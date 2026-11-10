@@ -1,0 +1,1034 @@
+{
+  "spec_sha256": "3438a50a40a2570d500cd2799c4afbc34906ba341555c0e7d04d5cc030a9fc38",
+  "retrieved_utc": "2026-11-10T21:50:27.460372+00:00",
+  "FT19": {
+    "passed": true,
+    "metadata_only": true,
+    "weights_downloaded": 0
+  },
+  "collection_count": 19,
+  "collection_model_ids": [
+    "ontocord/0.13b-Comma0.1-300BT",
+    "ontocord/0.13b-mixturevitae-v1-decontaminated-300B-4096",
+    "ontocord/0.4b-Comma0.1-300BT",
+    "ontocord/0.4b-mixturevitae-v1-decontaminated-300B-4096",
+    "ontocord/1.3b-Comma0.1-300BT",
+    "ontocord/1.3b-mixturevitae-v1-decontaminated-300B-4096",
+    "ontocord/1.7b-Comma0.1-300BT",
+    "ontocord/1.7b-mixturevitae-v1-decontaminated-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.13b-c4-300B-4096-warmup25000",
+    "open-sci/open-sci-ref-v0.01-0.13b-c4-300B-4096-warmup25000-lr0.006-2",
+    "open-sci/open-sci-ref-v0.01-0.13b-commoncorpus-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.13b-dclm-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.13b-dclm-300B-4096-lr0.006-2",
+    "open-sci/open-sci-ref-v0.01-0.13b-fineweb-edu-1.4t-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.13b-hplt-2.0-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.13b-nemotron-hq-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.13b-pile-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.13b-slimpajama-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.4b-c4-300B-4096-warmup25000",
+    "open-sci/open-sci-ref-v0.01-0.4b-c4-300B-4096-warmup25000-lr0.004-2",
+    "open-sci/open-sci-ref-v0.01-0.4b-commoncorpus-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.4b-dclm-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.4b-dclm-300B-4096-lr0.006-2",
+    "open-sci/open-sci-ref-v0.01-0.4b-fineweb-edu-1.4t-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.4b-hplt-2.0-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.4b-nemotron-hq-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.4b-pile-300B-4096",
+    "open-sci/open-sci-ref-v0.01-0.4b-slimpajama-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-300B-2048-warmup20000",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-300B-2048-warmup25000",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-300B-2048-warmup30000",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-300B-2048-warmup30000-lr0.005-2",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-300B-4096-warmup10000",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-300B-4096-warmup20000",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-300B-4096-warmup25000",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup1000",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup1000-lr0.004-2",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup1000-lr0.004-3",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup1000-lr0.004-4",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup1000-lr0.004-5",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup1000-lr0.004-6",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup10000",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup10000-lr0.003-2",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup10000-lr0.004-3",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup1500",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup1500-lr0.005-2",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup2000",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-2048-warmup2000-lr0.006-2",
+    "open-sci/open-sci-ref-v0.01-1.3b-c4-50B-4096-warmup1000",
+    "open-sci/open-sci-ref-v0.01-1.3b-commoncorpus-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.3b-hplt-2.0-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.3b-nemotron-hq-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.3b-pile-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.3b-slimpajama-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.7b-c4-300B-4096-warmup25000",
+    "open-sci/open-sci-ref-v0.01-1.7b-commoncorpus-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096",
+    "open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096",
+    "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.7b-hplt-2.0-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-16384",
+    "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096",
+    "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096-rope_theta-100k",
+    "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-8192",
+    "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-16384",
+    "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-8192",
+    "open-sci/open-sci-ref-v0.01-1.7b-pile-300B-4096",
+    "open-sci/open-sci-ref-v0.01-1.7b-slimpajama-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.13b-commoncorpus-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.13b-dclm-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.13b-fineweb-edu-1.4t-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.13b-hplt-2.0-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.13b-nemotron-hq-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.13b-pile-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.13b-slimpajama-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.4b-commoncorpus-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.4b-dclm-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.4b-fineweb-edu-1.4t-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.4b-hplt-2.0-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.4b-nemotron-hq-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.4b-pile-300B-4096",
+    "open-sci/open-sci-ref-v0.02-0.4b-slimpajama-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.3b-commoncorpus-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.3b-dclm-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.3b-fineweb-edu-1.4t-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.3b-hplt-2.0-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.3b-nemotron-hq-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.3b-pile-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.3b-slimpajama-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-commoncorpus-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-dclm-1T-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-dclm-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-fineweb-edu-1.4t-1T-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-fineweb-edu-1.4t-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-hplt-2.0-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-mixturevitae-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-nemotron-hq-100B-8192",
+    "open-sci/open-sci-ref-v0.02-1.7b-nemotron-hq-1T-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-nemotron-hq-300B-16384-rope_theta-1M",
+    "open-sci/open-sci-ref-v0.02-1.7b-nemotron-hq-300B-16384-rope_theta-1M-long_sft_16k",
+    "open-sci/open-sci-ref-v0.02-1.7b-nemotron-hq-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-pile-300B-4096",
+    "open-sci/open-sci-ref-v0.02-1.7b-slimpajama-300B-4096"
+  ],
+  "eligible_size_repositories": 40,
+  "models": [
+    {
+      "repo": "ontocord/0.13b-Comma0.1-300BT",
+      "revision": "b3f34a254df6ab55579e7e5a36f6bfcf82ff46d5",
+      "size_B": 0.13,
+      "dataset": "Comma0.1",
+      "tokens_B": 300.0,
+      "intermediate_count": 37,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": null,
+        "intermediate_size": null,
+        "num_hidden_layers": null,
+        "num_attention_heads": null
+      },
+      "metadata_sha256": {
+        "info": "13ef0c9efc0eaf23b52862b8e6fc1e2d1f30bca39f89ff70649e0ea6c6a4ae51",
+        "refs": "1ec02e9860d7162052456e03422b364c3c31fcc5a4971104a72fae401c66470a",
+        "config": "b42753f66be3d966c884bc0f5c2107db295c030e206882fca4a3f81be9ca5638"
+      }
+    },
+    {
+      "repo": "ontocord/0.13b-mixturevitae-v1-decontaminated-300B-4096",
+      "revision": "54a50e7ef79df1e7a3881ad26db6f85241988417",
+      "size_B": 0.13,
+      "dataset": "mixturevitae",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "50508018a06ef91d27da7a5e52028b707160bc5c8a2db6a3f60fe2c58b2e6b65",
+        "refs": "db97de503d4da029822f82bb5a0ebf8a7df977cf0c728e7aff5eac9029e7e314",
+        "config": "ab399f7e86c9105362838ad9a390b422c286d913586fef9f3f2d56359e94b288"
+      }
+    },
+    {
+      "repo": "ontocord/0.4b-Comma0.1-300BT",
+      "revision": "a64bbe737a8fcbc2d876faae3cb27096e5f1083e",
+      "size_B": 0.4,
+      "dataset": "Comma0.1",
+      "tokens_B": 300.0,
+      "intermediate_count": 37,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "c7c03dfe21687b0a28a2d43ab9e62273a505fa73ac95e25fdb0f13f88f67dbda",
+        "refs": "5e71a1c4eb8028601cd79cba6445a5d11518cec025bd28b3c88962535d830fe5",
+        "config": "1e331b1c26c122bb9b1ac6ac72ad8b6c99fb0a10a041e26a1e781498df44b1ac"
+      }
+    },
+    {
+      "repo": "ontocord/0.4b-mixturevitae-v1-decontaminated-300B-4096",
+      "revision": "dd380335af1a8c04220fc476e498eff530f6c248",
+      "size_B": 0.4,
+      "dataset": "mixturevitae",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "cd28469a025cb3916ea52baedf11b9e9ed4b917e66f40373d4e14d052665370c",
+        "refs": "43feace2b5ec72e2c18982dd87380de7f58825e7e69aaefe2d7a8a63cab94a3b",
+        "config": "f84aea3715a78d9e7fbab6d62c322b48b97fabbae558e0094dc4db25f71f6a08"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.13b-c4-300B-4096-warmup25000",
+      "revision": "c237585897de9a7295f6f4c55d95fdcdb0fab1da",
+      "size_B": 0.13,
+      "dataset": "c4",
+      "tokens_B": 300.0,
+      "intermediate_count": 35,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "a13212678aeaa340a0014b445b8c1108ce6ab8510bd43135d26755ac4224999d",
+        "refs": "f453c8dfc35f14237b1a644ec31195120db780649e700ee2bc2d496f3a7898ba",
+        "config": "335873d2736b28b5b893761d1bfeba9ebc1207e743381d3807d0e29ebb6c414a"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.13b-c4-300B-4096-warmup25000-lr0.006-2",
+      "revision": "565aec00ace141f60fb72245a8de548cfba894e9",
+      "size_B": 0.13,
+      "dataset": "c4",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "f8a671b81f7da38799f32ab41314183fd2b6c8c6bda1e6a8f3ac37c75336c8a8",
+        "refs": "e68aa18437926640796cc6ed056540438046b7e2731cae99c4f528adc1c51a24",
+        "config": "9fd53ff7dabbeb3e689c2475473a9d319e1c9e186432706725cdbfc55ee44c1b"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.13b-commoncorpus-300B-4096",
+      "revision": "c1d5611f32b1d2fa907fda4576bce46a32c9899a",
+      "size_B": 0.13,
+      "dataset": "commoncorpus",
+      "tokens_B": 300.0,
+      "intermediate_count": 25,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "f3338c94b125f4cf92de4c100caf425cdf6da5232bd341a22d2df6ac10644ef4",
+        "refs": "f008420445caf300bde1cb248d688291059694e77ab39da7a7d291532e564acd",
+        "config": "9d0799f60b2a0902708425ea34619318d12697b7575a3ee5dc4065e99592c4f5"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.13b-dclm-300B-4096",
+      "revision": "fb6dcba896701bea479cc7f053f0da10d23e844f",
+      "size_B": 0.13,
+      "dataset": "dclm",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "ef82b7be1e3f6b6ba6c1e81f8d99ce8d5efaf08145c457e0a3553445fa2669e7",
+        "refs": "836cb5fdb0461e78d640e055cff8ada10a4af05bd9bf33aa698e393fe8e3bc04",
+        "config": "5a4e76f7dffef993771b1ec9b9c7061b1f4f3266b9e37ca4300da2df0cff33fa"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.13b-dclm-300B-4096-lr0.006-2",
+      "revision": "10386fd55ab23404ea9525e2714ebfc241ba4d96",
+      "size_B": 0.13,
+      "dataset": "dclm",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "c5e9799591d0426c6e31bb78e41df3016642ad281106d871609d9058a7a21d19",
+        "refs": "b8dd43983a160db0db6ecbc992958a4eec871df4cd470ae1a288e5c6fb1e32a6",
+        "config": "27b48bf1246387ab134d38313ab1f6d7bb5831d044a8e6fe1842131f09a9015f"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.13b-fineweb-edu-1.4t-300B-4096",
+      "revision": "a3de31593847772fc4e7467d28290c5605cd0cf6",
+      "size_B": 0.13,
+      "dataset": "fineweb-edu",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "9a32faab1265347bef84435c8560d8e5eafa88756a5abc2ffa87752bd35a7cfb",
+        "refs": "10b5a295c46185f625bb222f34f2afe968e14c76f1a8b191af42f5dcf3b3d2cc",
+        "config": "faee19eb21a9639b5d1ced3b352a1a998c9e81b33aee10b8481d25f19ba5f586"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.13b-hplt-2.0-300B-4096",
+      "revision": "235dc7448c97ce1604cb75f12414de38ff8b6a45",
+      "size_B": 0.13,
+      "dataset": "hplt",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "fb3671005fa5b28ae6152ea48680ac5858be4e10e5f3ca8c329069ff67cd723b",
+        "refs": "362a81143cd30c701018c87855e1ebc1599d4b711dc26900a8658d002a6ad861",
+        "config": "ff6fe3082256eefef89b73cb01265b9fcc950d119dbffae27c93ffa104db7e72"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.13b-nemotron-hq-300B-4096",
+      "revision": "f2f96ef8ccc3288b6d7eed6831eb4d1cae3a835d",
+      "size_B": 0.13,
+      "dataset": "nemotron",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "7258bb656649fedaaad6e5364c759c851c2346269e5cc44f14ea05a4cbbeaa58",
+        "refs": "6f417e98cd10d8e002ce46ae96b560ef55940b7cf58ed2182c9a5a69055f9dfb",
+        "config": "3e021367d3e533152f62cca91c5159fe3c84522671e9fda56cc5fc1094285e99"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.13b-pile-300B-4096",
+      "revision": "0f2078edbc579e27780b4f8668dd8c1bac243f62",
+      "size_B": 0.13,
+      "dataset": "pile",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "2223922d594d6ddea30a1b7d8956137432c641d54c4830b58a5828539e1a5643",
+        "refs": "bf4f600a3c0f99d1891f5842d33520ee75410960b8ef1d000f0b430304ae1647",
+        "config": "85e641fd186e776f59d5080ff7c38990ce9dc29227689a14b0ebb2939a60d597"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.13b-slimpajama-300B-4096",
+      "revision": "c7c8cc410fbca92d7552dcb260d1abf1e86ec549",
+      "size_B": 0.13,
+      "dataset": "slimpajama",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "74ec805eeee38bd7ec568a3916b9174df94b9f3707a8cef7dd2226ea91187b41",
+        "refs": "c7ef55c95ccf404c72f81f0c1de162303a74da1af19e71807d056789147ff985",
+        "config": "2d7349c7c47318be3aea4391c4d398bcb20b5d88a6611c6388c2117da6a11cac"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.4b-c4-300B-4096-warmup25000",
+      "revision": "70682d1aab87b239f187ddc4b79138c77083bfdb",
+      "size_B": 0.4,
+      "dataset": "c4",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "e9ae10b5f53a50c952ef4547e7d85a12261af4029321f61bca17aea60c90a266",
+        "refs": "0a9759181ddcce4b6bef6b0b0643625364c95e78aeb4719af6dc3cf0879e7e37",
+        "config": "2b174a68dee92c95e99752acc9109014d80783d9bee60eaf62800b40e8d98fa9"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.4b-c4-300B-4096-warmup25000-lr0.004-2",
+      "revision": "d6582d0dbe1fcc6914f9a5c00f8019895cf370a8",
+      "size_B": 0.4,
+      "dataset": "c4",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "e3f5ac5a9af5fa9fca5c5af0f36ae2e8dc6fc1863f614928041842a178402b33",
+        "refs": "d44153411ad3ab24543de1222fab492ac559ab7c5ba3b738ce8f90262003d9a2",
+        "config": "5cbf528730299688e1182deaf7988bc8d7f89c2b09bc9ed59b5bf4d6380ba012"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.4b-commoncorpus-300B-4096",
+      "revision": "8fd178acf1aedad434de7eb41b7bbe908b1739b8",
+      "size_B": 0.4,
+      "dataset": "commoncorpus",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "8c0637026fff487c88067f001f9c9bdf18a947bc508caf247d386a7e749c4467",
+        "refs": "f1566a5013f876946c7b8132de0a83babcafe590631132bdc4c92fbf85f178c0",
+        "config": "d16cea917d73a77fef8ff93bb3d2656b4b2649517e52ef31e29a9d571dac1156"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.4b-dclm-300B-4096",
+      "revision": "907838c411703bdb1b75d7ded632dff279657683",
+      "size_B": 0.4,
+      "dataset": "dclm",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "fe9d7e2711a4ef1e8ab91c5d5319967126aafed9984a9cb987023c39393cf2c0",
+        "refs": "9623350ecd46c8614c5142a39334252d7c9e7d92bb51a458662cbedeaf14dd75",
+        "config": "bf0f209fdc202d50aafc431e167b839c0f42b71e96dbb11185f6f0e089bb78d5"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.4b-dclm-300B-4096-lr0.006-2",
+      "revision": "6d98ce594193cbe1d330ff0b45394f640710dce6",
+      "size_B": 0.4,
+      "dataset": "dclm",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "0e9217c8c3a7795d3d8f2a5492ec63dae08fa59d3ba1b99e1035e9efd3f61923",
+        "refs": "c5e78e138dc7f48faaa894c45c40bda0dbb06a31d10633f4fe6f9ef13791ed7c",
+        "config": "f482d1bab26f8914bba7ec3ce6b345268282c16e7712a483e5576e8809ea36b1"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.4b-fineweb-edu-1.4t-300B-4096",
+      "revision": "3ad72a55f282e7b6e685340dc51413230d738a8c",
+      "size_B": 0.4,
+      "dataset": "fineweb-edu",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "a1f5d1dbe02f83a4e05be28bd98f56b9a2f192f6d54f462b8b3369a36a983f01",
+        "refs": "0c64fb8c450cfc7f80044217a2b99a02b2562b033928a4b89f1c8a998180614b",
+        "config": "8d2d239ca273d33c8d20b10274ad7dd6afbb4a3485e2788568f4344117082bb6"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.4b-hplt-2.0-300B-4096",
+      "revision": "8129b427df40067ccb66f35d66c1745598f556a3",
+      "size_B": 0.4,
+      "dataset": "hplt",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "701fd8e7a0bc50bfaaf267a8144a03ca254dd470e69c65713f112cc1d8d0db8d",
+        "refs": "6cd59dcecb599b7b98a935e51e171a5af9368608ce05c66f8dad5f0f6615ec54",
+        "config": "f0d348f2dd36818e776e35511fb2e14c9893bb7a10d9c6ba59ae2f01a5e7ae2d"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.4b-nemotron-hq-300B-4096",
+      "revision": "bdff31d061b5c8a9b7a1343d026d96f0bffd59c3",
+      "size_B": 0.4,
+      "dataset": "nemotron",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "2d1dd0b51d31b7871f74d43ec7d84f1a1a992bf1b36b3c50420313e0de772004",
+        "refs": "2b9eb0a3e50b8a3b708a35c623d27494905013362ccfd092e9d4d3499a6acdf1",
+        "config": "4f161767c260cb0eba4349bc4476ddc3e30a417675ebddf7669ac3e4d7d99946"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.4b-pile-300B-4096",
+      "revision": "cad9278f72832eae908264938f2642684a57c12b",
+      "size_B": 0.4,
+      "dataset": "pile",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "7229b95689eb54d6d97cd7c43539267d9217fade2844f1936a64eafccf7b20fe",
+        "refs": "6ba25a7dca50e39de212982764fce53ee643fa4235bc9763c3ba74c9206f9829",
+        "config": "0c4b4958c41f05bdcd2da1a1ae728357dca38707ad4c3a787be9ca9b94a00b2b"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.01-0.4b-slimpajama-300B-4096",
+      "revision": "e26b3f045dfc4731305803761d32384b6a8e6cbd",
+      "size_B": 0.4,
+      "dataset": "slimpajama",
+      "tokens_B": 300.0,
+      "intermediate_count": 36,
+      "schedule": "WSD, 20% cooldown: v0.01 release documentation; per-repo training config not present",
+      "pre_cooldown_intermediates": "Yes: early iter branches precede documented final 20% cooldown",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "5621c17a3dc0a6b48fb58dcbbc8cc4e1b53640c4eaa8523a1a92eef162209c92",
+        "refs": "59c7b89f2fa872e6eaa8718cbf379164ac11f421b5264e423a826a63d17c339f",
+        "config": "5e5cae87c042ce2d9e7e48a8ceca30d93cb8c48624f204920605f2f10b53ed9f"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.13b-commoncorpus-300B-4096",
+      "revision": "c32268ab86a23fe6d91b6d31aa4e77a62f9836eb",
+      "size_B": 0.13,
+      "dataset": "commoncorpus",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "c6087cdaf7582fdc0d7d3c34e7a8de641640197b89cefb29332f7d57127caf61",
+        "refs": "1036bd48e8cc0e1cdc013601eeef5473d8c8395f77f3f69d68ab12dc3b28c8b7",
+        "config": "7de6a384fb977b47a97a4377e7d854d2a23d6bf2d4a16c566195f57f369933e5"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.13b-dclm-300B-4096",
+      "revision": "c3d11d3cb331d8ba2a4d25addc0f8912500c8479",
+      "size_B": 0.13,
+      "dataset": "dclm",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "70c111a0fdad847f4e862506351ed16a309016b84d5281924775e15e222d6907",
+        "refs": "03696ad7ea699784c095d6e451d66300e57270820bea448d22046f43236fbe1c",
+        "config": "7de6a384fb977b47a97a4377e7d854d2a23d6bf2d4a16c566195f57f369933e5"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.13b-fineweb-edu-1.4t-300B-4096",
+      "revision": "b157d58b2e1e4805871f07e0ad7e766d413af9bd",
+      "size_B": 0.13,
+      "dataset": "fineweb-edu",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "370bb89592bed22080e9bc3a29e0a8f4a94ec2e5b8b7d9b3c7ac739dae152159",
+        "refs": "f274daaad74f30960f0a01c82e58f85c52a4fa33e2a76b71a41cba677421976a",
+        "config": "7de6a384fb977b47a97a4377e7d854d2a23d6bf2d4a16c566195f57f369933e5"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.13b-hplt-2.0-300B-4096",
+      "revision": "6751bfe2ed876fc21913fe26be885112de7ec290",
+      "size_B": 0.13,
+      "dataset": "hplt",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "15e22e043793ad83ed0c7bfa51d7847b11d50a6ff42331306e62de84d4b663d2",
+        "refs": "c24f251042fdf805f8665dc3ccbdfb068618b63b01f8c1522b36b8a5437a9cb9",
+        "config": "7de6a384fb977b47a97a4377e7d854d2a23d6bf2d4a16c566195f57f369933e5"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.13b-hplt-3.0-en-hq-300B-4096",
+      "revision": "addbc1cb1397792fbef9df78e583eaf20005061c",
+      "size_B": 0.13,
+      "dataset": "hplt",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "557fa01f40a1813e6947a23000e4baa3d3d91a974ba2737a7dec7f164d528faf",
+        "refs": "80af2e62f05427745789aa30b0c52d8fb73f495d8c6bc823bf6b5ef19512442f",
+        "config": "7de6a384fb977b47a97a4377e7d854d2a23d6bf2d4a16c566195f57f369933e5"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.13b-nemotron-hq-300B-4096",
+      "revision": "fc43d36d18aeb5372b83b7818a678a4300824e0f",
+      "size_B": 0.13,
+      "dataset": "nemotron",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "a249db41f452e454d1939bd75462897e936849ddbd9cae3a0d1a7ff493630920",
+        "refs": "9dabb5837c9aac520a9a357f8dc18d44b9eb1fe487dff39b25158b28bcca4cc0",
+        "config": "7de6a384fb977b47a97a4377e7d854d2a23d6bf2d4a16c566195f57f369933e5"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.13b-pile-300B-4096",
+      "revision": "25707b065843bddb362ba75cc36639e9de7fb4e4",
+      "size_B": 0.13,
+      "dataset": "pile",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "17b321c166339d1b9e158e326b20af8c3ad45965ff12c727b5bec954d89b42bf",
+        "refs": "272b4c8473134adf4169eced8cd0a4e515ad735075b93428a1ce7f69a3301716",
+        "config": "7de6a384fb977b47a97a4377e7d854d2a23d6bf2d4a16c566195f57f369933e5"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.13b-slimpajama-300B-4096",
+      "revision": "d5422a68c9a19b13ec20d465fe71846cc97bcbfd",
+      "size_B": 0.13,
+      "dataset": "slimpajama",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 512,
+        "intermediate_size": 2256,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 8
+      },
+      "metadata_sha256": {
+        "info": "316adcfb64580b8ea2ad17ba120123d9a89303e081caa9be33ef92b452369961",
+        "refs": "a4edc75f78b370438f2f1bcf2ad5b0a415c26e465f5cb73790ad51b0bc016c62",
+        "config": "7de6a384fb977b47a97a4377e7d854d2a23d6bf2d4a16c566195f57f369933e5"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.4b-commoncorpus-300B-4096",
+      "revision": "eb2f2d25068f90f0a2f9427a6f9b3d0ecefc7d23",
+      "size_B": 0.4,
+      "dataset": "commoncorpus",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "c4b54816fbc92fa436bd39cd185dc1905051da38a4b4330d2fa58f909811b5fc",
+        "refs": "e2e8280c5c681e0cb0f6d9fc681900918543cf5316308ab11de2e0c257d5add5",
+        "config": "f1a6b934838d48d3e44775be348982c4af474ab2867db28db6aff7a3ab63efee"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.4b-dclm-300B-4096",
+      "revision": "36f3ec16db0b08fcd16cff8cc71e2c33dfc26bab",
+      "size_B": 0.4,
+      "dataset": "dclm",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "3a235098b17c96d2feb74b1675a3e8dca6f2f556721a34eafafa0166e86b1cac",
+        "refs": "5244173a890db385099ec2706d09fb7cd4d75a8816f39d944f0f306f141554f4",
+        "config": "f1a6b934838d48d3e44775be348982c4af474ab2867db28db6aff7a3ab63efee"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.4b-fineweb-edu-1.4t-300B-4096",
+      "revision": "e40ffeaffd594df73d4156f86a1de9f5abc38a29",
+      "size_B": 0.4,
+      "dataset": "fineweb-edu",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "6101e0d19df5beacab033eb31f5c589027092a7e34374ab134a917b621405504",
+        "refs": "af644847e318c34228164615efbab64a9ab5e52fdb32c5e1a2e9db935680423f",
+        "config": "f1a6b934838d48d3e44775be348982c4af474ab2867db28db6aff7a3ab63efee"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.4b-hplt-2.0-300B-4096",
+      "revision": "572ad444a309f28a0d830ecc8c34569f90d8156c",
+      "size_B": 0.4,
+      "dataset": "hplt",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "94f80201a844c6db2a8f346853da61cabc7aefe82fb8e67d778eee2bd7dd3624",
+        "refs": "1e218ff28a27e8f4c456cf0c7c425fb875a38216762873922d8cff9ee52240ca",
+        "config": "f1a6b934838d48d3e44775be348982c4af474ab2867db28db6aff7a3ab63efee"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.4b-hplt-3.0-en-hq-300B-4096",
+      "revision": "1c6967f93da4d1068d81a085effac955a6192c91",
+      "size_B": 0.4,
+      "dataset": "hplt",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "8e822e6e795b355978a9b88b75fc8122fbc690bdd2e50199e9f681642125ed15",
+        "refs": "71241bc824cc32d1b17b13a9abfc33f171c550c93c708b2155a97cd8c6b4266e",
+        "config": "f1a6b934838d48d3e44775be348982c4af474ab2867db28db6aff7a3ab63efee"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.4b-nemotron-hq-300B-4096",
+      "revision": "defe3deee4b3e5216f645f90adc0324cc9f9d735",
+      "size_B": 0.4,
+      "dataset": "nemotron",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "2f0f763cf3a64a93ce3f417c5d97ef782a6622c55362b0441bee3f1c993dfabd",
+        "refs": "4f76a651998e40a902dde1aa507462d6700c27ab74aca8a0d25afc2fc44d5cef",
+        "config": "f1a6b934838d48d3e44775be348982c4af474ab2867db28db6aff7a3ab63efee"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.4b-pile-300B-4096",
+      "revision": "ed615d1211b5fbbe27dba6049ecf5bc6d45d5574",
+      "size_B": 0.4,
+      "dataset": "pile",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "df41e7ebf151d5b96594d1c7af1bf72a91954caf3679f179420895bee211a85b",
+        "refs": "3c4f290439bafd370c60179c1e4ca336f941b280a4ba435904b77a719252b6a6",
+        "config": "f1a6b934838d48d3e44775be348982c4af474ab2867db28db6aff7a3ab63efee"
+      }
+    },
+    {
+      "repo": "open-sci/open-sci-ref-v0.02-0.4b-slimpajama-300B-4096",
+      "revision": "7ce05f5c489883dd0de919ff33e6768fc9f4024a",
+      "size_B": 0.4,
+      "dataset": "slimpajama",
+      "tokens_B": 300.0,
+      "intermediate_count": 0,
+      "schedule": "Unverified per-model schedule/cooldown; not used to assert an eligible pair",
+      "pre_cooldown_intermediates": "No intermediate branches listed",
+      "dataset_HF": "Not audited: no qualifying length pair at this size; would require pinned dataset metadata before any future run",
+      "config": {
+        "hidden_size": 1024,
+        "intermediate_size": 3840,
+        "num_hidden_layers": 22,
+        "num_attention_heads": 16
+      },
+      "metadata_sha256": {
+        "info": "ff5346808edddb3074bdd2b9ffd122497ede4de9afb5fde3fb87607918d9e5db",
+        "refs": "4a5f42cd86d111d7dacc7f1713a4280cac047b193db0aef8bbb237cba5f7bdad",
+        "config": "f1a6b934838d48d3e44775be348982c4af474ab2867db28db6aff7a3ab63efee"
+      }
+    }
+  ],
+  "pairs": [],
+  "conclusion": "No qualifying released length pairs were found at sizes other than 1.3B/1.7B in the inspected open-sci-ref 0.01/0.02 collections. All 40 repositories at 0.13B/0.4B declare a 300B final budget. C4 50B/300B comparisons are at excluded 1.3B; intermediate iter branches are not a second final annealed budget. This is an inventory at the recorded retrieval time, not evidence that no future or unlisted release can exist.",
+  "excluded_sizes_B": [
+    1.3,
+    1.7
+  ],
+  "metadata_archive": {
+    "path": "resources/a2_family_f12_hf_metadata_20261111.json.gz",
+    "sha256": "649bcab6e745e30ab7d3a045dab6814416ff9ad213e0b7d3538c0b850ad959bc"
+  },
+  "sources": [
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-001-685905e598be658fbcebff4f",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-002-697b4794e481a542d50cc21f",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-001-c4-6880bb9ec71ae334ab2d4bf2",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-002-slimpajama-6a7747a7512a99216034e4b9",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-002-comma-01-6a7747a91b52a16263024ef8",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-002-commoncorpus-6a7747a8668cb10904cf51e9",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-002-mixturevitae-6a7747a86eb3a66352fce7ab",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-002-pile-6a7747a62f16fd3ce389aa5e",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-002-nemotron-hq-6a7747a5db40d73bb3ca09c4",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-002-hplt-20-6a7747a4d47b76d35d871d21",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-002-fineweb-edu-6a7747a3a08c8405298c7e50",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-002-dclm-6a7747a229414e2b0855970b",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-001-commoncorpus-6880caa9a978a6a0708ff289",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-001-hplt-20-6880cacaefda387ab2ba2ca3",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-001-fineweb-edu-14t-6880bc72577ef0aaeb05709a",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-001-pile-6880bbd1cc5add2819c6809d",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-001-slimpajama-6880bbc5bf0a372d84f3b150",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-001-dclm-6880bb7f177e272687d2c4b1",
+    "https://huggingface.co/collections/open-sci/open-sci/open-sci-ref-001-nemotron-hq-6880b0ad97bf12b442f130ed",
+    "https://laion.ai/blog/open-sci-ref-001/"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "data_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data",
+  "data_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/manifest.json",
+    "sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e"
+  },
+  "heal_streams": {
+    "dclm": {
+      "2030": {
+        "path": "/mnt/local/_data/deep-llms_th2/a2_dclm_shuffle2030_rebuild_20261103",
+        "sha256": "5ddfb10ac309886eae0ae0e43024b93350bb022bc93c8ad095bb91cd638178f0"
+      }
+    }
+  },
+  "host": "thiennh-p6-wc69-worker-0",
+  "spec_sha256": "3438a50a40a2570d500cd2799c4afbc34906ba341555c0e7d04d5cc030a9fc38",
+  "f10_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f10-20261111-a01",
+  "f10_code_commit": "834e2cf1a883761b291d8d1d6687d45c27403931",
+  "queue_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f12-queue-20261111-a01",
+  "output_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f12-20261111-a01",
+  "queue_session": "a2_family_f12_queue_20261111_a01",
+  "session": "a2_family_f12_20261111_a01",
+  "f11_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f11-20261111-a01",
+  "f11_code_commit": "36432091e99089f8bb9c55ea76a29714ac4f4943",
+  "f11_prepared": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f11-queue-20261111-a01/prepared_config.json",
+    "sha256": "8a15475eb6d596805eb20d289043b37bd9ae56b6dcc8ffa693c6a236b52fa6c9"
+  },
+  "inventory": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_family_f12_inventory_20261111.json",
+    "sha256": "937873fbb422aa2dafc332c73e5b3c4cbb7222089037a4a0cbf301f974454774"
+  },
+  "reference_13_lock": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_family_f12_reference_13_20261111.json",
+    "sha256": "bee6b357a6c7d45c8288c8772318d4e415708d3edd0fd2e8cce00e2e26a6095e"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "spec_sha256": "3438a50a40a2570d500cd2799c4afbc34906ba341555c0e7d04d5cc030a9fc38",
+  "launch_ready": true,
+  "at": "2026-11-10T21:54:15.808005+00:00",
+  "files": {
+    "docs/A2_family_spec_v1.13.md": "a35e8f27d306bdc786426b1d57b6d075c4c9b7f6e437f4d95954b4dcc3409667",
+    "docs/A2_family_spec_v1.16.md": "3438a50a40a2570d500cd2799c4afbc34906ba341555c0e7d04d5cc030a9fc38",
+    "efficient_llm/a2/data.py": "f3ad8127643cef87c83818d72b7356ddbcc9963e035bfc072a3b2513e2f687dd",
+    "efficient_llm/a2/measure.py": "3cbb5b326c468a2f98f4229802b68faed8c5aec59b3a407fbed95bb43c4d22fc",
+    "efficient_llm/a2/model.py": "ac40fb3776f8537a04fad8b3f164c2ea598a1ab1b994b3cf61cf078d7e8c4d4f",
+    "efficient_llm/a2/train.py": "66e41889e226ae2bbcfa261beb3fe740412666bbc78420bac0ffc743d70eff93",
+    "efficient_llm/a2_family_f11_heal.py": "9c5a08c677779876f3a93b10df4043628e5834e8e9ac04a052bf102f60fbb3d0",
+    "efficient_llm/a2_family_f11_loss.py": "ca2ad066b18e01e5cb61dd91777bedf4f77ca75997f6a3a2c5a55513ea8e4377",
+    "efficient_llm/a2_family_f12_heal.py": "0c5b5af747a93876b201a0db81880149fb54fd46fead66e7e018a49ae63c330e",
+    "efficient_llm/a2_family_f12_masks.py": "7bc8ce831db5bc1fc99b493ef4a15d4d97270f5a626d60f7ac606569a10590f7",
+    "efficient_llm/a2_family_f12_width.py": "d8258bf609a47dd5665c9fa07f7b9e30fa9ff8198ce47f7f2aa9b98df2ecce24",
+    "eval/a2_family_f10_report.py": "bd169e6017e8f5450625bfe08cdad08595f8d26bd37f481f51eaf0e16fc0ef06",
+    "eval/a2_family_f10_score.py": "859877702bf368074ffed797cbf5af73cbd398f0fa4fc9254099f476972e85ad",
+    "eval/a2_family_f11.py": "8033d49c41ece0909658cd908c1b8f64e8b382d5b58753200ce99fcb6558859b",
+    "eval/a2_family_f11_calibrate.py": "9db5238454ed6fffa756105ad4b65c80b18549ce968719df7d4a2f941c004e1d",
+    "eval/a2_family_f11_report.py": "9844874ccc3d25bee2057b58cad51ad5be0a9b8d4919b13c7ce731dc8dfd83e7",
+    "eval/a2_family_f12.py": "ece38516adc1e5cd9b47666ac0ccb6b9b322fcb9e17c6b78f48e7fca415a379d",
+    "eval/a2_family_f12_report.py": "73667704b12105f97aa27ee2a74407123da37f0f0b08622fcbd4f4cb68166904",
+    "eval/a2_family_f9_score.py": "a577ec87d3758086b639eeea36eae86b418a514d63a4d517f0eea31edf31a426",
+    "eval/a2_family_f9_v110.py": "58229b440e1a0faf868e1cac1d1c0eaece0322ee8c7cf53dfe42f279a34a451e",
+    "resources/a2_family_f11_plan_20261111.json": "70816f8212025a1dc10a311aff22cc76a7bf33caa6591e294691b6853b691238",
+    "resources/a2_family_f12_hf_metadata_20261111.json.gz": "649bcab6e745e30ab7d3a045dab6814416ff9ad213e0b7d3538c0b850ad959bc",
+    "resources/a2_family_f12_inventory_20261111.json": "937873fbb422aa2dafc332c73e5b3c4cbb7222089037a4a0cbf301f974454774",
+    "resources/a2_family_f12_plan_20261111.json": "eb4e5b82672817029e84addfb0af252f06095c0f657767eb83a025d67083ed97",
+    "resources/a2_family_f12_reference_13_20261111.json": "bee6b357a6c7d45c8288c8772318d4e415708d3edd0fd2e8cce00e2e26a6095e",
+    "scripts/a2_family_f11_backup.py": "8e3730edba0d888d3abbbfcf19cdbdef6236eda9cd928fcd908ff6c69f97158b",
+    "scripts/a2_family_f11_checks.py": "4f7c3c14a2b232f009d433da5275fecf64c9b09a86af9c1eac3eaba1a8601604",
+    "scripts/a2_family_f11_health.py": "4cd1e58f6db8b3ddcb69aa3d037b02e625a36ed1e7a9f3fe145a9a63589f4a45",
+    "scripts/a2_family_f11_queue.py": "bbf85fcb966342a5e1c4cd1d3f5fd9e60317cc969535dabded5b8a9e3ae01068",
+    "scripts/a2_family_f11_score.py": "d6e7cfda427e0fe2334b9dfc0eba2d018f0aa3160d04c086274eeafe59e85f4e",
+    "scripts/a2_family_f12_backup.py": "1fcfcf3ddbba54f09b881e9ec5518dc5c95c15a53a7c314464bce2e2a15e6cee",
+    "scripts/a2_family_f12_checks.py": "3da4ee5ad7923ea4012158885daa67d222eab05215d98655ad02674bec175d04",
+    "scripts/a2_family_f12_health.py": "9d57e17618696f60dcbcf7a3e65d5189369e0fbbe325697e1cefab1e83901391",
+    "scripts/a2_family_f12_queue.py": "16da7332c1c8ec390cd8de89ea94a7cdb1ddaa6488e73f80d29073a80a77794d",
+    "scripts/a2_family_f12_score.py": "3377b915b6c3dc45095a78fa83abbd14a1089eb8167a6982ded84e0b84547185",
+    "scripts/launch_a2_family_f10.py": "b8a4eb574c3105bb62b4f485af37f14d65b750f1189c858ef637385b441f0820",
+    "scripts/launch_a2_family_f11.py": "d01d207427d2f9e79da6695dda5adecbb6dbbc699c350ca3226f546e16aa4ba6",
+    "scripts/launch_a2_family_f12.py": "84987383ea5235217aff72ed3dce66b610b8c61c393e96ef61b02ac05ce46884",
+    "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc",
+    "tests/a2/f11_distributed_cpu.py": "1b273f24f8e266658c351ef10ca51b6e87a05cc0d74bc5c6592277766367dd41",
+    "tests/a2/f11_report_fixture.py": "cb3785fba9c35a01d8dd4c23b15c729c7d88c5e47483e29d5af696867c4257fe",
+    "tests/a2/family_f12_distributed_fixture.py": "f1d0da821efea6816b2149da1e414748855100d99ea72bb36478b74a7f64f55a",
+    "tests/a2/family_f12_prepare_fixture.py": "edb890aca1adff19faffdad242a49684e0f1ccbe81c18618b57c02582bef0760",
+    "tests/a2/family_f12_report_fixture.py": "05a73ba739c74ae5b9c00a36755964232e60949357492e7a3c4759cd2954f56c",
+    "tests/a2/test_family_f11.py": "5c75ea4f948eb4f929a2bba1664ae27fa463fe6f0ff32bcea6d6075eb8c5aa51",
+    "tests/a2/test_family_f12.py": "86174f30faa7e0eb09d373d853960a79c8527960e2577ad2afb036af37b4e308"
+  },
+  "tests": {
+    "focused": 7,
+    "combined_regression": 41,
+    "additional_meta_count": 1,
+    "distributed": {
+      "passed": true,
+      "ranks": 2,
+      "exact_masks": true,
+      "max_abs": 0.0,
+      "tokens_per_layer": [
+        40,
+        40,
+        40,
+        40,
+        40
+      ],
+      "spec_sha256": "3438a50a40a2570d500cd2799c4afbc34906ba341555c0e7d04d5cc030a9fc38"
+    },
+    "report": {
+      "passed": true,
+      "full_registered_steps": true,
+      "raw_rank_traces": 48,
+      "raw_order_and_LR_replayed": true,
+      "paired_bootstrap_10000": true,
+      "report_append_and_csv": true,
+      "archive_verified": true,
+      "archive_members": 86,
+      "downstream_fixture_mocked": true,
+      "spec_sha256": "3438a50a40a2570d500cd2799c4afbc34906ba341555c0e7d04d5cc030a9fc38"
+    },
+    "admission": {
+      "passed": true,
+      "f11_lineage_lock": true,
+      "full_budget_stream_required": true,
+      "full_parent_input_validation_reused": true,
+      "actual_input_hashing_mocked_in_fixture": true,
+      "spec_sha256": "3438a50a40a2570d500cd2799c4afbc34906ba341555c0e7d04d5cc030a9fc38"
+    }
+  },
+  "logs": {
+    "tests_a01.log": {
+      "path": "temp/f12_inputs/tests_a01.log",
+      "sha256": "c675858f62243fd1966ef11b9b0d2351498fe4a0be12fe31d7b9e89907b3f963"
+    },
+    "combined_a01.log": {
+      "path": "temp/f12_inputs/combined_a01.log",
+      "sha256": "e86b2a051aeea389dea64372817d898074071fadca39407d358d416efdb8d6fe"
+    },
+    "combined_a02.log": {
+      "path": "temp/f12_inputs/combined_a02.log",
+      "sha256": "beacca873248f6bb885b48089d1c1ba81c66a588346c0cc6e0a6dd1747b3575f"
+    },
+    "meta_count_a01.log": {
+      "path": "temp/f12_inputs/meta_count_a01.log",
+      "sha256": "ea5b9929bb5f43594ceedb2833f3f94633d8da48b7db5dfe496826b0053d28c9"
+    },
+    "distributed_a01.log": {
+      "path": "temp/f12_inputs/distributed_a01.log",
+      "sha256": "331626e40c3ad0ed609c849a67554c5ad5624bbb38f70c75a65979dd8d1f61a1"
+    },
+    "report_a01.log": {
+      "path": "temp/f12_inputs/report_a01.log",
+      "sha256": "6f5ad05ecdfed7f1c70c518c0bf22ba2836e3024168d411bb7e0da06b48e8fe6"
+    },
+    "prepare_a01.log": {
+      "path": "temp/f12_inputs/prepare_a01.log",
+      "sha256": "be34a1928b96b2fb961dee169ee1dd952d166d8d2404daf1525503c4143cc11d"
+    }
+  },
+  "limitations": [
+    "CPU-only proof; actual B200 masks/FT20/FT21 validated during production",
+    "Original packed-sequence bootstrap qualification retained, not independent documents",
+    "Width LR 0.001 not retuned",
+    "Initial combined_a01 included nonexistent test module name; corrected invocation combined_a02 passed all41; failed invocation preserved"
+  ],
+  "order": "unchanged F10 then unchanged F11 then separate F12a inventory/F12b six width KD fits/downstream/report/on-node replay/backup/native burn",
+  "no_weights_downloaded_for_inventory": true,
+  "source_compaction": {
+    "path": "docs/results/context_budget_20261026/probe-manifest.json",
+    "sha256": "b9cf5ddd3517237a6ca874053d03fba66af3728f6a984af21e1fb383ed40c450",
+    "bytes": 378853,
+    "gzip_path": "docs/results/context_budget_20261026/probe-manifest.json.gz",
+    "gzip_bytes": 110442
+  }
+}
