@@ -3,24 +3,25 @@
   "utc": "2026-11-10T11:19:02.913025+00:00",
   "launch_ready": true,
   "status": "PASS",
-  "cpu_tests": 20,
+  "cpu_tests": 21,
   "files": {
     "eval/a2_family_f9_v110.py": "58229b440e1a0faf868e1cac1d1c0eaece0322ee8c7cf53dfe42f279a34a451e",
     "eval/a2_family_f9_report.py": "9a49e05558baf6296b761a796996176a91e822e18cfa7bbb81a3560d207e41a4",
     "scripts/a2_family_f9_v110_run.py": "df7e2613072466f418ae69e76aa4ec5febc20a059eb9644e6c935e1a019681d5",
-    "scripts/launch_a2_family_f9_v110.py": "3401914d27a04df6dc286c0a8cb41eadc89f52d339e2f832ec865d1177d10742",
+    "scripts/launch_a2_family_f9_v110.py": "35e8714541281a0c2f7f10ad7f30e4965be9f9126dddbe3bfd0a0073fb5a8d0f",
     "scripts/a2_family_f9_backup.py": "19255ac1e71889a61dc2c09acd7c743169bfdc15a106830f1c6f5fc154527171",
     "scripts/a2_family_f9_health.py": "bc296be2aa72db14f6b633fff33c264b7f7808ab8011599d2fdf9ad569de934a",
-    "tests/a2/test_family_f9_v110.py": "f4b938c68b5afe3cfbfe694f1c202c6bc5ca19c5729f719be62e112a2e756f95",
-    "resources/a2_family_f9_v110_plan_20261110.json": "11514261eef8d6f3937b66b44d0a19c548242044b84fdc7a3b640adf94cc9b0f",
+    "tests/a2/test_family_f9_v110.py": "a7186701f51372cf8af7c34c9226ea947e9ca69952431336a6b5ecff170bdaab",
+    "resources/a2_family_f9_v110_plan_20261110.json": "bc33f1091600ff02818a150195a005d2c79fe8e154a0a9e8f77f8a6b433fe0b6",
     "docs/A2_family_spec_v1.10.md": "1cf76d4e7a9d321e01f58ef704fc722ad186f2e966b3b34280141fe183b158cf"
   },
   "logs": {
     "temp/f9_v110_regression.log": "8f7441f5e8361ae90f4890ebec6a0143d2286b599d9efe054dcf8b15e884b003",
     "temp/f9_v110_tests_a02.log": "464df7c6426eb05e81f6ea53fd33bfab9c62aaeb171d5493b4a68d93270a3bdc",
-    "temp/f9_v110_wait_test.log": "4cc2eb17e8f278ec724af152411419fa0bd11e637f0a58d2a02259587376fc87"
+    "temp/f9_v110_wait_test.log": "4cc2eb17e8f278ec724af152411419fa0bd11e637f0a58d2a02259587376fc87",
+    "temp/f9_v110_path_fix_tests.log": "231fe3dfebbd2779b5c3e8c843a853d9a7f471f5ef81e3deea7edeb8a64983e6"
   },
-  "scope": "CPU only; 11 prior regression tests +8 v110 tests; real full-nine-task archived raw LL extraction/normalization/identity, closed55 selection, nativejobs parser, joint bootstrap units/signs and no interim/continue-on-failure; native-wait test verifies no GPU admission before finished predecessor receipt",
+  "scope": "CPU only; 11 prior regression tests +8 v110 tests; real full-nine-task archived raw LL extraction/normalization/identity, closed55 selection, nativejobs parser, joint bootstrap units/signs and no interim/continue-on-failure; native-wait test verifies no GPU admission before finished predecessor receipt; corrected attestation location verified against original activation",
   "numerical_evaluator_commit": "2a74421e4dc6f4f6669af1769e1ae07828b031c2",
   "limitations": [
     "Fresh actual55 weight hashes and native drainhandoff checked again on node",

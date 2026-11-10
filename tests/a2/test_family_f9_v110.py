@@ -21,6 +21,12 @@ class V110(unittest.TestCase):
         self.assertEqual({e['trained_node'] for e in groups[1] if e['budget']==12.8},{'wc69'})
         self.assertEqual({e['budget'] for e in groups[4]},{.2,.8,3.2})
 
+    def test_attestation_matches_original_activation_location(self):
+        cfg=json.loads(Path('resources/a2_family_f9_v110_plan_20261110.json').read_text())
+        expected=Path(cfg['prior_root'])/'results/a2_family_20261107/downstream/SOURCE_COMMIT_ATTESTATION.json'
+        self.assertEqual(Path(cfg['evaluator_attestation']['path']),expected)
+        self.assertEqual(cfg['evaluator_attestation']['sha256'],'eb3a64960edc9670e738fa9f51657107e550773e606a02fd81064d3028029d68')
+
     def test_winogrande_canonical_choices(self):
         c,g=choices_and_gold('winogrande',dict(doc=dict(sentence='The _ runs',option1='dog',option2='cat',answer='2')))
         self.assertEqual(c,['The dog','The cat']);self.assertEqual(g,1)

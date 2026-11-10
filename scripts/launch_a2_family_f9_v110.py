@@ -82,6 +82,7 @@ def launch(plan,output,session,commit):
     for p,h in manifest['files'].items():
         if sha256(old/'source'/p)!=h:raise ValueError('Numerical evaluator source changed')
     attestation=locked(cfg['evaluator_attestation'])
+    if not attestation['verified'] or attestation['actual_source_commit']!=EVALUATOR_COMMIT or not all(attestation['checks'].values()):raise ValueError('Invalid source attestation')
     prior=old/'results/a2_family_20261107/downstream'
     oldcfg=read(prior/'config_admitted_a02.json')
     if oldcfg['code_commit']!=EVALUATOR_COMMIT:raise ValueError('Wrong evaluator commit')
@@ -134,7 +135,7 @@ def launch(plan,output,session,commit):
     import shutil
     for name in ('FT12_loads.json','FT13.json','flags.json'):
         shutil.copyfile(prior/name,prep/('v19_'+name))
-    for p in (old/'SOURCE_COMMIT_ATTESTATION.json',old/'ADMISSION_CORRECTIONS.json',old/'scope_v110_drain/native_handoff_requested.json'):
+    for p in (Path(cfg['evaluator_attestation']['path']),prior/'ADMISSION_CORRECTIONS.json',old/'scope_v110_drain/native_handoff_requested.json'):
         if p.is_file():shutil.copyfile(p,prep/p.name)
     benchmarks=oldcfg['benchmarks']
     for family,common in benchmarks.items():

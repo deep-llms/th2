@@ -7,7 +7,7 @@
     "sha256": "05b0b4addb7bfa94be6f0891a3b474ad0723569fe85ef049fab3bf0492b28fc8"
   },
   "evaluator_attestation": {
-    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f9-20261110-a01/SOURCE_COMMIT_ATTESTATION.json",
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f9-20261110-a01/results/a2_family_20261107/downstream/SOURCE_COMMIT_ATTESTATION.json",
     "sha256": "eb3a64960edc9670e738fa9f51657107e550773e606a02fd81064d3028029d68"
   },
   "old_ready": {
