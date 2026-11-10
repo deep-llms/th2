@@ -8,7 +8,7 @@ from eval.a2_family_f9 import read,write
 from efficient_llm.diagnostic_data import sha256
 
 
-def backup(root):
+def backup(root, writer=write):
     root=Path(root);out=root/'backup';out.mkdir(exist_ok=False)
     # Materialize reused scores and preparations so archives never depend on
     # temporary node paths. Existing original artifacts remain untouched.
@@ -23,7 +23,7 @@ def backup(root):
                 dest=root/'reused'/model/(kind+'.json');dest.parent.mkdir(parents=True,exist_ok=True)
                 shutil.copyfile(p,dest)
             copies[model][kind]=dict(path=str(dest.relative_to(root)),sha256=item['sha256'])
-    write(root/'portable_index.json',dict(models=copies))
+    writer(root/'portable_index.json',dict(models=copies))
     files={}
     for p in sorted(root.rglob('*')):
         rel=p.relative_to(root)
@@ -48,11 +48,15 @@ def backup(root):
         while chunk:=stream.read(24<<20):
             p=out/f'family_f9_scientific.part{len(parts):03d}';p.write_bytes(chunk)
             parts.append(dict(path=str(p),sha256=sha256(p),bytes=len(chunk)))
-    proof=write(out/'verified.json',dict(verified=True,files=files,parts=parts,archive_sha256=sha256(archive),
+    proof=writer(out/'verified.json',dict(verified=True,files=files,parts=parts,archive_sha256=sha256(archive),
         members=len(files),scope='F9 model hashes, requests, per-item LL/correctness, reports and logs; excludes model weights'))
     return proof
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--receipt',required=True);a=p.parse_args()
-    proof=backup(a.root);write(a.receipt,dict(verified=True,proof=proof))
+    p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--receipt',required=True);p.add_argument('--spec-sha256');a=p.parse_args()
+    writer=write
+    if a.spec_sha256:
+        from eval.a2_family_f9_v110 import SPEC_SHA,write as writer
+        if a.spec_sha256!=SPEC_SHA:raise ValueError('Wrong backup spec')
+    proof=backup(a.root,writer);writer(a.receipt,dict(verified=True,proof=proof))

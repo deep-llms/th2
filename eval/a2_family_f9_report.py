@@ -22,8 +22,9 @@ def ratio(num,den):
         out[t]=(interval(p/q,d/e,scale=1) if (ci[0]>0 or ci[1]<0) and np.all(e!=0) else None)
     return out
 
-def analyze(entries,replays):
-    byid={e['model_id']:e for e in entries};records={k:items(v) for k,v in replays.items()}
+def analyze(entries,replays,*,item_records=None,draw_sampler=None):
+    byid={e['model_id']:e for e in entries};records=item_records if item_records is not None else {k:items(v) for k,v in replays.items()}
+    sample=draw_sampler or joint_draws
     models={k:{t:float(np.mean(v['values'])) for t,v in r.items()} for k,r in records.items()}
     for row in models.values():
         row['MC8']=sum(v for t,v in row.items() if t!='lambada_openai')/8
@@ -45,7 +46,7 @@ def analyze(entries,replays):
             ids=[a.get('parent_id'),b.get('parent_id'),a['model_id'],b['model_id']]
             if any(i not in records for i in ids):
                 unavailable.append(dict(condition=conditions,pair=[short,long],reason='missing parent scores'));continue
-            names,draws=joint_draws({i:records[i] for i in ids})
+            names,draws=sample({i:records[i] for i in ids})
             sp,lp,ss,ls=ids
             gap=linear(names,draws,{lp:1,sp:-1});studentgap=linear(names,draws,{ls:1,ss:-1})
             ev=linear(names,draws,{lp:1,ls:-1,sp:-1,ss:1})
@@ -63,7 +64,7 @@ def analyze(entries,replays):
         if 'P300' in arms and 'X72' in arms:
             for a,b in product(arms['P300'],arms['X72']):
                 ids=[a['model_id'],b['model_id']]
-                names,draws=joint_draws({i:records[i] for i in ids})
+                names,draws=sample({i:records[i] for i in ids})
                 ainit.append(dict(**conditions,models=ids,A_init_down=summarize(linear(names,draws,{ids[0]:1,ids[1]:-1}))))
     pooled=[]
     candidates=[]
@@ -73,7 +74,7 @@ def analyze(entries,replays):
         for (otherkey,s,l,_,_),partner in pair_inputs.items():
             if (otherkey,s,l)==(other,short,long):candidates.append((key,short,long,ids,partner))
     for key,short,long,ids,partner in candidates:
-        allids=ids+partner;names,draws=joint_draws({i:records[i] for i in allids})
+        allids=ids+partner;names,draws=sample({i:records[i] for i in allids})
         weights={}
         for quartet in (ids,partner):
             for i,w in zip(quartet,[-.5,.5,.5,-.5]):weights[i]=weights.get(i,0)+w
@@ -96,7 +97,7 @@ def analyze(entries,replays):
         arms={e['arm']:e['model_id'] for e in entries if e['role']=='parent' and e['family']=='opensci'
               and e['dataset']==ds and e['model_id'] in records}
         if not all(a in arms for a in ('S72','S188','P300','P1T')):continue
-        parentsets[ds]=arms;names,draws=joint_draws({i:records[i] for i in arms.values()})
+        parentsets[ds]=arms;names,draws=sample({i:records[i] for i in arms.values()})
         sw={arms['P300']:1,arms['S72']:-1};lw={arms['P1T']:1,arms['S188']:-1}
         dw={**lw,**{i:-w for i,w in sw.items()}}
         nll=[byid[arms[a]].get('final_nll') for a in ('S72','P300','S188','P1T')]
@@ -106,13 +107,13 @@ def analyze(entries,replays):
         for row in lead:
             if row['dataset']!=ds or row['pair']!=['P300','P1T']:continue
             ids=row['models'];allids=set(ids)|set(arms.values())
-            names,draws=joint_draws({i:records[i] for i in sorted(allids)})
+            names,draws=sample({i:records[i] for i in sorted(allids)})
             ev=linear(names,draws,dict(zip(ids,[-1,1,1,-1])))
             row['E_down_over_delta_g']=ratio(ev,linear(names,draws,dw))
             row['E_over_delta_g_NLL']=row['E_nats']/gn if gn and row['E_nats'] is not None else None
     if all(ds in parentsets for ds in ('dclm','fwe')):
         allids=[i for ds in ('dclm','fwe') for i in parentsets[ds].values()]
-        names,draws=joint_draws({i:records[i] for i in allids});sw={};lw={}
+        names,draws=sample({i:records[i] for i in allids});sw={};lw={}
         for ds in ('dclm','fwe'):
             a=parentsets[ds];sw.update({a['P300']:.5,a['S72']:-.5});lw.update({a['P1T']:.5,a['S188']:-.5})
         dw={**lw,**{i:-w for i,w in sw.items()}}
@@ -122,7 +123,7 @@ def analyze(entries,replays):
         for row in pooled:
             if row['pair']!=['P300','P1T']:continue
             modelids=set(row['models'])|set(allids)
-            names,draws=joint_draws({i:records[i] for i in sorted(modelids)})
+            names,draws=sample({i:records[i] for i in sorted(modelids)})
             ew={}
             for i,w in zip(row['models'],[-.5,.5,.5,-.5]*2):ew[i]=ew.get(i,0)+w
             row['E_down_over_delta_g']=ratio(linear(names,draws,ew),linear(names,draws,dw))
@@ -133,7 +134,7 @@ def analyze(entries,replays):
         if e['role']!='student' or e['model_id'] not in records:continue
         refs=[r for r in entries if r['role']=='reference' and r['dataset']==e['dataset'] and r['model_id'] in records]
         for ref in refs:
-            ids=[e['model_id'],ref['model_id']];names,draws=joint_draws({i:records[i] for i in ids})
+            ids=[e['model_id'],ref['model_id']];names,draws=sample({i:records[i] for i in ids})
             reference.append(dict(student=ids[0],reference=ids[1],difference=summarize(linear(names,draws,{ids[0]:1,ids[1]:-1}))))
     drops=[]
     for e in entries:
@@ -154,7 +155,7 @@ def analyze(entries,replays):
         if len({r['budget'] for r in rows})!=len(rows):
             unavailable.append(dict(series=list(key),reason='Multiple reruns at one budget; no arbitrary lineage selected for trend'))
             continue
-        ids=sorted({i for r in rows for i in r['models']});names,draws=joint_draws({i:records[i] for i in ids})
+        ids=sorted({i for r in rows for i in r['models']});names,draws=sample({i:records[i] for i in ids})
         x=np.log([r['budget'] for r in rows]);w=(x-x.mean())/np.sum((x-x.mean())**2)
         weights={}
         for r,c in zip(rows,w):

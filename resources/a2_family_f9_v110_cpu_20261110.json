@@ -1,0 +1,28 @@
+{
+  "spec_sha256": "1cf76d4e7a9d321e01f58ef704fc722ad186f2e966b3b34280141fe183b158cf",
+  "utc": "2026-11-10T11:19:02.913025+00:00",
+  "launch_ready": true,
+  "status": "PASS",
+  "cpu_tests": 19,
+  "files": {
+    "eval/a2_family_f9_v110.py": "58229b440e1a0faf868e1cac1d1c0eaece0322ee8c7cf53dfe42f279a34a451e",
+    "eval/a2_family_f9_report.py": "9a49e05558baf6296b761a796996176a91e822e18cfa7bbb81a3560d207e41a4",
+    "scripts/a2_family_f9_v110_run.py": "df7e2613072466f418ae69e76aa4ec5febc20a059eb9644e6c935e1a019681d5",
+    "scripts/launch_a2_family_f9_v110.py": "2cd5d5a6e1260bc47552c5bf82c944de0973d4668c6d8edd36c81c3ef5147d1f",
+    "scripts/a2_family_f9_backup.py": "19255ac1e71889a61dc2c09acd7c743169bfdc15a106830f1c6f5fc154527171",
+    "scripts/a2_family_f9_health.py": "bc296be2aa72db14f6b633fff33c264b7f7808ab8011599d2fdf9ad569de934a",
+    "tests/a2/test_family_f9_v110.py": "7445c15e846438bd8f2fb471ea3c6980f5bab94905034104bbc61a6c6a2c3e0f",
+    "resources/a2_family_f9_v110_plan_20261110.json": "11514261eef8d6f3937b66b44d0a19c548242044b84fdc7a3b640adf94cc9b0f",
+    "docs/A2_family_spec_v1.10.md": "1cf76d4e7a9d321e01f58ef704fc722ad186f2e966b3b34280141fe183b158cf"
+  },
+  "logs": {
+    "temp/f9_v110_regression.log": "8f7441f5e8361ae90f4890ebec6a0143d2286b599d9efe054dcf8b15e884b003",
+    "temp/f9_v110_tests_a02.log": "464df7c6426eb05e81f6ea53fd33bfab9c62aaeb171d5493b4a68d93270a3bdc"
+  },
+  "scope": "CPU only; 11 prior regression tests +8 v110 tests; real full-nine-task archived raw LL extraction/normalization/identity, closed55 selection, nativejobs parser, joint bootstrap units/signs and no interim/continue-on-failure",
+  "numerical_evaluator_commit": "2a74421e4dc6f4f6669af1769e1ae07828b031c2",
+  "limitations": [
+    "Fresh actual55 weight hashes and native drainhandoff checked again on node",
+    "No new GPU test; numerical scorer and harness source immutable, FT11 reused only after source/data/model verification"
+  ]
+}
