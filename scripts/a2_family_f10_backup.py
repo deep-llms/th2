@@ -1,9 +1,10 @@
 """Keep a verified scientific archive on node; never split/export raw data."""
 import hashlib
+import csv
 from pathlib import Path
 import shutil
 import tarfile
-from eval.a2_family_f10 import write
+from eval.a2_family_f10 import write,SPEC_SHA
 from eval.a2_family_f9 import read
 from efficient_llm.diagnostic_data import sha256
 from scripts.a2_family_f9_run import locked
@@ -19,7 +20,9 @@ def backup(root,cfg):
     ft16=locked(cfg['FT16']);locked(ft16['fewshot_examples']);inputs['fewshot_examples']=ft16['fewshot_examples']['path']
     for key in ('source_manifest','prepared','FT16','input_manifest','f10a','preparation_ready','cpu_proof','f9_manifest'):locked(cfg[key])
     for name,path in inputs.items():shutil.copyfile(path,evidence/(name+'.json'))
-    shutil.copyfile(Path(cfg['f10a_root'])/'tests.csv',root/'F10a_TESTS.csv')
+    with (Path(cfg['f10a_root'])/'tests.csv').open() as source_csv,(root/'F10a_TESTS.csv').open('x') as target_csv:
+        reader=csv.DictReader(source_csv);writer=csv.DictWriter(target_csv,fieldnames=['spec_sha256',*reader.fieldnames]);writer.writeheader()
+        writer.writerows(dict(row,spec_sha256=SPEC_SHA) for row in reader)
     source=Path(cfg['source_manifest']['path']).parent/'source'
     for name,h in read(cfg['source_manifest']['path'])['files'].items():
         if sha256(source/name)!=h:raise ValueError('Source changed before backup')

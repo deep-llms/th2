@@ -2,33 +2,37 @@
   "spec_sha256": "6ac9f6d2da0a75c1ac5d9846a00519de8750130813a19e10fc454bbd0490f22b",
   "launch_ready": true,
   "scope": "CPU readiness only; actual input hashes/ready/ownership and FT14/15 remain native gates",
-  "at": "2026-11-10T17:53:06.855923+00:00",
+  "at": "2026-11-10T17:56:13.149896+00:00",
   "files": {
     "eval/a2_family_f10.py": "ad471ab2c5e41e4d2dd176f5d39320dddb9fe96dcd7c5825fb7f71fb544d869e",
     "eval/a2_family_f10_tasks.py": "cae04cae6088f2847aaa46f212f5108d924851bd1638e10f0cfbe9bbcc781bfb",
     "eval/a2_family_f10_score.py": "859877702bf368074ffed797cbf5af73cbd398f0fa4fc9254099f476972e85ad",
-    "eval/a2_family_f10_report.py": "e9b2b142a5123c0071be5ea2bf04c773c5690e1e6fd5822bff43cad066c58396",
+    "eval/a2_family_f10_report.py": "bd169e6017e8f5450625bfe08cdad08595f8d26bd37f481f51eaf0e16fc0ef06",
     "scripts/a2_family_f10_cpu.py": "9948145a3d92c9ea96ad8986b2cbe7d2be3dbeb95c88985245024cb2c927259a",
     "scripts/a2_family_f10_prepare.py": "91231428b6b72abcaf3008555c0c28b5d0cc30988286a20ba686297facdf8898",
     "scripts/a2_family_f10_run.py": "0f0a5dc303c3c7200283b4c7756638d04e329710c70d6908eb9aa9ba0d2d290b",
-    "scripts/a2_family_f10_backup.py": "5d7b781252d0c90409320e92fde50979eb153de9855c3e98f9a454eb4559604d",
-    "scripts/launch_a2_family_f10.py": "849a092dcf0617cf1b444df7d7eac4fe213e43f01ccd09406672316217fd7cbf",
+    "scripts/a2_family_f10_backup.py": "6aa8abf1c42a95d5a2874653235e511b1feec174b9e8ed2516e593b2ebd0c1e0",
+    "scripts/launch_a2_family_f10.py": "20522bc932d5a34164f05f0d37fac8f2b76ec6191c7e412aa6e3020a99ad28c3",
     "tests/a2/test_family_f10.py": "ac9a03a5c3629bbd3dd5bba9d7bbad64dadbaaa023b192f5d2baf8511fe7fbdb",
-    "tests/a2/f10_report_fixture.py": "23fb08493d1694b63a9c600d0a508fb76a77989c453a6bdf6a9e467634875f3c"
+    "tests/a2/f10_report_fixture.py": "23fb08493d1694b63a9c600d0a508fb76a77989c453a6bdf6a9e467634875f3c",
+    "scripts/a2_family_f10_health.py": "185613117210e9ff034aa1347578d9bb50e01d2049286088430d754b7f7366db"
   },
   "tests": {
     "focused_unittests": 12,
     "result": "PASS",
-    "log_sha256": "15ecf13243b8f50c6c799acd098fc57ad34ecec198f09e4458b81a59fa390d45",
+    "log_sha256": "d6c6556c143c427f62b6fc3e60eb16586533c0ed90f4b98480200f5b8b8eeaf2",
     "full_report_fixture": "PASS 42 new / 34 generations / 64 conf / 11 oneshots, prior Markdown retained",
     "fixture_log_sha256": "0478b910d51ac7e458b6167a1744b17ab0015f0698edb13f4629baeed3dffffe",
     "full_canonical_preparation": "PASS 59 hashes; MMLU14042 / TriviaQA17944 / 5shot seed42",
     "tiny_native_generation": "PASS parent and noncontiguous pruned cache/no-cache/batch1/batch2 exact; CPU only",
-    "native_generation_log_sha256": "e9e49c605305668691015f5f61cb5536b235c53312603a2969d3bdc18df16b7a"
+    "native_generation_log_sha256": "e9e49c605305668691015f5f61cb5536b235c53312603a2969d3bdc18df16b7a",
+    "combined_F9_F10_regression": "PASS 35 tests; tests/a2 on PYTHONPATH as required by legacy harness imports",
+    "combined_log_sha256": "9e3afdd283b1515327b0109cf08785c58b4d96834fa06702e05e58bbdb23ccc5"
   },
   "limitations": [
     "No production GPU gate has run yet",
     "Winogrande canonical F9 likelihood is gold-conditioned suffix, not direct inserted-choice likelihood; confidence and MC8/MC7 explicitly qualified",
-    "Historical CPU wrapper import failure retained; corrected explicit PYTHONPATH without changing numerical source"
+    "Historical CPU wrapper import failure retained; corrected explicit PYTHONPATH without changing numerical source",
+    "a02 CPU wrapper env did not propagate through existing tmux server; a03 calls module with explicit env in pane; both failures preGPU"
   ]
 }

@@ -299,7 +299,7 @@ def report(cfg,root):
             if len({r['identity'] for r in vals})!=1:raise ValueError('Stage items differ')
             means=[float(np.mean(r['values'])) for r in vals]
             pmeans=[float(np.mean(pc[m][task]['values'])) if task in pc.get(m,{}) else None for m in ids]
-            stages.append(dict(parent=parent,model=model,oneshot=oneshot,task=task,conf=means,p_correct=pmeans,
+            stages.append(dict(parent=parent,model=model,oneshot=oneshot,task=task,conf=means,p_correct=pmeans,p_correct_differences=({k:float(v) for k,v in zip(('pruning_loss','recovered','still_missing'),(pmeans[0]-pmeans[1],pmeans[2]-pmeans[1],pmeans[0]-pmeans[2]))} if all(v is not None for v in pmeans) else None),
                 pruning_loss=means[0]-means[1],recovered=means[2]-means[1],still_missing=means[0]-means[2]))
             if vals[0].get('correct') is not None and vals[2].get('correct') is not None:
                 mask=(np.asarray(vals[0]['correct'])==1)&(np.asarray(vals[2]['correct'])==1)
@@ -392,7 +392,7 @@ def report(cfg,root):
     full=locked_report(cfg['previous_report'])+'\n'+'\n'.join(sections)+'\n'
     (root/'REPORT_FULL_v1.11.md').write_text(full)
     with (root/'F10_MODELS.csv').open('x') as f:
-        columns=['model','MMLU_acc_norm','MMLU_acc','MMLU_subject_average','TriviaQA_EM','TriviaQA_F1']
-        writer=csv.DictWriter(f,fieldnames=columns);writer.writeheader();writer.writerows(dict(model=m,**r) for m,r in newmodels.items())
+        columns=['spec_sha256','model','MMLU_acc_norm','MMLU_acc','MMLU_subject_average','TriviaQA_EM','TriviaQA_F1']
+        writer=csv.DictWriter(f,fieldnames=columns);writer.writeheader();writer.writerows(dict(spec_sha256=SPEC_SHA,model=m,**r) for m,r in newmodels.items())
     write(root/'report_complete.json',dict(complete=(len(newmodels)==42 and sum('TriviaQA_EM' in r for r in newmodels.values())==34 and len(list((root/'nine').glob('*/per_item.json')))==11),raw_new_metric_replay=True,new_models=len(newmodels),confidence_models=len(conf),
                                          old_report_preserved=True,scope='F10a/F10b/F10c',joint_bootstrap_seed=0))

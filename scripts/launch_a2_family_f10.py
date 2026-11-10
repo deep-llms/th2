@@ -86,7 +86,7 @@ def launch(preparation,output,session,commit,proof):
     env={**os.environ,'CUDA_VISIBLE_DEVICES':'','PYTHONPATH':str(frozen),'A2_CODE_COMMIT':commit,
          'OMP_NUM_THREADS':'1','OPENBLAS_NUM_THREADS':'1','MKL_NUM_THREADS':'1','PYTHONDONTWRITEBYTECODE':'1',
          'HF_HUB_OFFLINE':'1','HF_DATASETS_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1','HF_HUB_DISABLE_TELEMETRY':'1','WANDB_MODE':'offline'}
-    shell='exec '+shlex.join(cmd)+' >'+shlex.quote(str(out/'supervisor.log'))+' 2>&1'
+    shell='exec env '+shlex.join([k+'='+v for k,v in env.items() if k in ('CUDA_VISIBLE_DEVICES','PYTHONPATH','A2_CODE_COMMIT','OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','PYTHONDONTWRITEBYTECODE','HF_HUB_OFFLINE','HF_DATASETS_OFFLINE','TRANSFORMERS_OFFLINE','HF_HUB_DISABLE_TELEMETRY','WANDB_MODE')]+cmd)+' >'+shlex.quote(str(out/'supervisor.log'))+' 2>&1'
     write(out/'launch.json',dict(config=config,jobs=lock(jobs),session=session,scope='F10 only; FT14/FT15/11oneshots/42newtask/analysis/backup; native burn after'))
     subprocess.run(['tmux','new-session','-d','-s',session,'-c',str(frozen),shell],env=env,check=True)
     subprocess.run(['tmux','set-option','-w','-t',session,'remain-on-exit','on'],check=True)

@@ -1,3 +1,7 @@
+2026-11-10T18:00:35.789159+00:00: F10status022f435 ACK/rawSHAab8e0774d7554e3f5ebc68e4e837d3012ecdfd73ca95c32f97703ce3f53e93e5. Actual59/59dataSHA PASS; F10a90complete. CPUa02 failedsameimport, pane dead1exit1/nooutput: env supplied to tmux client notpane. Correcta03 explicit env in paneshell + python -m, samefrozen1f115f2. NoGPUmutation; preservedbothfailures. FullF10code35combinedCPUtestsPASS/fixturePASS.
+
+2026-11-10T17:53:23.299622+00:00: F10statusa02 022f435f48a172aa1603bc76137343440d13b213 SUBMITTED/remoteheadverified. FullF10queue/code CPU12tests+complete synthetic readout+native tinygenerationPASS; GPU notlaunched. Retrieve actualCPUready before launch; no duplicate. Samewatch3072624.
+
 2026-11-10T17:52:18.301789+00:00: CPUrecoveryffb55db ACK retrieved; wrapperexplicitPYTHONPATH startedsamefrozen1f115f2, noGPU. Actual59data/model/FT16ready stillpending. LocalF10queue/report11CPUtestsPASS plusfullreportfixture42newmodels/64conf/11oneshotsPASS; reportonly~416KBfixture. No pendingreceipt; nextstatusa02 prepared.
 
 2026-11-10T17:46:34.104309+00:00: F10CPUrecoverya02 ffb55db95b5e3fe0bee5374dd06de4aa919de5c7 SUBMITTED/remoteheadverified. Retrieve before writes/no duplicate. Samefrozen/inputwait/noGPU.
