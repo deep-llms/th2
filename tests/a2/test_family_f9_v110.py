@@ -13,6 +13,36 @@ from scripts.launch_a2_family_f9_v110 import job_manifest
 from run_experiments import write_json,load_jobs
 
 class V110(unittest.TestCase):
+    def test_previous_markdown_report_preserves_text_and_enforces_hash(self):
+        from scripts.a2_family_f9_v110_run import locked_report
+        from scripts.a2_quant_io import lock
+        with tempfile.TemporaryDirectory() as td:
+            p=Path(td)/'REPORT.md';text='# Prior results\n\nGiữ nguyên số liệu.\n'
+            p.write_text(text);identity=lock(p)
+            self.assertEqual(locked_report(identity),text)
+            p.write_text(text+'Changed\n')
+            with self.assertRaisesRegex(ValueError,'Changed prior report'):
+                locked_report(identity)
+
+    def test_report_appends_to_locked_markdown_without_parsing_it_as_json(self):
+        from scripts.a2_family_f9_v110_run import Queue
+        from scripts.a2_quant_io import lock
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);prior=root/'prior.md';prior.write_text('# Prior science\n\nKept exactly.\n')
+            inventory=root/'inventory.json';inventory.write_text('{"models": []}')
+            q=Queue.__new__(Queue);q.root=root/'downstream';q.root.mkdir()
+            q.entries=[];q.outputs={};q.flags=[]
+            q.admission=dict(inventory=lock(inventory),previous_report=lock(prior),code_commit='fixture')
+            with patch('eval.a2_family_f9_report.analyze',return_value={}),patch('scripts.a2_family_f9_v110_run.sampler',return_value=None),patch('scripts.a2_family_f9_v110_run.continuous_report',return_value={}),patch('eval.a2_family_f9_report.render',return_value='Family v1.9 — F9 downstream\n'),patch('eval.a2_family_f9_v110.render_secondary',return_value='Secondary metrics\n'):
+                q.report()
+            full=(q.root/'REPORT_FULL.md').read_text()
+            self.assertTrue(full.startswith(prior.read_text()+'\n'))
+            self.assertIn('Family v1.10 — F9 downstream',full)
+            self.assertIn('Secondary metrics',full)
+            self.assertEqual((root/'REPORT.md').read_text(),full)
+            self.assertTrue((q.root/'contrasts.json').is_file())
+            self.assertTrue((q.root/'continuous.json').is_file())
+
     def test_closed_list_actual_inventory(self):
         cfg=json.loads(Path('resources/a2_family_f9_plan_20261110.json').read_text())
         groups,excluded=select(cfg['models'])

@@ -24,6 +24,12 @@ def reuse_check(entry,scored,prepared,batch,commit):
     return checks
 
 
+def locked_report(value):
+    path=Path(value['path'])
+    if sha256(path)!=value['sha256']:raise ValueError('Changed prior report: '+str(path))
+    return path.read_text()
+
+
 class Queue(Base):
     def __init__(self,cfg):
         if cfg['spec_sha256']!=SPEC_SHA or cfg['evaluator_commit']!=EVALUATOR_COMMIT:raise ValueError('Wrong v1.10 admission')
@@ -111,8 +117,7 @@ class Queue(Base):
         section=render(result).replace('Family v1.9 — F9 downstream','Family v1.10 — F9 downstream')
         section+='\n'+render_secondary(result,secondary)+'\nSpec SHA256: '+SPEC_SHA+'\n'
         (self.root/'contrasts.md').write_text(section)
-        previous=Path(self.admission['previous_report']['path']);locked(self.admission['previous_report'])
-        full=previous.read_text()+'\n'+section
+        full=locked_report(self.admission['previous_report'])+'\n'+section
         (self.root/'REPORT_FULL.md').write_text(full);(self.root.parent/'REPORT.md').write_text(full)
 
     def run(self):
