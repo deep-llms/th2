@@ -1,3 +1,7 @@
+2026-11-10T17:46:30.020989+00:00: F10statusd7270e7 ACK/rawSHAe9077b3f4c395156ae89f28420750a57247275f4dbc809cb2910951ae5b810d8. CPUwrapper failedpreGPU ModuleNotFoundError efficient_llm; originalpane dead1 exit1/no preparedoutput. Actual38/59dataSHA; download ongoing. Unique CPUrecoverya02 samefrozen1f115f2 explicitPYTHONPATH, verifieddead/absentoutput; no modelrun/duplicate. F10a90complete.
+
+2026-11-10T17:44:25.339660+00:00: F10 readonlystatusa01 d7270e7b6686bac783bd06f19bb67905610155e3 SUBMITTED/remoteheadverified. Retrieve before writes/no duplicate. CPUprepare/modeladmission pending; GPU notlaunched. Samewatch3072624.
+
 2026-11-10T17:44:12.516443+00:00: CPUprepare c62c317 ACK received/rawSHA2a4104948dcf3926cd0e3f939c0b641a29a3a1cf1cdbf2a6526997650f36f867. F10a completed90tests; Holm survivors annealed3/stable1/Smol2. Submit unique readonlystatusa01 toverify actual59hash+prep completion/error before GPUlaunch. No pendingreceipt beforestatus; samewatch.
 
 2026-11-10T17:38:14.036943+00:00: CPUpreparation c62c31752b20f042b98f7819e7b95eaf00f4d213 SUBMITTED/remoteheadverified; retrieve before writes/no duplicate. Frozencode1f115f2; freshoutwc69-a2-family-f10-preparation-20261111-a01. Wait actual59SHA+F10a then37modelhashes/FT16. GPU notlaunched. Potential wrapperPYTHONPATH must verify in receipt before dependentsteps (absolute waitscript). commands#0local/samewatch3072624.
