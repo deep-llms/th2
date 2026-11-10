@@ -1,0 +1,239 @@
+{
+  "verified": true,
+  "models": 55,
+  "models_checked": [
+    "opensci-fwe-P300",
+    "opensci-dclm-S72",
+    "opensci-fwe-P1T",
+    "opensci-dclm-S188",
+    "opensci-fwe-S188",
+    "opensci-dclm-P300",
+    "opensci13-dclm",
+    "opensci-dclm-P1T",
+    "opensci-fwe-S72",
+    "opensci13-fwe",
+    "smollm3-k20",
+    "smollm3-k6",
+    "smollm3-k64",
+    "ST1-dclm-P300-S1-0.8B-lr1e-3--3cf1d528",
+    "ST1-dclm-P1T-S1-3.2B-lr1e-3--0eb64afe",
+    "ST1-dclm-X72-S1-0.8B-lr1e-3--22275109",
+    "ST1-dclm-P1T-S1-0.8B-lr1e-3--3f64a6d3",
+    "ST1-dclm-P1T-S1-0.2B-lr1e-3--8a49f36f",
+    "ST1-dclm-P300-S1-0.2B-lr1e-3--fc03fe2b",
+    "ST1-dclm-P300-S1-3.2B-lr1e-3--4f525079",
+    "ST1-dclm-X72-S1-0.2B-lr1e-3--44a28420",
+    "ST1-dclm-X72-S1-12.8B-lr1e-3--20ddedb9",
+    "ST1-dclm-X72-S1-3.2B-lr1e-3--3c7f69e5",
+    "ST1-dclm-P1T-S1-12.8B-lr1e-3--b030fca3",
+    "ST1-dclm-P300-S1-12.8B-lr1e-3--32af92b6",
+    "ST1-fwe-P300-S1-0.8B-lr1e-3--b6a90c9d",
+    "ST1-fwe-P1T-S1-0.8B-lr1e-3--cea463c6",
+    "ST1-fwe-X72-S1-0.2B-lr1e-3--404415e5",
+    "ST1-fwe-P300-S1-0.2B-lr1e-3--8fd38544",
+    "ST1-fwe-X72-S1-0.8B-lr1e-3--23d3d07b",
+    "ST1-fwe-P1T-S1-0.2B-lr1e-3--031deaca",
+    "ST1-fwe-P300-S1-3.2B-lr1e-3--1c7791ce",
+    "ST1-fwe-P1T-S1-3.2B-lr1e-3--50f3ba7d",
+    "ST1-fwe-X72-S1-3.2B-lr1e-3--ef65abfe",
+    "ST1-dclm-S188-S1-0.8B-lr1e-3--45cd899f",
+    "ST1-dclm-S72-S1-0.2B-lr1e-3--95aaa75c",
+    "ST1-fwe-S72-S1-0.8B-lr1e-3--bc57ca26",
+    "ST1-fwe-S72-S1-0.2B-lr1e-3--d713b19d",
+    "ST1-fwe-S188-S1-0.8B-lr1e-3--38316287",
+    "ST1-dclm-S188-S1-0.2B-lr1e-3--a439dd6b",
+    "ST1-fwe-S188-S1-0.2B-lr1e-3--0fb68c38",
+    "ST1-dclm-S72-S1-0.8B-lr1e-3--f8b5eb9f",
+    "ST1-fwe-S72-S1-3.2B-lr1e-3--4b71803c",
+    "ST1-dclm-S188-S1-3.2B-lr1e-3--97ae15c0",
+    "ST1-fwe-S188-S1-3.2B-lr1e-3--ecbbc761",
+    "ST1-dclm-S72-S1-3.2B-lr1e-3--600bcf65",
+    "F3-fwe-k20-BS1-3.2B-lr0.0001-s2030--6d044b4f",
+    "F4-fwe-k64-BS1-0.8B-lr0.0001-s2030--ca135f41",
+    "F2-fwe-k6-BS1-0.2B-lr0.0001-s2030--d8b15cb5",
+    "F4-fwe-k64-BS1-0.2B-lr0.0001-s2030--a2c2aa5b",
+    "F3-fwe-k20-BS1-0.8B-lr0.0001-s2030--6d545249",
+    "F2-fwe-k20-BS1-0.2B-lr0.0001-s2030--5aa437b3",
+    "F3-fwe-k6-BS1-3.2B-lr0.0001-s2030--bfce9394",
+    "F3-fwe-k6-BS1-0.8B-lr0.0001-s2030--d5ccceeb",
+    "F4-fwe-k64-BS1-3.2B-lr0.0001-s2030--47c0a5d5"
+  ],
+  "joint_bootstrap_resamples": 10000,
+  "seed": 0,
+  "spec_sha256": "1cf76d4e7a9d321e01f58ef704fc722ad186f2e966b3b34280141fe183b158cf",
+  "scope": "Raw LL to per-item accuracy/continuous reconstruction and complete report numerical replay; no model run",
+  "native_handoff_verified": true,
+  "gpu_ownership_verified": true,
+  "utc": "2026-11-10T14:46:40.298414+00:00",
+  "original_manifest_members": 418,
+  "original_archive_sha256": "7aa13538ac51f6335cd5727b5872029bcd6ac339c119f6338e114688128702be",
+  "retained_flags": [
+    {
+      "test": "intentional_v19_scope_change",
+      "detail": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f9-20261110-a01/scope_v110_drain/dispatch_stopped.json",
+        "sha256": "2700760d31d64b150b002c4401f0f4d13b8684c1442611f5a7fb42ef2b774624"
+      }
+    },
+    {
+      "test": "FT11_request_numerical_differences:opensci13",
+      "detail": {
+        "passed": true,
+        "batch_size": 2,
+        "MC_difference_pp": -0.03228081513812764,
+        "LAMBADA_difference_pp": 0.0,
+        "task_differences_pp": {
+          "hellaswag": 0.039832702648867624,
+          "arc_easy": 0.0,
+          "arc_challenge": 0.0,
+          "piqa": 0.054406964091413546,
+          "winogrande": -0.5524861878453025,
+          "boolq": 0.0,
+          "openbookqa": 0.20000000000000018,
+          "sciq": 0.0,
+          "lambada_openai": 0.0
+        },
+        "max_request_LL_difference": 0.4372100830078125,
+        "mean_request_LL_difference": 0.011386517750866385,
+        "changed_requests": 23299,
+        "changed_greedy": 1,
+        "model": "opensci13-dclm"
+      }
+    },
+    {
+      "test": "FT11_request_numerical_differences:opensci",
+      "detail": {
+        "passed": true,
+        "batch_size": 2,
+        "MC_difference_pp": 0.05888746110901816,
+        "LAMBADA_difference_pp": 0.0,
+        "task_differences_pp": {
+          "hellaswag": 0.009958175662228008,
+          "arc_easy": 0.0,
+          "arc_challenge": 0.17064846416382506,
+          "piqa": 0.16322089227420733,
+          "winogrande": 0.15785319652723562,
+          "boolq": -0.03058103975535076,
+          "openbookqa": 0.0,
+          "sciq": 0.0,
+          "lambada_openai": 0.0
+        },
+        "max_request_LL_difference": 3.3023109436035156,
+        "mean_request_LL_difference": 0.012710973352438888,
+        "changed_requests": 20969,
+        "changed_greedy": 3,
+        "model": "opensci-dclm-P1T"
+      }
+    },
+    {
+      "test": "FT11_request_numerical_differences:smollm3",
+      "detail": {
+        "passed": true,
+        "batch_size": 2,
+        "MC_difference_pp": -0.04000883963396068,
+        "LAMBADA_difference_pp": 0.0582185134872959,
+        "task_differences_pp": {
+          "hellaswag": 0.019916351324433812,
+          "arc_easy": 0.08417508417508657,
+          "arc_challenge": -0.08532423208190698,
+          "piqa": 0.0,
+          "winogrande": 0.0,
+          "boolq": 0.06116207951070152,
+          "openbookqa": -0.40000000000000036,
+          "sciq": 0.0,
+          "lambada_openai": 0.0582185134872959
+        },
+        "max_request_LL_difference": 0.8504867553710938,
+        "mean_request_LL_difference": 0.03959659746853866,
+        "changed_requests": 35581,
+        "changed_greedy": 11,
+        "model": "smollm3-k20"
+      }
+    },
+    {
+      "test": "FT13_rescore_preserve_original:opensci-dclm-P300",
+      "detail": {
+        "code_commit": false,
+        "tasks_metrics": true,
+        "settings": true,
+        "prepared": false,
+        "batch": true,
+        "per_item": true
+      }
+    },
+    {
+      "test": "FT13_rescore_preserve_original:opensci-dclm-P1T",
+      "detail": {
+        "code_commit": false,
+        "tasks_metrics": true,
+        "settings": true,
+        "prepared": false,
+        "batch": true,
+        "per_item": true
+      }
+    },
+    {
+      "test": "FT13_rescore_preserve_original:opensci-dclm-S72",
+      "detail": {
+        "code_commit": false,
+        "tasks_metrics": true,
+        "settings": true,
+        "prepared": false,
+        "batch": true,
+        "per_item": true
+      }
+    },
+    {
+      "test": "FT13_rescore_preserve_original:ST1-dclm-P300-S1-12.8B-lr1e-3--32af92b6",
+      "detail": {
+        "code_commit": false,
+        "tasks_metrics": true,
+        "settings": true,
+        "prepared": false,
+        "batch": true,
+        "per_item": true
+      }
+    },
+    {
+      "test": "FT13_rescore_preserve_original:ST1-dclm-P1T-S1-12.8B-lr1e-3--b030fca3",
+      "detail": {
+        "code_commit": false,
+        "tasks_metrics": true,
+        "settings": true,
+        "prepared": false,
+        "batch": true,
+        "per_item": true
+      }
+    },
+    {
+      "test": "FT13_rescore_preserve_original:ST1-dclm-X72-S1-12.8B-lr1e-3--20ddedb9",
+      "detail": {
+        "code_commit": false,
+        "tasks_metrics": true,
+        "settings": true,
+        "prepared": false,
+        "batch": true,
+        "per_item": true
+      }
+    },
+    {
+      "test": "final_readout",
+      "detail": "JSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
+    }
+  ],
+  "report_error_resolved": true,
+  "previous_report": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f9-20261110-a01/source/results/a2_family_20261107/REPORT_FULL_v1.7_20261110.md",
+    "sha256": "35ca2d064ff36780456a2dba3117252651dfa0eff55c1a65b90a0ec0ffb09970"
+  },
+  "files": {
+    "REPORT_FULL_v1.10.md": {
+      "bytes": 174734,
+      "sha256": "05a463a257700bb8d6e9fcc4955d41f525ec8b25bbfb178bf8f165bad0bd9428"
+    },
+    "F9_MODELS.csv": {
+      "bytes": 10809,
+      "sha256": "f4e32abd855fcd8f31247a0ced90014a4f52899f8d24596fc51ab75e65ddc445"
+    }
+  }
+}

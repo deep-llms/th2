@@ -1,0 +1,26 @@
+{
+  "complete": true,
+  "files_verified": {
+    "REPORT_FULL_v1.10.md": {
+      "bytes": 174734,
+      "sha256": "05a463a257700bb8d6e9fcc4955d41f525ec8b25bbfb178bf8f165bad0bd9428"
+    },
+    "F9_MODELS.csv": {
+      "bytes": 10809,
+      "sha256": "f4e32abd855fcd8f31247a0ced90014a4f52899f8d24596fc51ab75e65ddc445"
+    },
+    "verification.json": {
+      "bytes": 7981,
+      "sha256": "820f9b4efbec75682665981d83934b5d6adef4e3a8551bfac886561318db8ba5"
+    }
+  },
+  "total_download_bytes": 193524,
+  "models": 55,
+  "csv_rows": 55,
+  "prior_report_byte_identical": true,
+  "node_replay_verified": true,
+  "node_native_handoff_verified": true,
+  "large_archive_downloaded": false,
+  "report_error_resolved": true,
+  "retained_flag_count": 11
+}
