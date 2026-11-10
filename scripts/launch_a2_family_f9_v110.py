@@ -1,5 +1,6 @@
 """Admit the closed paper list after the recorded, intentional v1.9 drain."""
 import argparse
+from importlib.metadata import version
 from concurrent.futures import ThreadPoolExecutor
 import os
 from pathlib import Path
@@ -67,6 +68,8 @@ def launch(plan,output,session,commit):
     cfg=read(plan);source=Path(__file__).resolve().parents[1];out=Path(output);old=Path(cfg['prior_root'])
     if cfg['spec_sha256']!=SPEC_SHA or not re.fullmatch('[0-9a-f]{40}',commit) or out.exists():raise ValueError('Invalid scope/commit or duplicate root')
     if socket.gethostname()!=cfg['host']:raise ValueError('Wrong node')
+    if version('transformers')!='4.57.1' or version('torch').split('+')[0]!='2.14.1':raise ValueError('Changed native runtime')
+    print('F9_V110_CPU_ADMISSION_STARTED',out,flush=True)
     for name in (session,session+'_burn'):
         if subprocess.run(['tmux','has-session','-t',name],capture_output=True).returncode==0:raise ValueError('Session exists')
     proof=read(source/cfg['cpu_proof'])
@@ -106,6 +109,7 @@ def launch(plan,output,session,commit):
         for e,error in pool.map(check,entries):
             if error:hash_failures.append(error)
             else:usable.append(e)
+    print('F9_V110_FRESH_HASHES',len(usable),'of',len(entries),'failures',len(hash_failures),flush=True)
     # Keep full closed list in manifest; unusable rows get explicit skip flags.
     inventory=write(prep/'FT12_inventory.json',dict(models=entries,missing=[],hash_failures=hash_failures,
         excluded_prior_ids=excluded,source_inventory=oldcfg['inventory'],groups=[len(g) for g in groups]))
