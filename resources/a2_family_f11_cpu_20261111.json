@@ -1,0 +1,54 @@
+{
+  "spec_sha256": "a35e8f27d306bdc786426b1d57b6d075c4c9b7f6e437f4d95954b4dcc3409667",
+  "launch_ready": true,
+  "at": "2026-11-10T19:18:15.452190+00:00",
+  "files": {
+    "eval/a2_family_f11.py": "8033d49c41ece0909658cd908c1b8f64e8b382d5b58753200ce99fcb6558859b",
+    "eval/a2_family_f11_calibrate.py": "9db5238454ed6fffa756105ad4b65c80b18549ce968719df7d4a2f941c004e1d",
+    "eval/a2_family_f11_report.py": "9844874ccc3d25bee2057b58cad51ad5be0a9b8d4919b13c7ce731dc8dfd83e7",
+    "scripts/a2_family_f11_checks.py": "4f7c3c14a2b232f009d433da5275fecf64c9b09a86af9c1eac3eaba1a8601604",
+    "scripts/a2_family_f11_score.py": "d6e7cfda427e0fe2334b9dfc0eba2d018f0aa3160d04c086274eeafe59e85f4e",
+    "scripts/a2_family_f11_queue.py": "bbf85fcb966342a5e1c4cd1d3f5fd9e60317cc969535dabded5b8a9e3ae01068",
+    "scripts/a2_family_f11_backup.py": "8e3730edba0d888d3abbbfcf19cdbdef6236eda9cd928fcd908ff6c69f97158b",
+    "scripts/launch_a2_family_f11.py": "d01d207427d2f9e79da6695dda5adecbb6dbbc699c350ca3226f546e16aa4ba6",
+    "scripts/a2_family_f11_health.py": "4cd1e58f6db8b3ddcb69aa3d037b02e625a36ed1e7a9f3fe145a9a63589f4a45",
+    "efficient_llm/a2_family_f11_heal.py": "9c5a08c677779876f3a93b10df4043628e5834e8e9ac04a052bf102f60fbb3d0",
+    "efficient_llm/a2_family_f11_loss.py": "ca2ad066b18e01e5cb61dd91777bedf4f77ca75997f6a3a2c5a55513ea8e4377",
+    "tests/a2/test_family_f11.py": "5c75ea4f948eb4f929a2bba1664ae27fa463fe6f0ff32bcea6d6075eb8c5aa51",
+    "tests/a2/f11_report_fixture.py": "cb3785fba9c35a01d8dd4c23b15c729c7d88c5e47483e29d5af696867c4257fe",
+    "tests/a2/f11_distributed_cpu.py": "1b273f24f8e266658c351ef10ca51b6e87a05cc0d74bc5c6592277766367dd41",
+    "resources/a2_family_f11_plan_20261111.json": "70816f8212025a1dc10a311aff22cc76a7bf33caa6591e294691b6853b691238",
+    "docs/A2_family_spec_v1.13.md": "a35e8f27d306bdc786426b1d57b6d075c4c9b7f6e437f4d95954b4dcc3409667",
+    "efficient_llm/a2/train.py": "66e41889e226ae2bbcfa261beb3fe740412666bbc78420bac0ffc743d70eff93",
+    "efficient_llm/a2/model.py": "ac40fb3776f8537a04fad8b3f164c2ea598a1ab1b994b3cf61cf078d7e8c4d4f",
+    "efficient_llm/a2/measure.py": "3cbb5b326c468a2f98f4229802b68faed8c5aec59b3a407fbed95bb43c4d22fc",
+    "efficient_llm/a2/data.py": "f3ad8127643cef87c83818d72b7356ddbcc9963e035bfc072a3b2513e2f687dd",
+    "eval/a2_family_f10_score.py": "859877702bf368074ffed797cbf5af73cbd398f0fa4fc9254099f476972e85ad",
+    "eval/a2_family_f10_report.py": "bd169e6017e8f5450625bfe08cdad08595f8d26bd37f481f51eaf0e16fc0ef06",
+    "eval/a2_family_f9_score.py": "a577ec87d3758086b639eeea36eae86b418a514d63a4d517f0eea31edf31a426",
+    "eval/a2_family_f9_v110.py": "58229b440e1a0faf868e1cac1d1c0eaece0322ee8c7cf53dfe42f279a34a451e",
+    "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc",
+    "scripts/launch_a2_family_f10.py": "b8a4eb574c3105bb62b4f485af37f14d65b750f1189c858ef637385b441f0820"
+  },
+  "tests": {
+    "focused": 9,
+    "combined_F10_F11": 23,
+    "native_CE_gradients": "PASS parent and physically pruned; chunked vs full CE",
+    "two_rank_cpu_DDP": "PASS accumulated gradients and AdamW global update",
+    "trainer": "PASS 20CPUupdates/exactLR/order/save-reload",
+    "temperature_T1": "PASS native score equivalence; one decoder pass per sequence",
+    "report_backup": "PASS 42rows/16ranktraces/159archive members; downstream numerical helpers covered by F10 regression, report fixture substitutes downstream result",
+    "native_launcher": "PASS real install/freeze/serialize with mocked hardware/tmux"
+  },
+  "evidence": {
+    "temp/f11_inputs/tests_a03.log": "23e3c892e61b9088d91d8059e8d41a0bf66c4f49258ec9611bdf0cbb1c5367cb",
+    "temp/f11_inputs/distributed_a01.log": "7f2bd82d62aad61b3704ce23079881f84712aa04e32f7920dd4eac1dee1dda06",
+    "temp/f11_inputs/regression_a02.log": "e9999087b144302c3ff3be970db8374ef6e24dcfa1a6ade2941bae779014ae27",
+    "temp/f11_inputs/report_fixture_a01.log": "5817630eca46ff3afba82fc805e03e2dbbbfb649fe6d2d4bcebd0940e6b8f4d2"
+  },
+  "limitations": [
+    "CPU only; actual node input verification and GPU admission still required",
+    "Temperature extension precomputes guard reductions on same logits, excludes them until initial edge trigger; flags continued edge",
+    "Initial short 8update CPUfixture invalid due minimum10 warmup; fixed fixture20, production3051 unchanged"
+  ]
+}

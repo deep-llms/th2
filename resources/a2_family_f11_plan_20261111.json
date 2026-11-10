@@ -1,0 +1,27 @@
+{
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "data_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data",
+  "data_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/manifest.json",
+    "sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e"
+  },
+  "heal_streams": {
+    "dclm": {
+      "2030": {
+        "path": "/mnt/local/_data/deep-llms_th2/a2_dclm_shuffle2030_rebuild_20261103",
+        "sha256": "5ddfb10ac309886eae0ae0e43024b93350bb022bc93c8ad095bb91cd638178f0"
+      }
+    }
+  },
+  "host": "thiennh-p6-wc69-worker-0",
+  "spec_sha256": "a35e8f27d306bdc786426b1d57b6d075c4c9b7f6e437f4d95954b4dcc3409667",
+  "f10_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f10-20261111-a01",
+  "f10_code_commit": "834e2cf1a883761b291d8d1d6687d45c27403931",
+  "queue_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f11-queue-20261111-a01",
+  "output_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f11-20261111-a01",
+  "queue_session": "a2_family_f11_queue_20261111_a01",
+  "session": "a2_family_f11_20261111_a01"
+}
