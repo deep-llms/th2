@@ -1,3 +1,7 @@
+2026-11-10T14:51:04.834186+00:00: CPUrecovery VERIFIED22:46:40SGT:418artifacthashes+immutable256/253sources+nativeburnownershipPASS;55/55rawLL→accuracy/continuousitems+joint10kseed0 readout matchwithin1e-10. reportJSONfailure resolvedviahashlockedMarkdown;originalflagretained/noGPUrerun. status77d29d5 ACK/rawSHAaa67608e959e9f4cdd890f0a2803cbd7bc8f6d360385e3d17e9cc5877b3b13d6. ExportONLY3files193524bytes:REPORT_FULL_v1.10.md174734/F9_MODELS.csv10809/verification.json7981. No pendingreceipt beforeexport. Rawarchive remainsnode; samewatch/noSTOP untilsmallfilesdownloadverified/delivered.
+
+2026-11-10T14:46:17.461486+00:00: Readonlyrecovery-statusa01 77d29d5269a1dc1b895bb0cbe75e7761057d0306 SUBMITTED/remoteheadverified; retrievebeforewrites/no duplicate. Recovery346d1c1running/418hashPASS; report+CSV+proof totalmust<1MiB beforeexport. commands#0local/samewatch.
+
 2026-11-10T14:46:03.846376+00:00: CPUrecovery346d1c1 ACK initialsnapshot INPUT_HASHES_VERIFIED418/first4modelsITEMS_VERIFIED; rawSHA41548e23e6f79af1153685ae9e1bb988b1762fd8ae833373ac2da71911795c7a. No failure/no duplicate; retrievecompletion throughunique readonlystatus next. Rawdata staysnode/only3smallfinalfilesplanned.
 
 2026-11-10T14:40:45.021903+00:00: Unique CPUreportrecoverya01 346d1c17a49abce1f22844526b7b66d8665647d4 SUBMITTED/remoteheadverified. Retrieve receipt beforewrites/no duplicate; outputwc69-a2-family-f9-v110-report-recovery-20261110-a01. Onnode418hash+55rawmetric/10kbootstrapchecks then3compactfilesONLY, no bulkdownload/no GPUmutation. Samewatch3023125/noSTOP/commands#0local.
