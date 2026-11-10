@@ -1,0 +1,8 @@
+{
+  "original_path": "docs/results/a2_early_grid_20261028/results.json",
+  "original_bytes": 386798,
+  "original_sha256": "5a202e59e97eb51253cb2d985e3d65966cb79a804ea44a9604c60545eb4b6550",
+  "compressed_path": "docs/results/a2_early_grid_20261028/results.json.gz",
+  "compressed_sha256": "7c4adaa34cdbcf6f66ed018c657dc290c73ec72864f3fc4fd094cd9982848963",
+  "lossless_roundtrip_verified": true
+}
