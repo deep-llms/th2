@@ -1,3 +1,7 @@
+2026-11-10T18:12:41.956465+00:00: F10launch29721b2 ACK/rawSHAb2cbe5fc4d4d7467c557eb43c6c3f04af0c33899a92e0e5a07de54a464e92907. CPU_READY config7931f32d37743e856f7c4181451442d88c8207d89044376ef79d4fa9ebf27e39/all37actualmodelhash/59dataSHA/FT16MMLU14042Trivia17944. Immutableadmission started; GPUroot/nativeownership notyetverified. Unique readonlyhealtha01 next; no pendingreceipt beforehealth. OriginalCPUa01/a02importfailures resolveda03, preserved. Samewatch3072624next02:25SGT.
+
+2026-11-10T18:06:52.508654+00:00: F10admission/launch 29721b28bb3bd961a6b303d54b0b035be8f49755 SUBMITTED/remoteheadverified; frozen834e2cf, GPUrootwc69-a2-family-f10-20261111-a01/sessiona2_family_f10_20261111_a01. Retrieve beforewrites/no duplicate. CPUready+freshownership are hard gates; actualGPU NOTyetverified. Samewatch3072624.
+
 2026-11-10T18:06:47.970466+00:00: F10CPUa03 b19365e ACK/rawSHAd4abb97ad80aeb83b3f66d20816bef6a58cf0bdb6d5c519f3cceb59ddb58eaed; all59actualhashPASS, explicit-env pythonmodulepreparer started. No pendingreceipt. Submit singleimmutable F10admission: frozen834e2cf/14CPUtests+fullreportfixture, waitsCPUready thenfreshownership/nativeFT14–16→11oneshots→42newtask→report/replay/nodebackup/nativeburn. No training. ActualGPUstartup pendinghealth; samewatch3072624/tick1queued notactualdelivery/next02:25SGT.
 
 2026-11-10T18:00:39.619321+00:00: F10CPUa03 b19365e1714bb5213ca5d6629dd1468a615a8a48 SUBMITTED/remoteheadverified. Retrieve beforewrites/no duplicate. 59actualhashPASS, CPUmodel+FT16admission next, noGPUyet. Samewatch3072624.
