@@ -1,28 +1,61 @@
-#1 +20+a
-#th2-wc69-family-f10-cpu-20261111-a01
-set -euo pipefail
-cd /mnt/local/deep-llms_th2
-export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
-export CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1
-/mnt/local/conda-py311/envs/eval/bin/python3.11 - <<'PYCODE'
-from pathlib import Path
-from importlib.metadata import version
-import lm_eval,json
-from scripts.gpu_process import inspect
-print('F10_READONLY_GPU',json.dumps(inspect()),flush=True)
-root=Path(lm_eval.__file__).parent/'tasks'
-for name in ['triviaqa/default.yaml','triviaqa/utils.py','mmlu/continuation/_continuation_template_yaml','mmlu/continuation/_mmlu.yaml']:
- p=root/name
- print('TASK_SOURCE',str(p),p.read_text() if p.is_file() else 'ABSENT',flush=True)
-print('PACKAGES',{k:version(k) for k in ['lm-eval','torch','transformers','datasets']},flush=True)
-for p in [Path('/mnt/local/_data/deep-llms_th2'),Path('/mnt/local/.cache/huggingface/datasets')]:
- print('DATA_ROOT',str(p),[x.name for x in p.iterdir()] if p.exists() else 'ABSENT',flush=True)
-PYCODE
-TASK_OUT=/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f10-cpu-20261111-a01
-test ! -e "$TASK_OUT"
-mkdir "$TASK_OUT"
-cp -r eval efficient_llm scripts "$TASK_OUT/"
-TASK_CMD="cd $TASK_OUT && exec /mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u -m scripts.a2_family_f10_cpu --f9-root /mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f9-v110-20261110-a01/results/a2_family_20261107/downstream --output $TASK_OUT/f10a >$TASK_OUT/cpu.log 2>&1"
-tmux new-session -d -s a2_family_f10_cpu_20261111_a01 "$TASK_CMD"
-tmux set-option -w -t a2_family_f10_cpu_20261111_a01 remain-on-exit on
-echo F10A_CPU_SUBMITTED
+#d +a
+#datasets
+--url https://huggingface.co/datasets/mandarjoshi/trivia_qa/resolve/0f7faf33a3908546c6fd5b73a660e0f8ff173c2f/rc.nocontext/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/triviaqa/rc.nocontext
+--url https://huggingface.co/datasets/mandarjoshi/trivia_qa/resolve/0f7faf33a3908546c6fd5b73a660e0f8ff173c2f/rc.nocontext/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/triviaqa/rc.nocontext
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/abstract_algebra/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/abstract_algebra
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/anatomy/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/anatomy
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/astronomy/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/astronomy
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/business_ethics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/business_ethics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/clinical_knowledge/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/clinical_knowledge
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_biology/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_biology
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_chemistry/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_chemistry
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_computer_science/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_computer_science
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_mathematics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_mathematics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_medicine/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_medicine
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_physics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_physics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/computer_security/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/computer_security
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/conceptual_physics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/conceptual_physics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/econometrics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/econometrics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/electrical_engineering/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/electrical_engineering
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/elementary_mathematics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/elementary_mathematics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/formal_logic/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/formal_logic
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/global_facts/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/global_facts
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_biology/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_biology
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_chemistry/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_chemistry
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_computer_science/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_computer_science
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_european_history/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_european_history
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_geography/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_geography
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_government_and_politics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_government_and_politics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_macroeconomics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_macroeconomics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_mathematics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_mathematics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_microeconomics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_microeconomics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_physics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_physics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_psychology/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_psychology
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_statistics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_statistics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_us_history/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_us_history
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_world_history/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_world_history
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/human_aging/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/human_aging
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/human_sexuality/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/human_sexuality
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/international_law/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/international_law
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/jurisprudence/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/jurisprudence
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/logical_fallacies/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/logical_fallacies
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/machine_learning/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/machine_learning
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/management/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/management
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/marketing/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/marketing
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/medical_genetics/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/medical_genetics
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/miscellaneous/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/miscellaneous
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/moral_disputes/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/moral_disputes
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/moral_scenarios/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/moral_scenarios
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/nutrition/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/nutrition
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/philosophy/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/philosophy
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/prehistory/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/prehistory
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/professional_accounting/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/professional_accounting
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/professional_law/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/professional_law
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/professional_medicine/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/professional_medicine
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/professional_psychology/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/professional_psychology
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/public_relations/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/public_relations
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/security_studies/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/security_studies
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/sociology/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/sociology
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/us_foreign_policy/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/us_foreign_policy
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/virology/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/virology
+--url https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/world_religions/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/f10_v111/mmlu/world_religions

@@ -1,0 +1,432 @@
+{
+  "spec_sha256": "6ac9f6d2da0a75c1ac5d9846a00519de8750130813a19e10fc454bbd0490f22b",
+  "repositories": [
+    {
+      "repo": "mandarjoshi/trivia_qa",
+      "revision": "0f7faf33a3908546c6fd5b73a660e0f8ff173c2f",
+      "tag": "triviaqa",
+      "files": [
+        {
+          "path": "rc.nocontext/train-00000-of-00001.parquet",
+          "bytes": 55391498,
+          "sha256": "455223e4a3ba6977611914d96b1b812fe19a6cd4ea3aef4df381f093b297670c",
+          "url": "https://huggingface.co/datasets/mandarjoshi/trivia_qa/resolve/0f7faf33a3908546c6fd5b73a660e0f8ff173c2f/rc.nocontext/train-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/triviaqa/rc.nocontext"
+        },
+        {
+          "path": "rc.nocontext/validation-00000-of-00001.parquet",
+          "bytes": 7335321,
+          "sha256": "48a5005c0eb4f8a4ae5b9868644297fd5bf1e694aeb3dc9c8ab958cac0d5b201",
+          "url": "https://huggingface.co/datasets/mandarjoshi/trivia_qa/resolve/0f7faf33a3908546c6fd5b73a660e0f8ff173c2f/rc.nocontext/validation-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/triviaqa/rc.nocontext"
+        }
+      ]
+    },
+    {
+      "repo": "cais/mmlu",
+      "revision": "c30699e8356da336a370243923dbaf21066bb9fe",
+      "tag": "mmlu",
+      "files": [
+        {
+          "path": "abstract_algebra/test-00000-of-00001.parquet",
+          "bytes": 9964,
+          "sha256": "92338cdcdb43d2871691ef9a0e125e633ca57335ed635a635fe6dead94f224c2",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/abstract_algebra/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/abstract_algebra"
+        },
+        {
+          "path": "anatomy/test-00000-of-00001.parquet",
+          "bytes": 20078,
+          "sha256": "cb88f5920b67ab290dd23a825f8e3826d01d8f48d99ad4931a8b0003a952a211",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/anatomy/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/anatomy"
+        },
+        {
+          "path": "astronomy/test-00000-of-00001.parquet",
+          "bytes": 28323,
+          "sha256": "bcdfe1afcb9421747b4edd8d426ac87d47fd4d03e7c3455bcb149d1ba14db228",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/astronomy/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/astronomy"
+        },
+        {
+          "path": "business_ethics/test-00000-of-00001.parquet",
+          "bytes": 21566,
+          "sha256": "7910a4b8236c64ef339410a41d5806637087c84635278dda0ff674b8f894dfbb",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/business_ethics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/business_ethics"
+        },
+        {
+          "path": "clinical_knowledge/test-00000-of-00001.parquet",
+          "bytes": 40510,
+          "sha256": "7bd3de302db35c6e9adb311ef40b2fb15ffe02ada17667119d9fb30fe393a44e",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/clinical_knowledge/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/clinical_knowledge"
+        },
+        {
+          "path": "college_biology/test-00000-of-00001.parquet",
+          "bytes": 31845,
+          "sha256": "5b6920ddbbb40ee6efd1e6c8814be9fd03d24c9e1e1dbd4b02325e2d454a6a82",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_biology/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_biology"
+        },
+        {
+          "path": "college_chemistry/test-00000-of-00001.parquet",
+          "bytes": 17877,
+          "sha256": "f012f90fc3aec5ead6963fe7bdeee58783010265538dda3be984a9d1dbbd7051",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_chemistry/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_chemistry"
+        },
+        {
+          "path": "college_computer_science/test-00000-of-00001.parquet",
+          "bytes": 28069,
+          "sha256": "08b79916057e75938a2a0d5ceb10c517cf923580e6058af48b1b7b3f7a52c5b8",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_computer_science/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_computer_science"
+        },
+        {
+          "path": "college_mathematics/test-00000-of-00001.parquet",
+          "bytes": 16620,
+          "sha256": "f57b57e992d03d07a05c6f8f328a14a49870f61d91e8e525a062644e234bf4f0",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_mathematics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_mathematics"
+        },
+        {
+          "path": "college_medicine/test-00000-of-00001.parquet",
+          "bytes": 42470,
+          "sha256": "f21b3166975dbc14dff5940df41479bc28853008303c50a070d430fc59468f9c",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_medicine/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_medicine"
+        },
+        {
+          "path": "college_physics/test-00000-of-00001.parquet",
+          "bytes": 18641,
+          "sha256": "81b8eafc776b3109fd0ba9f527a7f759b07b92fe953743d3711086e5208aadca",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/college_physics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/college_physics"
+        },
+        {
+          "path": "computer_security/test-00000-of-00001.parquet",
+          "bytes": 19150,
+          "sha256": "a6ad5774acf5133ac88cf1bb066c60db8668abee2d6a724cf2f9dfa7cb4f103d",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/computer_security/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/computer_security"
+        },
+        {
+          "path": "conceptual_physics/test-00000-of-00001.parquet",
+          "bytes": 25031,
+          "sha256": "c66a861048a25f96baa59517b613c3ed1a26abf4d7717ae5aab2da29bac7fa70",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/conceptual_physics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/conceptual_physics"
+        },
+        {
+          "path": "econometrics/test-00000-of-00001.parquet",
+          "bytes": 24480,
+          "sha256": "63501e9de9f822b4d0f60919024c660b40a78791b9cfcf1e69e759f16eef9123",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/econometrics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/econometrics"
+        },
+        {
+          "path": "electrical_engineering/test-00000-of-00001.parquet",
+          "bytes": 17589,
+          "sha256": "3df176cabbd13a1315d7312f37ffec139f1cf51fc4ea3407b5293a00ac325570",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/electrical_engineering/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/electrical_engineering"
+        },
+        {
+          "path": "elementary_mathematics/test-00000-of-00001.parquet",
+          "bytes": 41056,
+          "sha256": "9cb645300084d3b7ff8af98efef034068f8c8780f06017e2ebf21d33beb2fc61",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/elementary_mathematics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/elementary_mathematics"
+        },
+        {
+          "path": "formal_logic/test-00000-of-00001.parquet",
+          "bytes": 21515,
+          "sha256": "a9f917e01461be6ef71bf32248bf10c3a0580d2fef641255b265131bf29d876c",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/formal_logic/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/formal_logic"
+        },
+        {
+          "path": "global_facts/test-00000-of-00001.parquet",
+          "bytes": 11489,
+          "sha256": "9e4b5a22ad1cbe5c58c21f6a96fe65bd0dbb05c8295e1db6fc57c9ee7676b6ef",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/global_facts/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/global_facts"
+        },
+        {
+          "path": "high_school_biology/test-00000-of-00001.parquet",
+          "bytes": 62704,
+          "sha256": "73600cc5c8032ffd20115887ec4f2c868d75c403c70ac1d115295e72cb8d80e3",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_biology/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_biology"
+        },
+        {
+          "path": "high_school_chemistry/test-00000-of-00001.parquet",
+          "bytes": 33334,
+          "sha256": "fde2345147be31d8df06ad66200521d7e47588490ab59c09fd78861c8a373ccb",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_chemistry/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_chemistry"
+        },
+        {
+          "path": "high_school_computer_science/test-00000-of-00001.parquet",
+          "bytes": 27253,
+          "sha256": "6e1b210896afc60f2ea3a1b011733b86dedd74690adce6ff0893346089f83252",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_computer_science/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_computer_science"
+        },
+        {
+          "path": "high_school_european_history/test-00000-of-00001.parquet",
+          "bytes": 142465,
+          "sha256": "2bcf46d76656082263b22d871c6ba16f29f4abed600d07381018b843769620c1",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_european_history/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_european_history"
+        },
+        {
+          "path": "high_school_geography/test-00000-of-00001.parquet",
+          "bytes": 28162,
+          "sha256": "d083f0a37e9802ff70af8c0ccee95dc6836d80db74f45327519756327076a2c1",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_geography/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_geography"
+        },
+        {
+          "path": "high_school_government_and_politics/test-00000-of-00001.parquet",
+          "bytes": 40219,
+          "sha256": "54bb3fcc3987afc3ce0e605343752de94ca227bd4ae13c84b7b1ec9bc3998292",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_government_and_politics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_government_and_politics"
+        },
+        {
+          "path": "high_school_macroeconomics/test-00000-of-00001.parquet",
+          "bytes": 54819,
+          "sha256": "a0f2d6a33352452442a13ffb947ab04dcf16513e87bee7c52e8957c2bc761a4c",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_macroeconomics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_macroeconomics"
+        },
+        {
+          "path": "high_school_mathematics/test-00000-of-00001.parquet",
+          "bytes": 33722,
+          "sha256": "310628511fac990528ecac65634fa1ab924ce2d4aad7a7d9cded06db17f6cf7d",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_mathematics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_mathematics"
+        },
+        {
+          "path": "high_school_microeconomics/test-00000-of-00001.parquet",
+          "bytes": 38827,
+          "sha256": "8a55dc2fa10fa86cc4cf5565bb49416bdcf45b545ebb83f6ce8e4360cc65b453",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_microeconomics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_microeconomics"
+        },
+        {
+          "path": "high_school_physics/test-00000-of-00001.parquet",
+          "bytes": 32950,
+          "sha256": "48fc84060e4cd032a407da09164e99dfdf81f3ce345bf6c1871bb539ba4ead6c",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_physics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_physics"
+        },
+        {
+          "path": "high_school_psychology/test-00000-of-00001.parquet",
+          "bytes": 92752,
+          "sha256": "9df4a744eb6faa12bb359df1f808c0461c055f240b998a9ec9d97b1c4e49a958",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_psychology/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_psychology"
+        },
+        {
+          "path": "high_school_statistics/test-00000-of-00001.parquet",
+          "bytes": 57998,
+          "sha256": "4922828bda3ae4c4470e95d8fa809e3abe18f6239047b21d675267ebefb1c691",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_statistics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_statistics"
+        },
+        {
+          "path": "high_school_us_history/test-00000-of-00001.parquet",
+          "bytes": 154916,
+          "sha256": "7e3c242fa3b087b918d30a5202948ed462363ca9de9e65a76970e2c58d5659b7",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_us_history/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_us_history"
+        },
+        {
+          "path": "high_school_world_history/test-00000-of-00001.parquet",
+          "bytes": 201554,
+          "sha256": "abc9b0182e7cdd19ef7b70ec9734f62436f99e76c740c67f41155611eccbcd7d",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/high_school_world_history/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/high_school_world_history"
+        },
+        {
+          "path": "human_aging/test-00000-of-00001.parquet",
+          "bytes": 31249,
+          "sha256": "69b143d394fd115c893afd98ed8fddaf32039bdece6a60c7f0e6caa3e2a97847",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/human_aging/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/human_aging"
+        },
+        {
+          "path": "human_sexuality/test-00000-of-00001.parquet",
+          "bytes": 23185,
+          "sha256": "49efe58e13116a40ac9ee640da8b9c41b29a2915c86eb5bb33fb2959d0c724f9",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/human_sexuality/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/human_sexuality"
+        },
+        {
+          "path": "international_law/test-00000-of-00001.parquet",
+          "bytes": 29512,
+          "sha256": "05da704a004fcc5c7d3d47a894af201ca26d8e071aadf05e3a34155fad968ccf",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/international_law/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/international_law"
+        },
+        {
+          "path": "jurisprudence/test-00000-of-00001.parquet",
+          "bytes": 23324,
+          "sha256": "0f302db5178cb629b3b1514cc5f9b2a94e6bbbf0925e3d18b09ed4394099e059",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/jurisprudence/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/jurisprudence"
+        },
+        {
+          "path": "logical_fallacies/test-00000-of-00001.parquet",
+          "bytes": 23022,
+          "sha256": "87eefcf75ec88f69379d848bddab3f8936e4d340ef1e51498c334c5a76031fe7",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/logical_fallacies/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/logical_fallacies"
+        },
+        {
+          "path": "machine_learning/test-00000-of-00001.parquet",
+          "bytes": 19699,
+          "sha256": "cd3d1ac01f117433bfed153f81425ede65b1d57abd7bebd2a3471b7b22334424",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/machine_learning/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/machine_learning"
+        },
+        {
+          "path": "management/test-00000-of-00001.parquet",
+          "bytes": 14722,
+          "sha256": "b5579485f3b83ceabcf2269720c7ce087b76ad473f020336c5ec7e724900767f",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/management/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/management"
+        },
+        {
+          "path": "marketing/test-00000-of-00001.parquet",
+          "bytes": 37259,
+          "sha256": "3c975f1b0dc699b113fe9ac9a438cda04995b5fab8613e949693cd85e360240a",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/marketing/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/marketing"
+        },
+        {
+          "path": "medical_genetics/test-00000-of-00001.parquet",
+          "bytes": 16379,
+          "sha256": "f5535475f3afc3479697355679f2b615603fe90a58e8e5b6a98e50ccf07171b9",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/medical_genetics/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/medical_genetics"
+        },
+        {
+          "path": "miscellaneous/test-00000-of-00001.parquet",
+          "bytes": 98558,
+          "sha256": "5665dde94d34f04a0310bb2af2f8a27fc09a8a2629fe1e6e9248b11592dbd060",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/miscellaneous/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/miscellaneous"
+        },
+        {
+          "path": "moral_disputes/test-00000-of-00001.parquet",
+          "bytes": 60902,
+          "sha256": "fc2a4270481cf732dcbce6816231b430bec14e327e28db930b396e7e53c6c775",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/moral_disputes/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/moral_disputes"
+        },
+        {
+          "path": "moral_scenarios/test-00000-of-00001.parquet",
+          "bytes": 89816,
+          "sha256": "e21cc9d8f5a1898bd4bb080fa5dad2474f67f27ca98d3c7bb8c7f529ea32a9f4",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/moral_scenarios/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/moral_scenarios"
+        },
+        {
+          "path": "nutrition/test-00000-of-00001.parquet",
+          "bytes": 55041,
+          "sha256": "7ba291c21774407b1b27349172c3f85211af81df5047fe92b83b961d7bb7f03f",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/nutrition/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/nutrition"
+        },
+        {
+          "path": "philosophy/test-00000-of-00001.parquet",
+          "bytes": 48556,
+          "sha256": "51a6715bca767d89652f782825610b7acd22dd5feb9331dce53cb52a772e4d22",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/philosophy/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/philosophy"
+        },
+        {
+          "path": "prehistory/test-00000-of-00001.parquet",
+          "bytes": 54316,
+          "sha256": "f4cf1e103e6494dd2f77bd1d732b58d8386cc3182346609b7c04353207122a25",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/prehistory/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/prehistory"
+        },
+        {
+          "path": "professional_accounting/test-00000-of-00001.parquet",
+          "bytes": 69518,
+          "sha256": "1fe6da7a3a8647ee70c23543a15ef9b3ad5bf9ec22e68d0583c98dfdf7585e0f",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/professional_accounting/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/professional_accounting"
+        },
+        {
+          "path": "professional_law/test-00000-of-00001.parquet",
+          "bytes": 1037057,
+          "sha256": "81cfdb63639fe7839da36aa1156e3f772a4521d532027d2c56f1db8fb30c6c7c",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/professional_law/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/professional_law"
+        },
+        {
+          "path": "professional_medicine/test-00000-of-00001.parquet",
+          "bytes": 124933,
+          "sha256": "8c1c18b16c9865bf52b7cd997c4d05346f914441645459fac8c5b2f78d9ebac9",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/professional_medicine/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/professional_medicine"
+        },
+        {
+          "path": "professional_psychology/test-00000-of-00001.parquet",
+          "bytes": 132551,
+          "sha256": "91529edc6760dbe5bfa41e9190021041499a15f332f5af8d9bffc9fb252116b9",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/professional_psychology/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/professional_psychology"
+        },
+        {
+          "path": "public_relations/test-00000-of-00001.parquet",
+          "bytes": 20617,
+          "sha256": "9ce4ff437b2b6192505d2b5dbe745a5012711ce911ada34f8574fb18411d07cd",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/public_relations/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/public_relations"
+        },
+        {
+          "path": "security_studies/test-00000-of-00001.parquet",
+          "bytes": 114103,
+          "sha256": "38477f527d22bc9f55e92fb7c247f73e301508d547841b591bd0f9f0fc9529d5",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/security_studies/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/security_studies"
+        },
+        {
+          "path": "sociology/test-00000-of-00001.parquet",
+          "bytes": 43920,
+          "sha256": "0cdb1dab92e7d5a8c1b617b1c868ae72dade770eb64d6539b26e256594a5d67a",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/sociology/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/sociology"
+        },
+        {
+          "path": "us_foreign_policy/test-00000-of-00001.parquet",
+          "bytes": 19540,
+          "sha256": "8051dfc5f49bc73c4882049cbfe476fea2f57ec1879eb23319ed4bdd8f6b0cd3",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/us_foreign_policy/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/us_foreign_policy"
+        },
+        {
+          "path": "virology/test-00000-of-00001.parquet",
+          "bytes": 27310,
+          "sha256": "c59ea23f72b405b180a3135c3a5240f8594af6f3c03e5c7784345914253a4928",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/virology/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/virology"
+        },
+        {
+          "path": "world_religions/test-00000-of-00001.parquet",
+          "bytes": 18922,
+          "sha256": "b59bdb0cb4b16fd8a0a81362d8bd8241c0013940b877c5c6e76d66f536613aff",
+          "url": "https://huggingface.co/datasets/cais/mmlu/resolve/c30699e8356da336a370243923dbaf21066bb9fe/world_religions/test-00000-of-00001.parquet",
+          "local_dir": "/mnt/local/_data/deep-llms_th2/f10_v111/mmlu/world_religions"
+        }
+      ]
+    }
+  ]
+}
