@@ -1,0 +1,42 @@
+{
+  "verified": true,
+  "models": [
+    {
+      "arm": "P300",
+      "verified": true,
+      "checkpoint_files": {
+        "config.json": "84473d976cc16640692097339baf7d8ba15e884e2bad9625fae9de4af6c722f5",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+        "generation_config.json": "6b2295d556a32ea9383d6d153bafc087a950a45b97bb9113eebce0ceb4274f8b",
+        "model.safetensors": "6d70213591026d06e3e825a5589969d44aee6758b99e5ee003c5338a5006d9c6",
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d"
+      },
+      "result_sha256": "8cc3ed270ff861292681f04c65cb78ad0190d529db3117bc6e7736fefdce7a9a"
+    },
+    {
+      "arm": "P1T",
+      "verified": true,
+      "checkpoint_files": {
+        "config.json": "84473d976cc16640692097339baf7d8ba15e884e2bad9625fae9de4af6c722f5",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+        "generation_config.json": "6b2295d556a32ea9383d6d153bafc087a950a45b97bb9113eebce0ceb4274f8b",
+        "model.safetensors": "4e36b75b8714d59cecc36f3da9b260bde8879b969a36e1a310f3258ba0991d57",
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d"
+      },
+      "result_sha256": "b8f02aa472a6a1863dcc3df8a341a3b5db50060d321f252fecf60f71db0ef28e"
+    },
+    {
+      "arm": "X72",
+      "verified": true,
+      "checkpoint_files": {
+        "config.json": "84473d976cc16640692097339baf7d8ba15e884e2bad9625fae9de4af6c722f5",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+        "generation_config.json": "6b2295d556a32ea9383d6d153bafc087a950a45b97bb9113eebce0ceb4274f8b",
+        "model.safetensors": "412725f6adff23908baeac4ed400976f7c17db083b2283da63bf575b93ce414b",
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d"
+      },
+      "result_sha256": "5b3f8895d6fb5d5751856634870df352f474d92f52ca14525453d061149a53dc"
+    }
+  ],
+  "scope": "Exact score identity versus sealed final manifest; model weights were not downloaded or independently loaded locally."
+}

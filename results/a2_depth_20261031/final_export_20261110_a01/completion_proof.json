@@ -1,0 +1,29 @@
+{
+  "completed_utc": "2026-11-10T07:31:30.006559+00:00",
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "receipt_commit": "586beae84ea39e4dd370ea038ba760a4389f48df",
+  "exported_parts": 12,
+  "members": 153,
+  "archive_sha256": "4068966b2f98991017940ab2fc32b37457afd523aedbc342d7979f154ce5a9f7",
+  "partA_comparisons": 1938,
+  "partB_checks": 504,
+  "partC_checks": 133,
+  "downstream_checks": 303,
+  "all_replays_passed": true,
+  "native_depth_finished_utc": "2026-11-09T23:18:31.268352+00:00",
+  "burn_verified_utc": "2026-11-09T23:19:42.111709+00:00",
+  "fresh_ownership_utc": "2026-11-10T07:05:16.148485+00:00",
+  "report": {
+    "path": "results/A2_Family_v1.7_Depth_v1.1_REPORT_20261110.md",
+    "sha256": "c419a53b020c5d4e2f1e419b6db3abc4fda51badf17af8cc83db0e178422f22e"
+  },
+  "evidence": {
+    "archive_verification.json": "89db76d5e8daa6a4b608f6485bf428e08e291803068d956644100fe0e21ff31d",
+    "partc_replay.json": "678ef5d0748405c64e223a58438b5a88ca6f20927fc74286d9b594e390b68605",
+    "downstream_replay.json": "017eff4c5133103285f6502d2242b266d20253abb1c58851970339be0773d133",
+    "C_intervals.json": "164c78b857b606a150a3585404a0befc00a9141491b3e3829da7261ff558eb8a",
+    "checkpoint_score_binding.json": "99f14b863f48de2438fb71aa1884227686b55478baed8fe714e4b3684c2d0740",
+    "health.json": "9624f5228df4f013f27078a0310a251ed26a4d468a5a212db93a14792b48a69a"
+  },
+  "limitations": "Historical flags and model-weight/optimizer backup exclusions retained. No independent local model reload or controlled 8GPU resume equivalence claim. Complete science backup and replay, not full model-state backup."
+}

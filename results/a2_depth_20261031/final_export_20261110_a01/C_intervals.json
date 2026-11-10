@@ -1,0 +1,22 @@
+{
+  "E": {
+    "estimate": 0.020443865973687622,
+    "ci95": [
+      0.019982500745185486,
+      0.020923350884518774
+    ]
+  },
+  "A_init": {
+    "estimate": 0.0012291867669731056,
+    "ci95": [
+      0.0010481200917648935,
+      0.0014154105995591046
+    ]
+  },
+  "resamples": 10000,
+  "seed": 0,
+  "sequences": 2461,
+  "prediction_tokens": 10077795,
+  "method": "Independent paired packed-sequence bootstrap. Equal 4095 prediction tokens per row, so means are token-weighted. Evaluation uncertainty only; no independent-doc or training-seed claim.",
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+}

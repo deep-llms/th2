@@ -1,0 +1,1737 @@
+{
+  "verification_passed": true,
+  "checks": [
+    {
+      "test": "prepared_request_digest",
+      "passed": true
+    },
+    {
+      "test": "full_protocol",
+      "passed": true
+    },
+    {
+      "test": "P300-parent:score_lock",
+      "passed": true
+    },
+    {
+      "test": "P300-parent:identity",
+      "passed": true
+    },
+    {
+      "test": "P300-parent:replay_binding",
+      "passed": true
+    },
+    {
+      "test": "P300-parenthellaswag:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-parenthellaswag:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-parenthellaswag:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-parenthellaswag:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-parentarc_easy:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-parentarc_easy:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-parentarc_easy:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-parentarc_easy:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-parentarc_challenge:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-parentarc_challenge:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-parentarc_challenge:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-parentarc_challenge:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-parentpiqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-parentpiqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-parentpiqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-parentpiqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-parentwinogrande:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-parentwinogrande:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-parentwinogrande:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-parentwinogrande:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-parentboolq:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-parentboolq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-parentboolq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-parentboolq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-parentopenbookqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-parentopenbookqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-parentopenbookqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-parentopenbookqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-parentsciq:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-parentsciq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-parentsciq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-parentsciq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-parentlambada_openai:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-parentlambada_openai:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-parentlambada_openai:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-parentlambada_openai:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-parent:native_response_coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-parent:score_lock",
+      "passed": true
+    },
+    {
+      "test": "P1T-parent:identity",
+      "passed": true
+    },
+    {
+      "test": "P1T-parent:replay_binding",
+      "passed": true
+    },
+    {
+      "test": "P1T-parenthellaswag:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-parenthellaswag:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-parenthellaswag:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-parenthellaswag:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentarc_easy:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentarc_easy:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentarc_easy:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentarc_easy:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentarc_challenge:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentarc_challenge:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentarc_challenge:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentarc_challenge:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentpiqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentpiqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentpiqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentpiqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentwinogrande:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentwinogrande:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentwinogrande:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentwinogrande:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentboolq:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentboolq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentboolq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentboolq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentopenbookqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentopenbookqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentopenbookqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentopenbookqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentsciq:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentsciq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentsciq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentsciq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentlambada_openai:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentlambada_openai:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentlambada_openai:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-parentlambada_openai:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-parent:native_response_coverage",
+      "passed": true
+    },
+    {
+      "test": "S72-parent:score_lock",
+      "passed": true
+    },
+    {
+      "test": "S72-parent:identity",
+      "passed": true
+    },
+    {
+      "test": "S72-parent:replay_binding",
+      "passed": true
+    },
+    {
+      "test": "S72-parenthellaswag:coverage",
+      "passed": true
+    },
+    {
+      "test": "S72-parenthellaswag:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "S72-parenthellaswag:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "S72-parenthellaswag:aggregate",
+      "passed": true
+    },
+    {
+      "test": "S72-parentarc_easy:coverage",
+      "passed": true
+    },
+    {
+      "test": "S72-parentarc_easy:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "S72-parentarc_easy:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "S72-parentarc_easy:aggregate",
+      "passed": true
+    },
+    {
+      "test": "S72-parentarc_challenge:coverage",
+      "passed": true
+    },
+    {
+      "test": "S72-parentarc_challenge:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "S72-parentarc_challenge:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "S72-parentarc_challenge:aggregate",
+      "passed": true
+    },
+    {
+      "test": "S72-parentpiqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "S72-parentpiqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "S72-parentpiqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "S72-parentpiqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "S72-parentwinogrande:coverage",
+      "passed": true
+    },
+    {
+      "test": "S72-parentwinogrande:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "S72-parentwinogrande:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "S72-parentwinogrande:aggregate",
+      "passed": true
+    },
+    {
+      "test": "S72-parentboolq:coverage",
+      "passed": true
+    },
+    {
+      "test": "S72-parentboolq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "S72-parentboolq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "S72-parentboolq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "S72-parentopenbookqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "S72-parentopenbookqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "S72-parentopenbookqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "S72-parentopenbookqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "S72-parentsciq:coverage",
+      "passed": true
+    },
+    {
+      "test": "S72-parentsciq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "S72-parentsciq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "S72-parentsciq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "S72-parentlambada_openai:coverage",
+      "passed": true
+    },
+    {
+      "test": "S72-parentlambada_openai:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "S72-parentlambada_openai:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "S72-parentlambada_openai:aggregate",
+      "passed": true
+    },
+    {
+      "test": "S72-parent:native_response_coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-student:score_lock",
+      "passed": true
+    },
+    {
+      "test": "P300-student:identity",
+      "passed": true
+    },
+    {
+      "test": "P300-student:replay_binding",
+      "passed": true
+    },
+    {
+      "test": "P300-studenthellaswag:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-studenthellaswag:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-studenthellaswag:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-studenthellaswag:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-studentarc_easy:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-studentarc_easy:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-studentarc_easy:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-studentarc_easy:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-studentarc_challenge:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-studentarc_challenge:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-studentarc_challenge:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-studentarc_challenge:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-studentpiqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-studentpiqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-studentpiqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-studentpiqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-studentwinogrande:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-studentwinogrande:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-studentwinogrande:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-studentwinogrande:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-studentboolq:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-studentboolq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-studentboolq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-studentboolq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-studentopenbookqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-studentopenbookqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-studentopenbookqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-studentopenbookqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-studentsciq:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-studentsciq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-studentsciq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-studentsciq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-studentlambada_openai:coverage",
+      "passed": true
+    },
+    {
+      "test": "P300-studentlambada_openai:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P300-studentlambada_openai:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P300-studentlambada_openai:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P300-student:native_response_coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-student:score_lock",
+      "passed": true
+    },
+    {
+      "test": "P1T-student:identity",
+      "passed": true
+    },
+    {
+      "test": "P1T-student:replay_binding",
+      "passed": true
+    },
+    {
+      "test": "P1T-studenthellaswag:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-studenthellaswag:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-studenthellaswag:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-studenthellaswag:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentarc_easy:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentarc_easy:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentarc_easy:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentarc_easy:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentarc_challenge:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentarc_challenge:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentarc_challenge:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentarc_challenge:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentpiqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentpiqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentpiqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentpiqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentwinogrande:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentwinogrande:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentwinogrande:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentwinogrande:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentboolq:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentboolq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentboolq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentboolq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentopenbookqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentopenbookqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentopenbookqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentopenbookqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentsciq:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentsciq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentsciq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentsciq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentlambada_openai:coverage",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentlambada_openai:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentlambada_openai:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "P1T-studentlambada_openai:aggregate",
+      "passed": true
+    },
+    {
+      "test": "P1T-student:native_response_coverage",
+      "passed": true
+    },
+    {
+      "test": "X72-student:score_lock",
+      "passed": true
+    },
+    {
+      "test": "X72-student:identity",
+      "passed": true
+    },
+    {
+      "test": "X72-student:replay_binding",
+      "passed": true
+    },
+    {
+      "test": "X72-studenthellaswag:coverage",
+      "passed": true
+    },
+    {
+      "test": "X72-studenthellaswag:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "X72-studenthellaswag:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "X72-studenthellaswag:aggregate",
+      "passed": true
+    },
+    {
+      "test": "X72-studentarc_easy:coverage",
+      "passed": true
+    },
+    {
+      "test": "X72-studentarc_easy:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "X72-studentarc_easy:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "X72-studentarc_easy:aggregate",
+      "passed": true
+    },
+    {
+      "test": "X72-studentarc_challenge:coverage",
+      "passed": true
+    },
+    {
+      "test": "X72-studentarc_challenge:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "X72-studentarc_challenge:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "X72-studentarc_challenge:aggregate",
+      "passed": true
+    },
+    {
+      "test": "X72-studentpiqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "X72-studentpiqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "X72-studentpiqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "X72-studentpiqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "X72-studentwinogrande:coverage",
+      "passed": true
+    },
+    {
+      "test": "X72-studentwinogrande:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "X72-studentwinogrande:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "X72-studentwinogrande:aggregate",
+      "passed": true
+    },
+    {
+      "test": "X72-studentboolq:coverage",
+      "passed": true
+    },
+    {
+      "test": "X72-studentboolq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "X72-studentboolq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "X72-studentboolq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "X72-studentopenbookqa:coverage",
+      "passed": true
+    },
+    {
+      "test": "X72-studentopenbookqa:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "X72-studentopenbookqa:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "X72-studentopenbookqa:aggregate",
+      "passed": true
+    },
+    {
+      "test": "X72-studentsciq:coverage",
+      "passed": true
+    },
+    {
+      "test": "X72-studentsciq:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "X72-studentsciq:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "X72-studentsciq:aggregate",
+      "passed": true
+    },
+    {
+      "test": "X72-studentlambada_openai:coverage",
+      "passed": true
+    },
+    {
+      "test": "X72-studentlambada_openai:paired_prompts",
+      "passed": true
+    },
+    {
+      "test": "X72-studentlambada_openai:fresh_sample_accuracy",
+      "passed": true
+    },
+    {
+      "test": "X72-studentlambada_openai:aggregate",
+      "passed": true
+    },
+    {
+      "test": "X72-student:native_response_coverage",
+      "passed": true
+    },
+    {
+      "test": "arc_challengeP300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_challengeP1T_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_challengeX72_drop_from_S72:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_challengeP1T_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_challengeX72_minus_P300_accuracy:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_challengeX72_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_easyP300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_easyP1T_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_easyX72_drop_from_S72:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_easyP1T_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_easyX72_minus_P300_accuracy:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "arc_easyX72_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "boolqP300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "boolqP1T_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "boolqX72_drop_from_S72:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "boolqP1T_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "boolqX72_minus_P300_accuracy:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "boolqX72_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "hellaswagP300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "hellaswagP1T_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "hellaswagX72_drop_from_S72:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "hellaswagP1T_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "hellaswagX72_minus_P300_accuracy:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "hellaswagX72_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "lambada_openaiP300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "lambada_openaiP1T_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "lambada_openaiX72_drop_from_S72:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "lambada_openaiP1T_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "lambada_openaiX72_minus_P300_accuracy:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "lambada_openaiX72_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "openbookqaP300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "openbookqaP1T_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "openbookqaX72_drop_from_S72:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "openbookqaP1T_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "openbookqaX72_minus_P300_accuracy:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "openbookqaX72_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "piqaP300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "piqaP1T_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "piqaX72_drop_from_S72:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "piqaP1T_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "piqaX72_minus_P300_accuracy:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "piqaX72_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "sciqP300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "sciqP1T_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "sciqX72_drop_from_S72:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "sciqP1T_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "sciqX72_minus_P300_accuracy:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "sciqX72_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "winograndeP300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "winograndeP1T_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "winograndeX72_drop_from_S72:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "winograndeP1T_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "winograndeX72_minus_P300_accuracy:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "winograndeX72_minus_P300_drop:pairedCI",
+      "passed": true
+    },
+    {
+      "test": "P300_drop:MC_CI",
+      "passed": true
+    },
+    {
+      "test": "P1T_drop:MC_CI",
+      "passed": true
+    },
+    {
+      "test": "X72_drop_from_S72:MC_CI",
+      "passed": true
+    },
+    {
+      "test": "P1T_minus_P300_drop:MC_CI",
+      "passed": true
+    },
+    {
+      "test": "X72_minus_P300_accuracy:MC_CI",
+      "passed": true
+    },
+    {
+      "test": "X72_minus_P300_drop:MC_CI",
+      "passed": true
+    },
+    {
+      "test": "native_fresh_paired_exact",
+      "passed": true
+    }
+  ],
+  "passed": 303,
+  "failed": 0,
+  "summary": {
+    "P300-parent": {
+      "hellaswag": 0.6505676160127465,
+      "arc_easy": 0.67003367003367,
+      "arc_challenge": 0.371160409556314,
+      "piqa": 0.7568008705114254,
+      "winogrande": 0.6203630623520127,
+      "boolq": 0.6235474006116208,
+      "openbookqa": 0.392,
+      "sciq": 0.908,
+      "lambada_openai": 0.6547642150203765,
+      "MC_mean": 0.6240591286347238
+    },
+    "P1T-parent": {
+      "hellaswag": 0.6859191396136228,
+      "arc_easy": 0.6843434343434344,
+      "arc_challenge": 0.4035836177474403,
+      "piqa": 0.76550598476605,
+      "winogrande": 0.6353591160220995,
+      "boolq": 0.6590214067278287,
+      "openbookqa": 0.392,
+      "sciq": 0.93,
+      "lambada_openai": 0.6764991267222977,
+      "MC_mean": 0.6444665874025595
+    },
+    "S72-parent": {
+      "hellaswag": 0.5807608046205935,
+      "arc_easy": 0.6123737373737373,
+      "arc_challenge": 0.3412969283276451,
+      "piqa": 0.7241566920565833,
+      "winogrande": 0.5927387529597474,
+      "boolq": 0.6308868501529052,
+      "openbookqa": 0.368,
+      "sciq": 0.885,
+      "lambada_openai": 0.5705414321754317,
+      "MC_mean": 0.5919017206864015
+    },
+    "P300-student": {
+      "hellaswag": 0.6017725552678749,
+      "arc_easy": 0.6355218855218855,
+      "arc_challenge": 0.32593856655290104,
+      "piqa": 0.7306855277475517,
+      "winogrande": 0.6069455406471981,
+      "boolq": 0.5697247706422018,
+      "openbookqa": 0.376,
+      "sciq": 0.906,
+      "lambada_openai": 0.620415292062876,
+      "MC_mean": 0.5940736057974516
+    },
+    "P1T-student": {
+      "hellaswag": 0.6278629755028878,
+      "arc_easy": 0.6519360269360269,
+      "arc_challenge": 0.34897610921501704,
+      "piqa": 0.7431991294885746,
+      "winogrande": 0.6345698500394633,
+      "boolq": 0.6192660550458715,
+      "openbookqa": 0.374,
+      "sciq": 0.928,
+      "lambada_openai": 0.648554240248399,
+      "MC_mean": 0.6159762682784802
+    },
+    "X72-student": {
+      "hellaswag": 0.6020713005377415,
+      "arc_easy": 0.6460437710437711,
+      "arc_challenge": 0.3438566552901024,
+      "piqa": 0.7372143634385201,
+      "winogrande": 0.6140489344909235,
+      "boolq": 0.5874617737003058,
+      "openbookqa": 0.372,
+      "sciq": 0.902,
+      "lambada_openai": 0.619056860081506,
+      "MC_mean": 0.6005870998126706
+    }
+  },
+  "MC_contrasts": {
+    "P300_drop": {
+      "estimate": 0.02998552283727205,
+      "ci95": [
+        0.024225555876433318,
+        0.03576033939987358
+      ]
+    },
+    "P1T_drop": {
+      "estimate": 0.028490319124079316,
+      "ci95": [
+        0.02265243377034966,
+        0.034467912589588305
+      ]
+    },
+    "X72_drop_from_S72": {
+      "estimate": -0.008685379126269058,
+      "ci95": [
+        -0.015185587963646574,
+        -0.001920696068003716
+      ]
+    },
+    "P1T_minus_P300_drop": {
+      "estimate": -0.0014952037131927207,
+      "ci95": [
+        -0.009370974607976142,
+        0.006341990507784747
+      ]
+    },
+    "X72_minus_P300_accuracy": {
+      "estimate": 0.006513494015218918,
+      "ci95": [
+        0.002609771234014639,
+        0.0103921110400218
+      ]
+    },
+    "X72_minus_P300_drop": {
+      "estimate": -0.03867090196354111,
+      "ci95": [
+        -0.04633348192055743,
+        -0.03098690236468979
+      ]
+    }
+  },
+  "task_contrasts": {
+    "arc_challenge": {
+      "P300_drop": {
+        "estimate": 0.045221843003412976,
+        "ci95": [
+          0.025597269624573378,
+          0.06399317406143344
+        ]
+      },
+      "P1T_drop": {
+        "estimate": 0.05460750853242324,
+        "ci95": [
+          0.03498293515358362,
+          0.07508532423208192
+        ]
+      },
+      "X72_drop_from_S72": {
+        "estimate": -0.0025597269624573205,
+        "ci95": [
+          -0.023890784982935155,
+          0.01877133105802048
+        ]
+      },
+      "P1T_minus_P300_drop": {
+        "estimate": 0.009385665529010268,
+        "ci95": [
+          -0.016211604095563138,
+          0.03498293515358362
+        ]
+      },
+      "X72_minus_P300_accuracy": {
+        "estimate": 0.017918088737201354,
+        "ci95": [
+          0.005972696245733789,
+          0.029863481228668942
+        ]
+      },
+      "X72_minus_P300_drop": {
+        "estimate": -0.047781569965870296,
+        "ci95": [
+          -0.07337883959044368,
+          -0.02303754266211604
+        ]
+      }
+    },
+    "arc_easy": {
+      "P300_drop": {
+        "estimate": 0.03451178451178449,
+        "ci95": [
+          0.021464646464646464,
+          0.04755892255892256
+        ]
+      },
+      "P1T_drop": {
+        "estimate": 0.03240740740740744,
+        "ci95": [
+          0.01978114478114478,
+          0.045454545454545456
+        ]
+      },
+      "X72_drop_from_S72": {
+        "estimate": -0.03367003367003374,
+        "ci95": [
+          -0.04755892255892256,
+          -0.01978114478114478
+        ]
+      },
+      "P1T_minus_P300_drop": {
+        "estimate": -0.002104377104377053,
+        "ci95": [
+          -0.01893939393939394,
+          0.015572390572390573
+        ]
+      },
+      "X72_minus_P300_accuracy": {
+        "estimate": 0.010521885521885599,
+        "ci95": [
+          0.0016835016835016834,
+          0.01936026936026936
+        ]
+      },
+      "X72_minus_P300_drop": {
+        "estimate": -0.06818181818181823,
+        "ci95": [
+          -0.08501683501683502,
+          -0.05176767676767677
+        ]
+      }
+    },
+    "boolq": {
+      "P300_drop": {
+        "estimate": 0.053822629969419,
+        "ci95": [
+          0.03914373088685015,
+          0.06850152905198777
+        ]
+      },
+      "P1T_drop": {
+        "estimate": 0.03975535168195721,
+        "ci95": [
+          0.026605504587155965,
+          0.05290519877675841
+        ]
+      },
+      "X72_drop_from_S72": {
+        "estimate": 0.04342507645259941,
+        "ci95": [
+          0.022629969418960245,
+          0.06452599388379204
+        ]
+      },
+      "P1T_minus_P300_drop": {
+        "estimate": -0.014067278287461793,
+        "ci95": [
+          -0.03241590214067278,
+          0.0045871559633027525
+        ]
+      },
+      "X72_minus_P300_accuracy": {
+        "estimate": 0.017737003058103995,
+        "ci95": [
+          0.007339449541284404,
+          0.02782874617737003
+        ]
+      },
+      "X72_minus_P300_drop": {
+        "estimate": -0.010397553516819591,
+        "ci95": [
+          -0.0308868501529052,
+          0.009785932721712538
+        ]
+      }
+    },
+    "hellaswag": {
+      "P300_drop": {
+        "estimate": 0.04879506074487161,
+        "ci95": [
+          0.04371639115714001,
+          0.05407289384584744
+        ]
+      },
+      "P1T_drop": {
+        "estimate": 0.058056164110735,
+        "ci95": [
+          0.05277833100975901,
+          0.06353316072495518
+        ]
+      },
+      "X72_drop_from_S72": {
+        "estimate": -0.021310495917147954,
+        "ci95": [
+          -0.027185819557857,
+          -0.015534754033061144
+        ]
+      },
+      "P1T_minus_P300_drop": {
+        "estimate": 0.009261103365863499,
+        "ci95": [
+          0.002589125672176857,
+          0.015833499302927705
+        ]
+      },
+      "X72_minus_P300_accuracy": {
+        "estimate": 0.0002987452698666182,
+        "ci95": [
+          -0.003087034455287791,
+          0.0035849432383987254
+        ]
+      },
+      "X72_minus_P300_drop": {
+        "estimate": -0.07010555666201956,
+        "ci95": [
+          -0.07707627962557259,
+          -0.06333399721171082
+        ]
+      }
+    },
+    "lambada_openai": {
+      "P300_drop": {
+        "estimate": 0.03434892295750047,
+        "ci95": [
+          0.025422084222782845,
+          0.043275761692218126
+        ]
+      },
+      "P1T_drop": {
+        "estimate": 0.0279448864738987,
+        "ci95": [
+          0.01901804773918106,
+          0.037259848631864934
+        ]
+      },
+      "X72_drop_from_S72": {
+        "estimate": -0.048515427906074216,
+        "ci95": [
+          -0.059576945468659034,
+          -0.03784203376673782
+        ]
+      },
+      "P1T_minus_P300_drop": {
+        "estimate": -0.006404036483601772,
+        "ci95": [
+          -0.01843586260430817,
+          0.005632641179895136
+        ]
+      },
+      "X72_minus_P300_accuracy": {
+        "estimate": -0.0013584319813700896,
+        "ci95": [
+          -0.007762468464971861,
+          0.00504560450223171
+        ]
+      },
+      "X72_minus_P300_drop": {
+        "estimate": -0.08286435086357469,
+        "ci95": [
+          -0.0952843004075296,
+          -0.07025033960799534
+        ]
+      }
+    },
+    "openbookqa": {
+      "P300_drop": {
+        "estimate": 0.016000000000000014,
+        "ci95": [
+          -0.006,
+          0.03804999999999927
+        ]
+      },
+      "P1T_drop": {
+        "estimate": 0.018000000000000016,
+        "ci95": [
+          -0.008,
+          0.044
+        ]
+      },
+      "X72_drop_from_S72": {
+        "estimate": -0.0040000000000000036,
+        "ci95": [
+          -0.03,
+          0.022
+        ]
+      },
+      "P1T_minus_P300_drop": {
+        "estimate": 0.0020000000000000018,
+        "ci95": [
+          -0.03,
+          0.034
+        ]
+      },
+      "X72_minus_P300_accuracy": {
+        "estimate": -0.0040000000000000036,
+        "ci95": [
+          -0.018,
+          0.01
+        ]
+      },
+      "X72_minus_P300_drop": {
+        "estimate": -0.020000000000000018,
+        "ci95": [
+          -0.05,
+          0.01
+        ]
+      }
+    },
+    "piqa": {
+      "P300_drop": {
+        "estimate": 0.026115342763873728,
+        "ci95": [
+          0.015778019586507073,
+          0.036996735582154515
+        ]
+      },
+      "P1T_drop": {
+        "estimate": 0.022306855277475446,
+        "ci95": [
+          0.010337323177366704,
+          0.03427638737758433
+        ]
+      },
+      "X72_drop_from_S72": {
+        "estimate": -0.013057671381936808,
+        "ci95": [
+          -0.025571273122959738,
+          -0.000544069640914037
+        ]
+      },
+      "P1T_minus_P300_drop": {
+        "estimate": -0.003808487486398171,
+        "ci95": [
+          -0.019042437431991296,
+          0.011425462459194777
+        ]
+      },
+      "X72_minus_P300_accuracy": {
+        "estimate": 0.006528835690968404,
+        "ci95": [
+          -0.001632208922742111,
+          0.014689880304679
+        ]
+      },
+      "X72_minus_P300_drop": {
+        "estimate": -0.039173014145810536,
+        "ci95": [
+          -0.05386289445048966,
+          -0.025027203482045703
+        ]
+      }
+    },
+    "sciq": {
+      "P300_drop": {
+        "estimate": 0.0020000000000000018,
+        "ci95": [
+          -0.01,
+          0.015
+        ]
+      },
+      "P1T_drop": {
+        "estimate": 0.0020000000000000018,
+        "ci95": [
+          -0.01,
+          0.014
+        ]
+      },
+      "X72_drop_from_S72": {
+        "estimate": -0.017000000000000015,
+        "ci95": [
+          -0.034,
+          -0.001
+        ]
+      },
+      "P1T_minus_P300_drop": {
+        "estimate": 0.0,
+        "ci95": [
+          -0.017,
+          0.017
+        ]
+      },
+      "X72_minus_P300_accuracy": {
+        "estimate": -0.0040000000000000036,
+        "ci95": [
+          -0.013,
+          0.005
+        ]
+      },
+      "X72_minus_P300_drop": {
+        "estimate": -0.019000000000000017,
+        "ci95": [
+          -0.038024999999999975,
+          0.0
+        ]
+      }
+    },
+    "winogrande": {
+      "P300_drop": {
+        "estimate": 0.013417521704814583,
+        "ci95": [
+          -0.010260457774269928,
+          0.037095501183898975
+        ]
+      },
+      "P1T_drop": {
+        "estimate": 0.0007892659826361781,
+        "ci95": [
+          -0.022099447513812154,
+          0.0244672454617206
+        ]
+      },
+      "X72_drop_from_S72": {
+        "estimate": -0.02131018153117603,
+        "ci95": [
+          -0.04814522494080505,
+          0.0055248618784530384
+        ]
+      },
+      "P1T_minus_P300_drop": {
+        "estimate": -0.012628255722178516,
+        "ci95": [
+          -0.04577742699289661,
+          0.01973164956590371
+        ]
+      },
+      "X72_minus_P300_accuracy": {
+        "estimate": 0.007103393843725381,
+        "ci95": [
+          -0.008681925808997633,
+          0.02367797947908445
+        ]
+      },
+      "X72_minus_P300_drop": {
+        "estimate": -0.034727703235990615,
+        "ci95": [
+          -0.06629834254143646,
+          -0.0031570639305445935
+        ]
+      }
+    }
+  },
+  "flags": [],
+  "scope": "Independent native-score-to-response coverage, primary per-item accuracy, aggregate, pairing and paired bootstrap 10000 seed0. No new model inference or retokenization. Benchmark-item uncertainty only."
+}

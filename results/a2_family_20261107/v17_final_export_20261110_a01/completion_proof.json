@@ -1,0 +1,28 @@
+{
+  "spec_sha256": "70bee591aa19a48578998655b53404e358f218a2cbcb1946c432b00cd5f44209",
+  "completed_utc": "2026-11-10T07:13:56.911899+00:00",
+  "archive": {
+    "verified": true,
+    "members": 152,
+    "archive_sha256": "688f2c4404f36102f7aa8249cceff101a65e4550d1e406a4456bae4045e6206c",
+    "utc": "2026-11-10T07:00:56.861236+00:00"
+  },
+  "worker_checks_pass": 576,
+  "independent_run_checks": 247,
+  "independent_pair_checks": 38,
+  "completed_runs": 6,
+  "original_F0_F6_values_and_report_preserved": true,
+  "report": {
+    "path": "results/a2_family_20261107/REPORT_FULL_v1.7_20261110.md",
+    "sha256": "35ca2d064ff36780456a2dba3117252651dfa0eff55c1a65b90a0ec0ffb09970"
+  },
+  "F7_E": 0.005171952894106886,
+  "F7_CI": [
+    0.004717248259710381,
+    0.005627455252999363
+  ],
+  "F7_secondary_reading": "falls",
+  "F8_secondary_reading": "mixed",
+  "depth_automatically_resumed_at_utc": "2026-11-09T13:08:11.603719+00:00",
+  "flags": "Original FT2/FT8/source/upper-grid-LR and historical node qualifications unchanged. CI is paired packed-sequence evaluation uncertainty, not training-seed or document-independent uncertainty. No new model runs during verification."
+}
