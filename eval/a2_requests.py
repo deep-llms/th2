@@ -36,6 +36,8 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('mode', choices=('prepare','replay'))
     p.add_argument('--tokenizer', required=True)
+    p.add_argument('--tokenizer-family', choices=('gpt_neox','smollm3'), default='gpt_neox')
+    p.add_argument('--tokenizer-manifest')
     p.add_argument('--input-spec', default='resources/a2_inputs_20261028.json')
     p.add_argument('--dataset-root', required=True)
     p.add_argument('--manifest', required=True)
@@ -53,6 +55,9 @@ def main():
     if int(os.environ.get('WORLD_SIZE','1'))!=1:p.error('CPU bridge expects one process')
     spec=json.loads(Path(a.input_spec).read_text())
     token_hashes=spec['tokenizer_provenance']['gpt_neox']['files']
+    if a.tokenizer_family=='smollm3':
+        if not a.tokenizer_manifest:raise ValueError('Explicit SmolLM3 tokenizer manifest required')
+        token_hashes=json.loads(Path(a.tokenizer_manifest).read_text())['files']
     for name,expected in token_hashes.items():
         if file_hash(Path(a.tokenizer)/name)!=expected:raise ValueError('Tokenizer checksum mismatch')
     from transformers import AutoTokenizer
@@ -69,7 +74,7 @@ def main():
     if a.mode=='replay':
         prepared=json.loads(Path(a.prepared).read_text());scored=json.loads(Path(a.scored).read_text())
         validate_prepared(prepared,protocol);validate_scored(prepared,scored)
-    bridge=make_bridge(tok,prepared=prepared,scored=scored)
+    bridge=make_bridge(tok,prepared=prepared,scored=scored,tokenizer_family=a.tokenizer_family)
     try:
         result=evaluator.simple_evaluate(model=bridge,tasks=task_configs(a.tasks,paths),
             num_fewshot=0,random_seed=42,numpy_random_seed=42,torch_random_seed=42,

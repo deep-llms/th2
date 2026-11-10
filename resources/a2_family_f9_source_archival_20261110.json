@@ -1,0 +1,37 @@
+{
+  "reason": "Lossless historical artifact compression for existing 25MiB runner source cap; numerical content unchanged",
+  "files": [
+    {
+      "original": "docs/results/a2_remaining_phase0a_20261028/status_1556/nem-P1T-pre.json",
+      "sha256": "bbba6059f1ba5a54ec774a89b73e356275f696e35b38014ed9a8cfc8cde8ca08",
+      "bytes": 587148,
+      "archive": "docs/results/a2_remaining_phase0a_20261028/status_1556/nem-P1T-pre.json.gz",
+      "archive_sha256": "128a8b25f65a3cd76b2e732dfe5fb1f6d3d0f07981bd36e291b2a68f0d55909f",
+      "archive_bytes": 176573
+    },
+    {
+      "original": "docs/results/a2_remaining_phase0a_20261028/status_1527/nem-P300-pre.json",
+      "sha256": "93e8fa80e48c07bac8ac5c36447e35631b5c90bf11eaa351378540051330d1fe",
+      "bytes": 587054,
+      "archive": "docs/results/a2_remaining_phase0a_20261028/status_1527/nem-P300-pre.json.gz",
+      "archive_sha256": "3d1b7f7e93f993b61aeb807d748bd159cbb0fafbfd66e192f2e744c03e6a1c82",
+      "archive_bytes": 176505
+    },
+    {
+      "original": "docs/results/a2_remaining_phase0a_20261028/status_1527/fwe-P1T-pre.json",
+      "sha256": "648b1bcf599da400a7ce630230c0964d1758c516f551b0d1bc45fe142348cab5",
+      "bytes": 586810,
+      "archive": "docs/results/a2_remaining_phase0a_20261028/status_1527/fwe-P1T-pre.json.gz",
+      "archive_sha256": "020ddf2fd8ef88eb42c06c6f5b6e58eb041638a15ea50d8c51bfdced1923ebae",
+      "archive_bytes": 176422
+    },
+    {
+      "original": "docs/results/a2_remaining_phase0a_20261028/status_1556/results.json",
+      "sha256": "16a3d5ba71ce5ecd8fc091b756192cffddc1035e47f1daf7a926ab555b5e3ed8",
+      "bytes": 397856,
+      "archive": "docs/results/a2_remaining_phase0a_20261028/status_1556/results.json.gz",
+      "archive_sha256": "3e36eac73e02dd37f7ab623ad2bfb9f079119ff29fcebb1afa20a7080246cb84",
+      "archive_bytes": 121925
+    }
+  ]
+}

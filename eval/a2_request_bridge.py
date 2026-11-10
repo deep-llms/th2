@@ -24,12 +24,16 @@ def request_rows(requests):
             for text,context,continuation in requests]
 
 
-def make_bridge(tokenizer, *, prepared=None, scored=None):
+def make_bridge(tokenizer, *, prepared=None, scored=None, tokenizer_family='gpt_neox'):
     """No model is loaded. Caller runs the same fixed task configuration twice."""
     from lm_eval.api.model import TemplateLM
 
-    if version('lm-eval')!='0.4.13' or tokenizer.eos_token_id!=0:
+    if tokenizer_family not in ('gpt_neox', 'smollm3'):
+        raise ValueError('Unregistered tokenizer family')
+    if version('lm-eval')!='0.4.13' or (tokenizer_family=='gpt_neox' and tokenizer.eos_token_id!=0):
         raise ValueError('Require pinned harness and verified GPT-NeoX EOS0 tokenizer')
+    if type(tokenizer.eos_token_id) is not int:
+        raise ValueError('Tokenizer EOS required')
     if (prepared is None)!=(scored is None):
         raise ValueError('Replay needs both prepared requests and scores')
     if prepared is not None:
@@ -53,10 +57,10 @@ def make_bridge(tokenizer, *, prepared=None, scored=None):
             self.calls=0
 
         @property
-        def eot_token_id(self): return 0
+        def eot_token_id(self): return tokenizer.eos_token_id
 
         @property
-        def tokenizer_name(self): return 'a2-pinned-gpt-neox'
+        def tokenizer_name(self): return 'a2-pinned-'+tokenizer_family.replace('_','-')
 
         def tok_encode(self,string,**kwargs):
             if kwargs.get('add_special_tokens',False):

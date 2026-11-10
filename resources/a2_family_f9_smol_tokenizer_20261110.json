@@ -1,0 +1,8 @@
+{
+  "spec_sha256": "c25a43d4c074be0ae667f59d4b85e719adc73a357603c62a907bfd4d431e4085",
+  "files": {
+    "special_tokens_map.json": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+    "tokenizer.json": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+    "tokenizer_config.json": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd"
+  }
+}

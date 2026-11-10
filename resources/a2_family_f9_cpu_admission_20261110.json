@@ -1,0 +1,61 @@
+{
+  "spec_sha256": "c25a43d4c074be0ae667f59d4b85e719adc73a357603c62a907bfd4d431e4085",
+  "utc": "2026-11-10T09:05:09.522352+00:00",
+  "status": "PASS",
+  "launch_ready": true,
+  "scope": "CPU admission and reviewed actual census; actual node model/data hashes and GPU FT12/11 pending",
+  "files": {
+    "eval/a2_request_bridge.py": "20760d2ebf40cd79e8d8cf11c07a75aeeb88bbda2a5c2194ae44391cce9bfabb",
+    "eval/a2_requests.py": "fef27bf76ef7320cd9e6f2705d9864dd2697adb7ea25c3f7df8df5ba06cf29e0",
+    "eval/a2_family_f9.py": "01a2a6f5831fe4d7876e034ab407d1c1db4bb5fe9bdcd92c7cc945e27ee344e8",
+    "eval/a2_family_f9_report.py": "70ea5387f6903cf1e763d38b5ffc594114248b1aa1547be841e8a316fab71426",
+    "eval/a2_family_f9_score.py": "a577ec87d3758086b639eeea36eae86b418a514d63a4d517f0eea31edf31a426",
+    "scripts/a2_family_f9_run.py": "efaa83dbd9462720ea5a7ca9fd07f00303dda6458fbc4322432940285126b7ce",
+    "scripts/a2_family_f9_prepare.py": "ecea00e8126b66a7075e1c0dd16d9ebda104a8048011827dfcb2303b2d3b9036",
+    "scripts/a2_family_f9_backup.py": "a7630a19ba71519b634020827721af1f6da590efacc7ee39e21d2c0e7623910d",
+    "scripts/a2_family_f9_inventory.py": "99092b1bfce2c840cfa511cb04de8cf0b75a9f442bac159dc26f2ccbe6cadfb7",
+    "scripts/a2_family_f9_health.py": "d432b178d7f1b9e427f23a8ccc4ccf5472cd54a6adf7c518e89b9f7b8676545c",
+    "scripts/launch_a2_family_f9.py": "68f8cff924f22cd9d50dca5147f2e2b253591a5f6cee2872175347cb00b2e74b",
+    "tests/a2/test_family_f9.py": "488f5bd8187a3aef3f5dca450771ac9aa88daca041a34173ba760dd9a2835cf0",
+    "resources/a2_family_f9_plan_20261110.json": "ae1b8964cb1547cb79a143cd0b519ca30ed90222f8840ad510338681b8286400",
+    "resources/a2_family_f9_smol_tokenizer_20261110.json": "2a97a5812a11c49d3e3576248da8a1371155e2b80777582bd2e871efe0587d93"
+  },
+  "tests": {
+    "f9": 9,
+    "bridge_regression": 5
+  },
+  "logs": [
+    {
+      "path": "temp/f9_cpu_tests_a14.log",
+      "sha256": "51547d418441639e161771842fc9c85355863ba35eeaf88f60fa4a5aeb34be7e"
+    },
+    {
+      "path": "temp/f9_bridge_regression_a03.log",
+      "sha256": "df908a0c74682f2192115a3b79803f2d4c5ddbe01f5d262ccf1f1707c115271e"
+    }
+  ],
+  "historical_failures": [
+    "a10/a11 test invocation omitted tests/a2 import path; corrected invocation, a12/a14 all PASS",
+    "original census53MB receipt oversize retained; compact a02 retrieved",
+    "initial tiny Smol pad fixture corrected, original failure preserved"
+  ],
+  "inventory": {
+    "directories": 248,
+    "selected": 189,
+    "parent_aliases": 8,
+    "excluded": 51,
+    "missing": 13
+  },
+  "authority": "User explicitly requests Family v1.9 and safe known burn stop",
+  "checks": [
+    "FT12 all actual model hashes/loads before downstream; full CX spot per original part",
+    "FT11 full nine tasks per family batch1/2; .1pp MC/LAM rule, LL differences flagged",
+    "FT13 changed evaluator commit requires fresh scores; originals preserved",
+    "Ordered parents/headline/interim/remaining/addendum/backup/native communicating burn",
+    "Native train_then_burn/gpu_process infrastructure unchanged",
+    "No model training or outbound network; offline pinned native/eval environments",
+    "All248 actual directories accounted; unique run/path IDs distinguish admission reruns",
+    "Trusted data binaries hashed before native reclaim; fresh predecessor identities rechecked twice"
+  ],
+  "eta": "Await actual first model runtime; spec 8-12 nodehours estimated100-130 models, actual189 exceeds estimate"
+}
