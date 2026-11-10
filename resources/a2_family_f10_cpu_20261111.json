@@ -1,0 +1,18 @@
+{
+  "spec_sha256": "6ac9f6d2da0a75c1ac5d9846a00519de8750130813a19e10fc454bbd0490f22b",
+  "status": "preparation_tests_pass_not_GPU_admission",
+  "local_FT16_counts": {
+    "mmlu": 14042,
+    "triviaqa": 17944
+  },
+  "local_input_files_verified": 59,
+  "tests": {
+    "statistic_and_metric_tests": 5,
+    "tiny_native_OpenSci_generation": "parent and pruned original-layer-index cache/no-cache +batch1/2 exact token IDs"
+  },
+  "historical_fixture_errors": [
+    "tiny config missing qk_layernorm",
+    "tiny config missing tied embeddings"
+  ],
+  "GPU_FT14_FT15_pending": true
+}

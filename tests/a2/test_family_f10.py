@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 from eval.a2_family_f10 import holm, test_statistic
+from eval.a2_family_f10_tasks import answer_metrics, likelihood_metrics
 
 
 class F10Tests(unittest.TestCase):
@@ -19,3 +20,16 @@ class F10Tests(unittest.TestCase):
         self.assertEqual(a['p_normal'],b['p_normal'])
         self.assertEqual(a['p_bootstrap_two_sided'],b['p_bootstrap_two_sided'])
         self.assertAlmostEqual(a['bootstrap_SE_pp'],np.std(x,ddof=1))
+
+    def test_alias_normalization_and_f1(self):
+        self.assertEqual(answer_metrics('The New_York!', ['NYC','New York']),dict(exact_match=1.,token_f1=1.))
+        self.assertEqual(answer_metrics('red dog',['a red cat'])['token_f1'],.5)
+        self.assertEqual(answer_metrics('',['Paris'])['token_f1'],0.)
+
+    def test_conf_is_not_choice_probability(self):
+        rows=[dict(doc_id='0',requests=[0,1],character_lengths=[2,10],gold=1)]
+        r=likelihood_metrics(rows,[[-1.,True],[-2.,False]],'mmlu')[0]
+        self.assertEqual(r['conf'],-.2)
+        self.assertEqual(r['correctness'],1.)
+        self.assertEqual(r['acc'],0.)
+        self.assertGreater(r['p_correct'],.5)

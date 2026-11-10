@@ -12,6 +12,31 @@ def write(path, value):
     return atomic_write(path, dict(value, spec_sha256=SPEC_SHA))
 
 
+def select_models(entries, plan):
+    byid={e['model_id']:e for e in entries}
+    if len(byid)!=55 or len(byid)!=len(entries):raise ValueError('Expected unique closed F9 inventory')
+    parents=[byid[i] for i in plan['oneshots']]
+    if len(parents)!=11 or any(e['role']!='parent' for e in parents):raise ValueError('Expected 11 parents')
+    oneshots=[]
+    for e in parents:
+        ref=plan['oneshots'][e['model_id']]
+        removed=list(range(24,33)) if e['family']=='smollm3' else list(range(16,22))
+        if ref['removed_layers']!=removed:raise ValueError('Wrong registered main cut')
+        oneshots.append(dict(e,model_id=e['model_id']+'-oneshot',parent_id=e['model_id'],role='oneshot',
+                             oneshot=True,removed_layers=removed,oneshot_expected_nll=ref['expected_nll'],
+                             final_nll=ref['expected_nll'],oneshot_reference=ref,budget=0.))
+    original=[byid[i] for i in plan['new_task_original_ids']]
+    if len(original)!=34 or len({e['model_id'] for e in original})!=34:raise ValueError('Expected 34 original models')
+    if any(e['family']!='opensci' or e['dataset'] not in ('dclm','fwe') or e['arm'] not in ('P300','P1T','S72','S188') for e in original):
+        raise ValueError('Unregistered new-task model')
+    groups=[[e for e in original if e['role']=='parent'],[e for e in oneshots if e['family']=='opensci']]
+    for dataset,arms in [('dclm',('P300','P1T')),('fwe',('P300','P1T')),(None,('S72','S188'))]:
+        group=[e for e in original if e['role']=='student' and e['arm'] in arms and (dataset is None or e['dataset']==dataset)]
+        groups.append(sorted(group,key=lambda e:(e['budget'],e['dataset'],arms.index(e['arm']))))
+    if [len(g) for g in groups]!=[8,8,8,6,12]:raise ValueError('Wrong F10c model groups')
+    return oneshots,groups
+
+
 def holm(pvalues):
     """Step-down Holm adjusted p, preserving the original test order."""
     p = np.asarray(pvalues, dtype=float)

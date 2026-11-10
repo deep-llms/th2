@@ -1,0 +1,201 @@
+{
+  "spec_sha256": "6ac9f6d2da0a75c1ac5d9846a00519de8750130813a19e10fc454bbd0490f22b",
+  "f9_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f9-v110-20261110-a01",
+  "f10a_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f10-cpu-20261111-a01/f10a",
+  "host": "thiennh-p6-wc69-worker-0",
+  "oneshots": {
+    "opensci-dclm-P1T": {
+      "expected_nll": 4.004721485196599,
+      "reference_path": "temp/a2_quant_health03/results/a2_quant_20261031/workers/baseline/dclm/P1T/pre-S1-final.json",
+      "reference_sha256": "b6a9a3ca074b55fcb7d8b73fed3cff2a458a5b2a5f0b0b323593b668a4984e60",
+      "removed_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    "opensci-dclm-P300": {
+      "expected_nll": 3.7637751437881795,
+      "reference_path": "temp/a2_quant_health03/results/a2_quant_20261031/workers/baseline/dclm/P300/pre-S1-final.json",
+      "reference_sha256": "162b33d4090bef939ce707e83c7640f4a7202c46ab9a3205b2d127688dd369db",
+      "removed_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    "opensci-dclm-S188": {
+      "expected_nll": 4.012656808594966,
+      "reference_path": "temp/a2_quant_health03/results/a2_quant_20261031/workers/baseline/dclm/S188/pre-S1-final.json",
+      "reference_sha256": "8b80beed055e798b4b63bc318844daa5b883100f06715f5b157bd039d3b9badf",
+      "removed_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    "opensci-dclm-S72": {
+      "expected_nll": 3.854544222000957,
+      "reference_path": "temp/a2_quant_health03/results/a2_quant_20261031/workers/baseline/dclm/S72/pre-S1-final.json",
+      "reference_sha256": "087d23fb601ee0d0a558c8db9a8a40078b142edca35f1fe6401757349b6ae400",
+      "removed_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    "opensci-fwe-P1T": {
+      "expected_nll": 4.124982157487267,
+      "reference_path": "temp/a2_quant_health03/results/a2_quant_20261031/workers/baseline/fwe/P1T/pre-S1-final.json",
+      "reference_sha256": "8fc375a5f231a57d8c1a8835cee3177ac1659fd4ffb17da2cee7f8ab990bdb9a",
+      "removed_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    "opensci-fwe-P300": {
+      "expected_nll": 3.822488626155515,
+      "reference_path": "temp/a2_quant_health03/results/a2_quant_20261031/workers/baseline/fwe/P300/pre-S1-final.json",
+      "reference_sha256": "ddef0fffde96988e2818a8d24f7b947b15b7aa881ce4176ea05b3f2badc62039",
+      "removed_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    "opensci-fwe-S188": {
+      "expected_nll": 4.199338768224907,
+      "reference_path": "temp/a2_quant_health03/results/a2_quant_20261031/workers/baseline/fwe/S188/pre-S1-final.json",
+      "reference_sha256": "96b65cb3a5ee77b19467e1ed3fadb5b3df2c211763660659975eb899e763f6d1",
+      "removed_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    "opensci-fwe-S72": {
+      "expected_nll": 4.007307971499392,
+      "reference_path": "temp/a2_quant_health03/results/a2_quant_20261031/workers/baseline/fwe/S72/pre-S1-final.json",
+      "reference_sha256": "3092aa6bedf3d55771cc124586484aee97672fdd220481a3abe5b39a4763c0d9",
+      "removed_layers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    "smollm3-k20": {
+      "expected_nll": 3.8059218953161,
+      "reference_path": "results/a2_family_20261107/v13_final_export_20261108_a01/files/parents/k20/result.json",
+      "reference_sha256": "8dcaf272f07dc59ecf44cebd303d01bf49965eadc83dcd6b9eb334a5f3607c99",
+      "removed_layers": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ]
+    },
+    "smollm3-k6": {
+      "expected_nll": 3.7494793364744323,
+      "reference_path": "results/a2_family_20261107/v13_final_export_20261108_a01/files/parents/k6/result.json",
+      "reference_sha256": "e246e2d8647a6205f7fa7a6afef5ab2af08154292a15bcd8ed349bc298111f78",
+      "removed_layers": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ]
+    },
+    "smollm3-k64": {
+      "expected_nll": 4.690374386472095,
+      "reference_path": "results/a2_family_20261107/v13_final_export_20261108_a01/files/parents/k64/result.json",
+      "reference_sha256": "27d2354578203a24e2e4f7f279a53b14dae4c62dc8f8847778f5d179d27f97f8",
+      "removed_layers": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ]
+    }
+  },
+  "new_task_original_ids": [
+    "opensci-dclm-P1T",
+    "opensci-dclm-P300",
+    "opensci-dclm-S188",
+    "opensci-dclm-S72",
+    "opensci-fwe-P1T",
+    "opensci-fwe-P300",
+    "opensci-fwe-S188",
+    "opensci-fwe-S72",
+    "ST1-dclm-S188-S1-0.2B-lr1e-3--a439dd6b",
+    "ST1-dclm-S72-S1-0.2B-lr1e-3--95aaa75c",
+    "ST1-fwe-S188-S1-0.2B-lr1e-3--0fb68c38",
+    "ST1-fwe-S72-S1-0.2B-lr1e-3--d713b19d",
+    "ST1-dclm-P1T-S1-12.8B-lr1e-3--b030fca3",
+    "ST1-dclm-P300-S1-12.8B-lr1e-3--32af92b6",
+    "ST1-dclm-S188-S1-0.8B-lr1e-3--45cd899f",
+    "ST1-dclm-S72-S1-0.8B-lr1e-3--f8b5eb9f",
+    "ST1-fwe-S188-S1-0.8B-lr1e-3--38316287",
+    "ST1-fwe-S188-S1-3.2B-lr1e-3--ecbbc761",
+    "ST1-fwe-S72-S1-0.8B-lr1e-3--bc57ca26",
+    "ST1-fwe-S72-S1-3.2B-lr1e-3--4b71803c",
+    "ST1-dclm-S188-S1-3.2B-lr1e-3--97ae15c0",
+    "ST1-dclm-S72-S1-3.2B-lr1e-3--600bcf65",
+    "ST1-dclm-P1T-S1-0.2B-lr1e-3--8a49f36f",
+    "ST1-dclm-P1T-S1-0.8B-lr1e-3--3f64a6d3",
+    "ST1-dclm-P1T-S1-3.2B-lr1e-3--0eb64afe",
+    "ST1-dclm-P300-S1-0.2B-lr1e-3--fc03fe2b",
+    "ST1-dclm-P300-S1-0.8B-lr1e-3--3cf1d528",
+    "ST1-dclm-P300-S1-3.2B-lr1e-3--4f525079",
+    "ST1-fwe-P1T-S1-0.2B-lr1e-3--031deaca",
+    "ST1-fwe-P1T-S1-0.8B-lr1e-3--cea463c6",
+    "ST1-fwe-P1T-S1-3.2B-lr1e-3--50f3ba7d",
+    "ST1-fwe-P300-S1-0.2B-lr1e-3--8fd38544",
+    "ST1-fwe-P300-S1-0.8B-lr1e-3--b6a90c9d",
+    "ST1-fwe-P300-S1-3.2B-lr1e-3--1c7791ce"
+  ],
+  "inputs": "resources/a2_family_f10_inputs_20261111.json",
+  "previous_report": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f9-v110-report-recovery-20261110-a01/REPORT_FULL_v1.10.md",
+    "sha256": "05a463a257700bb8d6e9fcc4955d41f525ec8b25bbfb178bf8f165bad0bd9428"
+  }
+}
