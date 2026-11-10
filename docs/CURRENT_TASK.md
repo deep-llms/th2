@@ -1,3 +1,7 @@
+2026-11-10T18:06:47.970466+00:00: F10CPUa03 b19365e ACK/rawSHAd4abb97ad80aeb83b3f66d20816bef6a58cf0bdb6d5c519f3cceb59ddb58eaed; all59actualhashPASS, explicit-env pythonmodulepreparer started. No pendingreceipt. Submit singleimmutable F10admission: frozen834e2cf/14CPUtests+fullreportfixture, waitsCPUready thenfreshownership/nativeFT14–16→11oneshots→42newtask→report/replay/nodebackup/nativeburn. No training. ActualGPUstartup pendinghealth; samewatch3072624/tick1queued notactualdelivery/next02:25SGT.
+
+2026-11-10T18:00:39.619321+00:00: F10CPUa03 b19365e1714bb5213ca5d6629dd1468a615a8a48 SUBMITTED/remoteheadverified. Retrieve beforewrites/no duplicate. 59actualhashPASS, CPUmodel+FT16admission next, noGPUyet. Samewatch3072624.
+
 2026-11-10T18:00:35.789159+00:00: F10status022f435 ACK/rawSHAab8e0774d7554e3f5ebc68e4e837d3012ecdfd73ca95c32f97703ce3f53e93e5. Actual59/59dataSHA PASS; F10a90complete. CPUa02 failedsameimport, pane dead1exit1/nooutput: env supplied to tmux client notpane. Correcta03 explicit env in paneshell + python -m, samefrozen1f115f2. NoGPUmutation; preservedbothfailures. FullF10code35combinedCPUtestsPASS/fixturePASS.
 
 2026-11-10T17:53:23.299622+00:00: F10statusa02 022f435f48a172aa1603bc76137343440d13b213 SUBMITTED/remoteheadverified. FullF10queue/code CPU12tests+complete synthetic readout+native tinygenerationPASS; GPU notlaunched. Retrieve actualCPUready before launch; no duplicate. Samewatch3072624.
