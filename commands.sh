@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-family-f10-health-20261111-a01
+#th2-wc69-family-f10-health-20261111-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1
@@ -20,4 +20,16 @@ for name in ['a2_family_f10_prepare_20261111_a03','a2_family_f10_admission_20261
 root=base/'wc69-a2-family-f10-20261111-a01'
 if (root/'config.json').is_file():health(root)
 else:print('GPUQUEUE_NOT_CREATED',json.dumps(inspect()),flush=True)
+from scripts.gpu_process import process
+status=inspect();guard=Path('/mnt/local/_gpu_guard/DISABLED')
+owner=json.loads(guard.read_text()) if guard.exists() else None
+print('GUARD_OWNER',json.dumps(owner),flush=True)
+for worker in status['workers']:
+ chain=[];pid=worker
+ for _ in range(12):
+  if pid<=1:break
+  try:p=process(pid)
+  except (FileNotFoundError,ProcessLookupError):break
+  chain.append(p);pid=p['ppid']
+ print('OWNERSHIP_CHAIN',worker,json.dumps(chain),'MATCH_GUARD',bool(owner and owner.get('owner_pid') in [p['pid'] for p in chain]),flush=True)
 PY
