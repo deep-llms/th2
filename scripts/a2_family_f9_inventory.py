@@ -7,6 +7,16 @@ from datetime import datetime, timezone
 from scripts.gpu_process import inspect
 
 
+def compact(value):
+    """Inventory metadata only; large scientific arrays remain in original files."""
+    if isinstance(value,dict):
+        return {k:compact(v) for k,v in value.items()
+                if k not in ('lr_updates','log_history','checks','tests') and not k.startswith('per_sequence')}
+    if isinstance(value,list):
+        return [compact(v) for v in value] if len(value)<=64 else dict(list_length=len(value),omitted_from_inventory=True)
+    return value
+
+
 def census():
     roots = [Path('/mnt/local') / x / 'deep-llms_th2'
              for x in ('_models', '_outputs', '_backup')]
@@ -30,12 +40,7 @@ def census():
                     if file.is_file() and file.stat().st_size<100_000_000:
                         try:
                             v=json.loads(file.read_text())
-                            record['provenance'][str(file)]={k:x for k,x in v.items()
-                                if k not in ('lr_updates','per_sequence_nll','per_sequence_tokens','checks','tests')}
-                            if 'scores' in record['provenance'][str(file)]:
-                                record['provenance'][str(file)]['scores']={k:({a:b for a,b in x.items()
-                                    if not a.startswith('per_sequence')} if isinstance(x,dict) else x)
-                                    for k,x in v['scores'].items()}
+                            record['provenance'][str(file)]=compact(v)
                         except Exception as e: errors.append(dict(path=str(file),error=repr(e)))
             rows.append(record)
     return dict(utc=datetime.now(timezone.utc).isoformat(),host=socket.gethostname(),
@@ -44,4 +49,9 @@ def census():
 
 
 if __name__=='__main__':
-    print('F9_CENSUS_JSON '+json.dumps(census()),flush=True)
+    value=census()
+    encoded=json.dumps(value)
+    # Each model is a separate line, allowing bounded #2 tails if necessary.
+    print('F9_CENSUS_HEADER '+json.dumps({k:v for k,v in value.items() if k!='models'}),flush=True)
+    for row in value['models']:print('F9_CENSUS_MODEL '+json.dumps(row),flush=True)
+    print('F9_CENSUS_COMPLETE '+json.dumps(dict(models=len(value['models']),bytes=len(encoded))),flush=True)

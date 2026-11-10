@@ -1,3 +1,7 @@
+2026-11-10T08:45:15.987055+00:00: Census retrieval30d175a ACK PARTIAL/SKIPPED: original35f86c3 log52253894bytes exceeds26214400limit; raw controllerSHAa70a5dc388b8996dabd048e2544206e84825e6ccbe9836d2d2372c5281961c93. Diagnosed nested scientific arrays/log histories in metadata dump, NOT infra/auth failure. Preserve original full log on node; prepare unique read-only compact census a02 (recursive array/history omission, separate model lines). No GPU mutations/no scoring launched.
+
+2026-11-10T08:39:46.706437+00:00: F9 pending-census log retrieval 30d175ac6095c31276181d8f1af6eca384bbc6a6 SUBMITTED (#2 only); retrieve this and original35f86c3 before new jobs/GPU mutation. No duplicate census/no scoring launch.
+
 2026-11-10T08:39:30.581322+00:00: F9 census35f86c3 controller started ACK retrieved; node log absent in repeated Dropbox listings through latest check. Preparing unique #2 +a retrieval ONLY of pending census (no rerun/no GPU mutation), before any new job or burn stop. Local F9 scorer/statistics/admission/archive 8CPUtests PASS on torch2.14.1/transformers4.57.1; original bridge5tests PASS. F9 not launched; model inventory mapping pending actual receipt. Samewatch3023125 restored/SAMEthread/next16:49:05SGT, actual delivery pending.
 
 2026-11-10T08:12:10.285666+00:00: F9 census35f86c3c0986fd282a828d1d20d628cd6e383a61 SUBMITTED/remotehead verified, read-only metadata+GPU inspection; retrieve receipt before next remote writes. No burn stopped/no scoring launched.
