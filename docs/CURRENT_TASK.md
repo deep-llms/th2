@@ -1,3 +1,7 @@
+2026-11-10T17:52:18.301789+00:00: CPUrecoveryffb55db ACK retrieved; wrapperexplicitPYTHONPATH startedsamefrozen1f115f2, noGPU. Actual59data/model/FT16ready stillpending. LocalF10queue/report11CPUtestsPASS plusfullreportfixture42newmodels/64conf/11oneshotsPASS; reportonly~416KBfixture. No pendingreceipt; nextstatusa02 prepared.
+
+2026-11-10T17:46:34.104309+00:00: F10CPUrecoverya02 ffb55db95b5e3fe0bee5374dd06de4aa919de5c7 SUBMITTED/remoteheadverified. Retrieve before writes/no duplicate. Samefrozen/inputwait/noGPU.
+
 2026-11-10T17:46:30.020989+00:00: F10statusd7270e7 ACK/rawSHAe9077b3f4c395156ae89f28420750a57247275f4dbc809cb2910951ae5b810d8. CPUwrapper failedpreGPU ModuleNotFoundError efficient_llm; originalpane dead1 exit1/no preparedoutput. Actual38/59dataSHA; download ongoing. Unique CPUrecoverya02 samefrozen1f115f2 explicitPYTHONPATH, verifieddead/absentoutput; no modelrun/duplicate. F10a90complete.
 
 2026-11-10T17:44:25.339660+00:00: F10 readonlystatusa01 d7270e7b6686bac783bd06f19bb67905610155e3 SUBMITTED/remoteheadverified. Retrieve before writes/no duplicate. CPUprepare/modeladmission pending; GPU notlaunched. Samewatch3072624.

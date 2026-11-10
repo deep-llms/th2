@@ -33,3 +33,97 @@ class F10Tests(unittest.TestCase):
         self.assertEqual(r['correctness'],1.)
         self.assertEqual(r['acc'],0.)
         self.assertGreater(r['p_correct'],.5)
+
+    def test_joint_cohort_does_not_require_all_eight(self):
+        from eval.a2_family_f10_report import cohort_bootstrap
+        values=np.tile([0,0,0,-2,0,0,0,-4],(6,1)).astype(float)
+        correct=np.ones_like(values);correct[:3,4:]=0;correct[3:,:4]=0
+        p,b,n=cohort_bootstrap(values,correct,np.random.default_rng(0),resamples=100)
+        self.assertEqual(n,[3,3]);self.assertEqual(p,3.)
+        np.testing.assert_allclose(b,3.)
+
+    def test_joint_cohort_sign_and_fixed_selection(self):
+        from eval.a2_family_f10_report import cohort_bootstrap
+        values=np.array([[0,0,0,-2],[100,0,100,0],[0,0,0,-4.]])
+        correct=np.ones_like(values);correct[1,0]=0
+        p,b,n=cohort_bootstrap(values,correct,np.random.default_rng(0),resamples=100)
+        self.assertEqual(n,[2]);self.assertEqual(p,3.)
+        self.assertTrue(((b>=2)&(b<=4)).all())
+
+    def test_native_manifest_and_registered_order(self):
+        import tempfile,json
+        from pathlib import Path
+        from scripts.launch_a2_family_f10 import job_manifest
+        from run_experiments import load_jobs
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/'jobs.json';p.write_text(json.dumps(job_manifest('/x/config.json')))
+            jobs=load_jobs(p);self.assertEqual(len(jobs),1)
+        from scripts.a2_family_f10_run import Queue
+        q=Queue.__new__(Queue);q.cfg={'oneshot_entries':[{'model_id':'x'}],'groups':[[{'model_id':'p','arm':'P300','dataset':'dclm'}],[],[],[],[]]}
+        # Actual queue code has no trainer entrypoint or optimizer operation.
+        import inspect
+        code=inspect.getsource(Queue.run)
+        positions=[code.index(x) for x in ["self.progress('FT14')","self.progress('FT15')","self.progress('F10b_nine_task_oneshots')","self.progress('F10c_group_'","self.progress('analysis')","self.progress('backup')"]]
+        self.assertEqual(positions,sorted(positions))
+
+    def test_new_raw_metric_replay_rejects_tampering(self):
+        from eval.a2_family_f10_report import replay_new
+        from eval.a2_request_bridge import digest
+        rows=[dict(doc_id='0',requests=[0,1],character_lengths=[2,10],gold=1)]
+        prep={'tasks':{'mmlu':rows},'request_sha256':'requests'}
+        scores=dict(scores=[[-1,True],[-2,False]],prepared_sha256=digest(prep),request_sha256='requests')
+        vals={'tasks':{'mmlu':likelihood_metrics(rows,scores['scores'],'mmlu')}}
+        self.assertTrue(replay_new(prep,scores,vals))
+        vals['tasks']['mmlu'][0]['conf']+=.01
+        with self.assertRaises(ValueError):replay_new(prep,scores,vals)
+
+    def test_joint_bootstrap_matches_old_f9(self):
+        from eval.a2_family_f10_report import sample
+        from eval.a2_family_f9_v110 import sampler
+        from eval.downstream_suite import COUNTS
+        from unittest.mock import patch
+        small={t:5 for t in COUNTS}
+        records={m:{t:dict(identity=t,values=[i+j for i in range(5)]) for t in COUNTS} for j,m in enumerate(['a','b'])}
+        with patch('eval.a2_family_f9_v110.COUNTS',small):
+            old=sampler(records)(['a','b'])[1]
+        new=sample(records)
+        for t in old:
+            np.testing.assert_array_equal(old[t][0],new[t][1]);np.testing.assert_array_equal(old[t][1],new[t][2])
+
+    def test_model_selection_exact_registered_counts(self):
+        import json
+        from eval.a2_family_f9_v110 import select
+        from eval.a2_family_f10 import select_models
+        from pathlib import Path
+        entries=sum(select(json.loads(Path('resources/a2_family_f9_plan_20261110.json').read_text())['models'])[0],[])
+        ones,groups=select_models(entries,json.loads(Path('resources/a2_family_f10_plan_20261111.json').read_text()))
+        self.assertEqual([len(g) for g in groups],[8,8,8,6,12])
+        self.assertEqual(len(ones),11)
+        self.assertEqual(len({e['model_id'] for e in sum(groups,[])}),42)
+        for e in ones:
+            self.assertEqual(e['removed_layers'],list(range(24,33)) if e['family']=='smollm3' else list(range(16,22)))
+        self.assertFalse(any(e['arm']=='X72' for e in sum(groups,[])))
+
+    def test_backup_is_verified_and_stays_on_node(self):
+        import tempfile,json
+        from pathlib import Path
+        from scripts.a2_family_f10_backup import backup
+        from eval.a2_family_f10 import write
+        from scripts.a2_quant_io import lock
+        from efficient_llm.diagnostic_data import sha256
+        with tempfile.TemporaryDirectory() as d:
+            outer=Path(d);root=outer/'result';root.mkdir();src=outer/'source';src.mkdir();(src/'code.py').write_text('# fixture\n')
+            cfg={'source_manifest':write(outer/'source-manifest.json',dict(files={'code.py':sha256(src/'code.py')}))}
+            for k in ('prepared','input_manifest','f10a','preparation_ready','cpu_proof'):
+                cfg[k]=write(outer/(k+'.json'),{})
+            ex=write(outer/'examples.json',{})
+            cfg['FT16']=write(outer/'FT16.json',dict(fewshot_examples=ex));cfg['f10a_root']=str(outer/'a');(outer/'a').mkdir()
+            for n in ('tests.json','complete.json'):write(outer/'a'/n,{})
+            (outer/'a/tests.csv').write_text('fixture\n')
+            (outer/'family_f9_scientific.tar.gz').write_bytes(b'old-fixture')
+            cfg['f9_manifest']=write(outer/'f9_verified.json',dict(archive_sha256=sha256(outer/'family_f9_scientific.tar.gz')))
+            write(outer/'config.json',cfg);write(root/'scores.json',dict(values=[1,2,3]))
+            proof=backup(root,cfg);v=json.loads(Path(proof['path']).read_text())
+            self.assertTrue(v['verified']);self.assertTrue(v['raw_stays_on_node'])
+            self.assertFalse(list(root.rglob('*.part*')))
+            self.assertIn('scores.json',v['files'])
