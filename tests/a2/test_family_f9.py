@@ -92,6 +92,12 @@ class SmolScoring(unittest.TestCase):
             self.assertEqual(greedy,bool(torch.equal(logits.argmax(-1),target)))
 
 class F9Admission(unittest.TestCase):
+    def test_launcher_rejects_missing_commit_before_any_io(self):
+        from scripts.launch_a2_family_f9 import launch
+        for value in ('','HEAD','2a74421'):
+            with self.assertRaisesRegex(ValueError,'Explicit verified source commit'):
+                launch('/does-not-exist','/must-not-create','fixture',value)
+
     def test_queue_order_and_scientific_failure_continuation(self):
         import tempfile,threading,time,json
         from pathlib import Path

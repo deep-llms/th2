@@ -14,15 +14,16 @@
     "scripts/a2_family_f9_prepare.py": "ecea00e8126b66a7075e1c0dd16d9ebda104a8048011827dfcb2303b2d3b9036",
     "scripts/a2_family_f9_backup.py": "a7630a19ba71519b634020827721af1f6da590efacc7ee39e21d2c0e7623910d",
     "scripts/a2_family_f9_inventory.py": "99092b1bfce2c840cfa511cb04de8cf0b75a9f442bac159dc26f2ccbe6cadfb7",
-    "scripts/a2_family_f9_health.py": "d432b178d7f1b9e427f23a8ccc4ccf5472cd54a6adf7c518e89b9f7b8676545c",
-    "scripts/launch_a2_family_f9.py": "68f8cff924f22cd9d50dca5147f2e2b253591a5f6cee2872175347cb00b2e74b",
-    "tests/a2/test_family_f9.py": "488f5bd8187a3aef3f5dca450771ac9aa88daca041a34173ba760dd9a2835cf0",
+    "scripts/a2_family_f9_health.py": "5d1e1dd4def0954e47a9ad6415db0545f2ed6639704cc0ff86f502970898c34f",
+    "scripts/launch_a2_family_f9.py": "955e9029c910437e8ec6e49f0ecd418a893163692b7c785d2a384fe12d9303fb",
+    "tests/a2/test_family_f9.py": "d89c6e65ad293f548f73f7a50c4490f77b41fc25f894b08c40b0df4d91158abf",
     "resources/a2_family_f9_plan_20261110.json": "ae1b8964cb1547cb79a143cd0b519ca30ed90222f8840ad510338681b8286400",
     "resources/a2_family_f9_smol_tokenizer_20261110.json": "2a97a5812a11c49d3e3576248da8a1371155e2b80777582bd2e871efe0587d93"
   },
   "tests": {
     "f9": 9,
-    "bridge_regression": 5
+    "bridge_regression": 5,
+    "explicit_commit_guard": 1
   },
   "logs": [
     {
@@ -32,6 +33,10 @@
     {
       "path": "temp/f9_bridge_regression_a03.log",
       "sha256": "df908a0c74682f2192115a3b79803f2d4c5ddbe01f5d262ccf1f1707c115271e"
+    },
+    {
+      "path": "temp/f9_commit_guard_test_a01.log",
+      "sha256": "85f688d159e6dcbfabbd6b8d8aa8e1d66e38410da8354648de4638152fb22120"
     }
   ],
   "historical_failures": [
@@ -57,5 +62,6 @@
     "All248 actual directories accounted; unique run/path IDs distinguish admission reruns",
     "Trusted data binaries hashed before native reclaim; fresh predecessor identities rechecked twice"
   ],
-  "eta": "Await actual first model runtime; spec 8-12 nodehours estimated100-130 models, actual189 exceeds estimate"
+  "eta": "Await actual first model runtime; spec 8-12 nodehours estimated100-130 models, actual189 exceeds estimate",
+  "note": "This guard update applies to future launches only. Active a01 stays frozen at2a74421; empty original commit metadata is corrected by a separately verified additive source attestation."
 }

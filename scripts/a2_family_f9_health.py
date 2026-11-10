@@ -11,6 +11,16 @@ from eval.a2_family_f9 import SPEC_SHA
 def health(root):
     root=Path(root);result=root/'results/a2_family_20261107/downstream';gpu=inspect()
     out=dict(spec_sha256=SPEC_SHA,utc=datetime.now(timezone.utc).isoformat(),root=str(root),inspection=gpu,artifacts={},logs={},ancestry={},sources={},errors=[])
+    out['preparation_files']=[dict(name=p.name,bytes=p.stat().st_size) for p in (result/'preparation').glob('*') if p.is_file()]
+    out['cpu_processes']=[]
+    for p in Path('/proc').glob('[0-9]*'):
+        try:
+            args=(p/'cmdline').read_bytes().split(b'\0')
+            if any(x in args for x in (b'scripts.launch_a2_family_f9',b'scripts.a2_family_f9_prepare',b'eval.a2_requests')):
+                out['cpu_processes'].append(dict(identity=process(int(p.name)),io=(p/'io').read_text(),stat=(p/'stat').read_text()))
+        except (OSError,ValueError):pass
+    for p in (result/'preparation').glob('*_prepare.log'):
+        out['logs'][str(p.relative_to(root))]=p.read_text(errors='replace').splitlines()[-6:]
     manifest=root/'source-manifest.json'
     if manifest.is_file():
         m=json.loads(manifest.read_text());bad=[p for p,h in m['files'].items() if sha256(root/'source'/p)!=h]

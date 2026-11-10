@@ -2,6 +2,7 @@
 import argparse
 from importlib.metadata import version
 import os
+import re
 from pathlib import Path
 import shlex
 import socket
@@ -44,6 +45,8 @@ def jobs(config,root):
 
 
 def launch(plan,output,session,commit):
+    if not re.fullmatch(r'[0-9a-f]{40}',commit):
+        raise ValueError('Explicit verified source commit required; synced node has no Git checkout')
     source=Path(__file__).resolve().parents[1];cfg=read(plan);out=Path(output)
     if cfg['spec_sha256']!=SPEC_SHA or cfg['host']!=socket.gethostname() or out.exists():
         raise ValueError('Wrong spec/host or output exists; no duplicate launch')
