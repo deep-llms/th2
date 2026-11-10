@@ -45,6 +45,12 @@ def health(root):
         out[label]=dict(complete=len(list(folder.glob('*/complete.json'))),replayed=len(list(folder.glob('*/replay.json'))),logs=len(list(folder.glob('*.log'))))
         for p in sorted(folder.glob('*.log'),key=lambda x:x.stat().st_mtime)[-8:]:
             out['logs'][str(p.relative_to(root))]=p.read_text(errors='replace').splitlines()[-4:]
+    out['FT12_spots']=[]
+    for p in sorted((result/'FT12_loads').glob('*/FT12_spot.json')):
+        v=json.loads(p.read_text())
+        out['FT12_spots'].append(dict(model=p.parent.name,sha256=sha256(p),
+            passed=v.get('passed'),expected=v.get('expected'),
+            loss=v.get('result',{}).get('loss'),error=v.get('error')))
     for p in (result/'INTERIM.md',result/'REPORT_FULL.md',result/'backup/verified.json'):
         if p.is_file():out['artifacts'][str(p.relative_to(root))]=dict(bytes=p.stat().st_size,sha256=sha256(p))
     for row in gpu['gpus']:
