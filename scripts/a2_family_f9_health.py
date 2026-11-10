@@ -29,6 +29,7 @@ def health(root):
         'supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json',
         'results/a2_family_20261107/downstream/preparation/ready.json',
         'results/a2_family_20261107/downstream/FT12_loads.json',
+        'results/a2_family_20261107/downstream/flags.json',
         'results/a2_family_20261107/downstream/progress.json',
         'results/a2_family_20261107/downstream/complete.json',
         'results/a2_family_20261107/downstream/FT13.json']
