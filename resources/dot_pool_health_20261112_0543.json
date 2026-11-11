@@ -1,0 +1,92 @@
+{
+  "passed": true,
+  "node_utc": 1794433378.3753374,
+  "raw_sha256": "e7aabfb754f6183d58f6cc1ed850642618569ac800ec7a7fc38ed887fec77595",
+  "source_files": 425,
+  "source_errors": [],
+  "data_locks": {
+    "utc": 1794433379.9625041,
+    "guard": {
+      "owner_pid": 170383,
+      "output": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/execution-a02/supervised",
+      "at": "2026-11-11T21:20:07.694394+00:00"
+    },
+    "data_ready_sha256": "5c1e0213e938ad1f6a74d7c17ca67a759e2a951d9bdd4cee7cb0ee5469911340",
+    "data_manifest_locks": {
+      "e1": true,
+      "e2": true
+    },
+    "queued_source_errors": [],
+    "queued_source_manifest_sha256": "6409d7c1b65ad783fc484928db38a740c8ba1b7cd42f93f5d2ded7e19ac335f1",
+    "handoff_log_tail": ""
+  },
+  "progress": [
+    {
+      "run": "cal-e1-lr0",
+      "last": {
+        "step": 23280,
+        "epoch": 302.3376623376623,
+        "nll": 0.011417623609304428,
+        "lr": 0.0003,
+        "grad_norm": 0.4011578857898712,
+        "elapsed": 1139.9970174040645,
+        "seconds_per_update": 0.04896894405948805,
+        "balance_loss": 0.0,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+      },
+      "complete": false
+    },
+    {
+      "run": "cal-e1-lr1",
+      "last": {
+        "step": 22130,
+        "epoch": 287.4025974025974,
+        "nll": 0.022226113826036453,
+        "lr": 0.001,
+        "grad_norm": 0.27387386560440063,
+        "elapsed": 1139.0223318003118,
+        "seconds_per_update": 0.051469603801458416,
+        "balance_loss": 0.0,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+      },
+      "complete": false
+    }
+  ],
+  "gpu_workers": [
+    170881,
+    170882,
+    170883,
+    170884,
+    170899,
+    170900,
+    170901,
+    170902
+  ],
+  "full_ancestry_verified": true,
+  "handoff_alive": {
+    "pid": 171190,
+    "ppid": 17115,
+    "start_ticks": 432544685,
+    "command_sha256": "ba36a148f4f0d3f5f84862a47bac1469b3bab2a0467e895c6ccdbeb89f3d4d71",
+    "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+    "command_prefix": [
+      "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+      "-u",
+      "-m"
+    ],
+    "launcher_kind": null
+  },
+  "actual_reminder_delivery": {
+    "actual_delivery": true,
+    "received_utc": "2026-11-11T21:41:49.755621+00:00",
+    "thread": "01a120fe-ea0e-7030-a337-dd3f52f3c625",
+    "watcher_pid": 3211258,
+    "note": "Actual reminder received as user message in this thread; queue tick attribution not asserted."
+  },
+  "remaining": "finish E1 calibration, automatic a03 with corrected E2 scheduler, remaining Phase0, twenty main runs, evaluation/report/Tier1 export/native handoff",
+  "flags": [
+    "intentional partial a01 calibration restart retained",
+    "a03 prepared and waiting, not yet started",
+    "Tier2/3 checkpoints not yet off-node"
+  ]
+}
