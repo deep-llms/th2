@@ -1,0 +1,14 @@
+# manager: conda
+# fresh: true
+# python: 3.11
+pip
+torch==2.14.1
+transformers==4.57.1
+huggingface-hub==0.36.0
+tokenizers==0.22.1
+numpy==2.4.6
+scipy==1.17.0
+safetensors==0.8.0
+matplotlib==3.10.7
+flash-attn-4[cu13]==4.0.0b33
+nvidia-cutlass-dsl==4.8.0
