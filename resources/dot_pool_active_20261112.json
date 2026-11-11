@@ -1,10 +1,9 @@
 {
-  "utc": 1794435012.9673421,
-  "snapshot_sgt": "2026-11-12T06:10:12.967342+08:00",
-  "receipt_sha256": "ea29e50f7b1be69f8119532950d0df151eb7d8c661aa6a08cfaa9abc234f936a",
-  "phase": "phase0_e2_throughput",
+  "snapshot_sgt": "2026-11-12T06:20:39+08:00",
+  "receipt_sha256": "31cf310caee0cd2b8ec435865c41e24bf54de8ac3fd157b31e3a4229d4cf4337",
+  "phase": "phase0_e2_lr",
   "source_files": 429,
-  "source_hash_errors": [],
+  "source_errors": [],
   "data_locks": {
     "e1": true,
     "e2": true
@@ -22,18 +21,22 @@
     ],
     "launcher_kind": null
   },
-  "gpu_workers": [
-    173363,
-    173364,
-    173365,
-    173366,
-    173367,
-    173368,
-    173369,
-    173370
+  "workers": [
+    174547,
+    174548,
+    174549,
+    174550,
+    174551,
+    174552,
+    174553,
+    174554
   ],
-  "all_gpu_workers_owned": true,
+  "all_workers_owned": true,
   "completed_e1_benchmarks": 10,
+  "completed_e2_benchmarks": 5,
+  "e2_lr_fits_complete": 1,
+  "e2_lr_fit_active": "D lr0.002 step350/953",
+  "calibration_reuse_verified": true,
   "flags": [
     {
       "flag": "Owned native handoff; prior logs retained, original elapsed time preserved; calibration reuse is recorded separately when requested",
@@ -45,10 +48,11 @@
       "predicted_seconds": 30801.804974347353
     }
   ],
-  "small_calibration_backup": "48 members/401864bytes locally hash verified",
-  "remaining": [
-    "E2 throughput and LR calibration",
-    "20 main E1/E2 runs",
-    "downstream/diagnostics/report/Tier1 downloads/native handoff"
-  ]
+  "small_export_verified": {
+    "commit": "a37fd92226bacedb8152794820f8ce86dd63a3e6",
+    "bytes": 8609,
+    "members": 10,
+    "lr_schedule_checks": 97,
+    "proof": "results/dot_pool_20261112/e2_calibration_small/cal-e2-D-0.001/verification.json"
+  }
 }
