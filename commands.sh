@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-family-f12-health-20261111-a07
+#th2-wc69-family-f12-health-20261111-a08
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1
@@ -32,7 +32,7 @@ for p in paths:
 print('F12_CHECK_SUMMARY',json.dumps(dict(files=len(paths),counts=dict(counts),failures=failed)),flush=True)
 for p in sorted((r/'heals').glob('*/result.json')):
  v=read(p)
- print('F12_RESULT',p.parent.name,sha256(p),json.dumps({k:v.get(k) for k in ('flags','train_seconds','steps','run_id')}),flush=True)
+ print('F12_RESULT',p.parent.name,sha256(p),json.dumps({k:v.get(k) for k in ('flags','training_seconds','elapsed_seconds','registered_run','roundtrip_difference','delta_post','run_id')}),flush=True)
 for name in ('verification.json','backup/verified.json'):
  p=r/name
  if p.is_file():
