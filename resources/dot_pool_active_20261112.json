@@ -1,49 +1,19 @@
 {
-  "node_utc": 1794432873.1592755,
-  "raw_sha256": "27445606d3985bf538f2b8f1e8ce13021144a9f19c2c0b3b4e536b00fdc79c9e",
-  "source_files": 425,
-  "source_errors": [],
-  "gpu_count": 8,
-  "core_checks": 17,
-  "production_kernel_checks": 2,
-  "production_overfit_arms": 10,
-  "progress": [
-    {
-      "run": "cal-e1-lr0",
-      "last": {
-        "step": 12740,
-        "epoch": 165.45454545454547,
-        "nll": 0.02478906884789467,
-        "lr": 0.0003,
-        "grad_norm": 0.6190775036811829,
-        "elapsed": 634.7199234738946,
-        "seconds_per_update": 0.049821030123530646,
-        "balance_loss": 0.0,
-        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
-      },
-      "complete": false
-    },
-    {
-      "run": "cal-e1-lr1",
-      "last": {
-        "step": 12120,
-        "epoch": 157.4025974025974,
-        "nll": 0.030769668519496918,
-        "lr": 0.001,
-        "grad_norm": 0.3274933993816376,
-        "elapsed": 633.6912030344829,
-        "seconds_per_update": 0.05228475274682574,
-        "balance_loss": 0.0,
-        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
-      },
-      "complete": false
-    }
-  ],
-  "handoff_process": {
-    "pid": 171190,
+  "utc": 1794435012.9673421,
+  "snapshot_sgt": "2026-11-12T06:10:12.967342+08:00",
+  "receipt_sha256": "ea29e50f7b1be69f8119532950d0df151eb7d8c661aa6a08cfaa9abc234f936a",
+  "phase": "phase0_e2_throughput",
+  "source_files": 429,
+  "source_hash_errors": [],
+  "data_locks": {
+    "e1": true,
+    "e2": true
+  },
+  "owner": {
+    "pid": 172535,
     "ppid": 17115,
-    "start_ticks": 432544685,
-    "command_sha256": "ba36a148f4f0d3f5f84862a47bac1469b3bab2a0467e895c6ccdbeb89f3d4d71",
+    "start_ticks": 432693250,
+    "command_sha256": "de867d8ae8e9566a0d8d283a7edb19a9e0053017e03248e9ab9c5d8c0837404d",
     "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
     "command_prefix": [
       "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
@@ -52,14 +22,33 @@
     ],
     "launcher_kind": null
   },
-  "handoff_state": "waiting_for_completed_e1_calibration",
-  "execution_a02_source": "c6d44961628006060df0742cd78decb5d38b34c4",
-  "queued_a03_source": "d3ed9a62377eb56c0e065fd5c9ed234b4825484a",
-  "queued_a03_source_manifest": "6409d7c1b65ad783fc484928db38a740c8ba1b7cd42f93f5d2ded7e19ac335f1",
+  "gpu_workers": [
+    173363,
+    173364,
+    173365,
+    173366,
+    173367,
+    173368,
+    173369,
+    173370
+  ],
+  "all_gpu_workers_owned": true,
+  "completed_e1_benchmarks": 10,
   "flags": [
-    "a01 partial calibration intentionally stopped; logs retained",
-    "E2 LR bug corrected in queued a03 before E2 starts",
-    "Tier2/3 weights/full state not yet off-node",
-    "Watcher queue ACK verified; actual delivery pending"
+    {
+      "flag": "Owned native handoff; prior logs retained, original elapsed time preserved; calibration reuse is recorded separately when requested",
+      "prior_root": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a02",
+      "prior_phase_log_sha256": "a5c57055772e9d7f45519a83c061de90b41c029968b213335e418a305c2b369a"
+    },
+    {
+      "flag": "E1 minimum exceeds target3h",
+      "predicted_seconds": 30801.804974347353
+    }
+  ],
+  "small_calibration_backup": "48 members/401864bytes locally hash verified",
+  "remaining": [
+    "E2 throughput and LR calibration",
+    "20 main E1/E2 runs",
+    "downstream/diagnostics/report/Tier1 downloads/native handoff"
   ]
 }
