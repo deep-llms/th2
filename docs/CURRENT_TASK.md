@@ -1,3 +1,5 @@
+2026-11-11 23:11 SGT: Prune plan READY/retrieved; all109 originals+backup content hashes match historical ledger; exact344554067497bytes. Plan SHA e929484f849c95bad95797af484e78fa456882ae003d8a668f291da644d37412 reviewed against audit/allowlist. Submit exact-plan execution once; verify PRUNE_COMPLETE and final total before claiming removal.
+
 2026-11-11 23:05 SGT: Plan9b80f7b startup receipt retrieved: correct wc69 host, 109 exact input files /344554067497 bytes undergoing original+backup hash preflight. No deletion yet. Request fresh plan receipt; do not duplicate plan.
 
 2026-11-11: Input audit574f537 retrieved: 24247 files /1192311879762 bytes, no symlinks. Cleanup plan only prepared, no deletion yet. Tight allowlist of mixture/FWE/Why input caches; retain original CulturaX packed inputs because legacy restore depends on them. Plan hashes originals and backup against historical ledger; protected metadata and all weights/results retained. Five CPU safety tests pass.
