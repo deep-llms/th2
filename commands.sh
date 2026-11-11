@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-family-f12-health-20261111-a05
+#th2-wc69-family-f12-health-20261111-a06
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1
@@ -46,4 +46,11 @@ while changed:
   if int(f[1]) in owned and int(f[0]) not in owned:owned.add(int(f[0]));changed=True
 for line in rows:
  if int(line.split()[0]) in owned:print('F11_PROCESS',line,flush=True)
+for name in ('verification.json','backup/verified.json'):
+ p=r/name
+ if p.is_file():
+  value=read(p)
+  if 'files' in value:value['file_count']=len(value.pop('files'))
+  if isinstance(value.get('backup'),dict) and 'files' in value['backup']:value['backup']['file_count']=len(value['backup'].pop('files'))
+  print('F11_FINAL_PROOF',name,sha256(p),value,flush=True)
 CODE
