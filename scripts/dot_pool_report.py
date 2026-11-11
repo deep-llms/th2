@@ -15,7 +15,7 @@ def main():
     if not final.exists():flags.append(f'Missing result: {path.name}');continue
     cfg=json.loads((path/'config.json').read_text());f=json.loads(final.read_text());train=json.loads((path/'train_complete.json').read_text());metrics=f['metrics'];row=dict(arm=arm,seed=seed)
     if study=='E1':
-     row.update({name:metrics[name]['accuracy'] for name in ['id_test','ood_test','atoms','ood_atoms']});row['epochs']=cfg['steps']/77;cross=[]
+     row.update({name:metrics[name]['accuracy'] for name in ['id_test','ood_test','train','atoms','ood_atoms']});row['epochs']=cfg['steps']/77;cross=[]
      for ep in path.glob('eval-*.json'):
       z=json.loads(ep.read_text())
       if z['metrics'].get('ood_dev',{}).get('accuracy',0)>=.5:cross.append(z['step']/77)
@@ -100,7 +100,7 @@ def main():
   if path.exists():text+=['',path.name,'```',path.read_text(),'```']
  runtime=[]
  for path in sorted(root.glob('E[12]-*/config.json')):
-  cfg=json.loads(path.read_text());runtime.append(dict(run=path.parent.name,runtime=cfg.get('runtime'),attention=cfg['model']['backend'],experts=cfg['model']['expert_kernel']))
+  cfg=json.loads(path.read_text());runtime.append(dict(run=path.parent.name,runtime=cfg.get('runtime'),attention=cfg['model'].get('backend','sdpa'),experts=cfg['model'].get('expert_kernel','loop')))
  text+=['','```json',json.dumps(runtime,indent=2),'```','E2 dense forward FLOPs/token at sequence512:215M; router overhead at most3.3M/token; theoretical Taylor forward overhead approximately7%, measured speed is in budget.json.']
  write(root/'readout.json',dict(tables=tables,extended=extended,downstream=downstream,readings=readings,flags=flags))
  (root/'REPORT.md').write_text('\n'.join(text)+'\n')

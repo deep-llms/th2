@@ -124,10 +124,11 @@ def downstream(run,cfg,m):
  write(run/'downstream.json',dict(metrics=primary,protocol='canonical A2 13686ed requests/replay; lm-eval0.4.13; context512; zero-shot',requests_sha256=sha(request)))
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('mode',choices=['routes','analysis']);p.add_argument('--run',required=True);a=p.parse_args();run,cfg,m=load(a.run);torch.set_num_threads(2)
+ p=argparse.ArgumentParser();p.add_argument('mode',choices=['routes','analysis','downstream','diagnostics']);p.add_argument('--run',required=True);a=p.parse_args();run,cfg,m=load(a.run);torch.set_num_threads(2)
  if a.mode=='routes':routes(run,cfg,m);return
+ if a.mode=='downstream':downstream(run,cfg,m);return
  flags=[]
- funcs=[lambda:e1_analysis(run)] if cfg['study']=='E1' else [lambda:downstream(run,cfg,m)]
+ funcs=[lambda:e1_analysis(run)] if cfg['study']=='E1' else ([lambda:downstream(run,cfg,m)] if a.mode=='analysis' else [])
  if cfg['study']=='E2' and cfg['arm'] in ['SO','DOT','SR']:funcs+=[lambda:e2_reentry(run)]
  if cfg['study']=='E2' and cfg['arm'] in ['SO','DOT']:funcs+=[lambda:e2_shuffle(run,cfg,m)]
  if cfg['study']=='E2' and cfg['arm']=='DOT':funcs+=[lambda:taylor_validity(run,cfg,m)]

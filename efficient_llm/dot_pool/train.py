@@ -71,7 +71,7 @@ def run(cfg):
     opt=torch.optim.AdamW(m.parameter_groups(),lr=cfg['lr'],betas=(.9,.95),eps=1e-8,fused=device.type=='cuda')
     data=Path(cfg['data']);study=cfg['study']
     train=np.load(data/'train.npy',mmap_mode='r') if study=='E1' else Stream(data,'train')
-    vals={name:np.load(data/(name+'.npy'),mmap_mode='r') for name in ['id_dev','ood_dev','id_test','ood_test','atoms','ood_atoms']} if study=='E1' else {'val':Stream(data,'val')}
+    vals={name:np.load(data/(name+'.npy'),mmap_mode='r') for name in ['id_dev','ood_dev','id_test','ood_test','atoms','ood_atoms','train']} if study=='E1' else {'val':Stream(data,'val')}
     total=cfg['steps'];stop_after=cfg.get('stop_after',total);batch=cfg['batch'];micro=cfg.get('microbatch',batch//world)
     if batch%world:raise ValueError('Global batch not divisible by world')
     if rank==0:

@@ -23,9 +23,14 @@ def main():
  if sha(source/'docs/DOT_pool_pilot_spec_v1.2.md')!=SPEC_SHA:raise ValueError('Spec mismatch')
  for package,expected in [('torch','2.14.1'),('transformers','4.57.1'),('flash-attn-4','4.0.0b33')]:
   if version(package).split('+')[0]!=expected:raise ValueError('Runtime mismatch '+package)
+ for line in (source/'envs/dot_pool.txt').read_text().splitlines():
+  if '==' in line:
+   package,expected=line.split('==');package=package.split('[')[0]
+   if version(package).split('+')[0]!=expected:raise ValueError('Dependency mismatch '+package)
  from flash_attn.cute.interface import flash_attn_varlen_func
  import torch
  if not hasattr(torch.nn.functional,'grouped_mm'):raise ValueError('Grouped GEMM missing')
+ if sha(BASE/'data/ready.json')!='5c1e0213e938ad1f6a74d7c17ca67a759e2a951d9bdd4cee7cb0ee5469911340':raise ValueError('Data ready differs from retrieved prelaunch receipt')
  ready=json.loads((BASE/'data/ready.json').read_text())
  if not ready['ready'] or ready['spec_sha256']!=SPEC_SHA:raise ValueError('Data not ready')
  for sub,key in [('e1','kg_manifest_sha256'),('e2','data_manifest_sha256')]:

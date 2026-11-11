@@ -1,0 +1,1024 @@
+{
+  "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05",
+  "core_unittest_passed": 7,
+  "native_job_contract_passed": 1,
+  "cpu_checks": {
+    "checks": [
+      {
+        "test": "T0_fp32",
+        "passed": true,
+        "seconds": 8.834192432463169,
+        "detail": {}
+      },
+      {
+        "test": "T1",
+        "passed": true,
+        "seconds": 0.7258807867765427,
+        "detail": {}
+      },
+      {
+        "test": "T2",
+        "passed": true,
+        "seconds": 0.20677907019853592,
+        "detail": {}
+      },
+      {
+        "test": "T0_bf16",
+        "passed": false,
+        "seconds": 7.495284080505371e-06,
+        "detail": {
+          "reason": "GPU BF16 comparison not executed"
+        }
+      },
+      {
+        "test": "T3",
+        "passed": true,
+        "seconds": 0.09317800402641296,
+        "detail": {
+          "initial_instant_imbalance": 1000.0,
+          "aggregate_100_updates": [
+            39000.0,
+            23000.0,
+            23000.0,
+            23000.0,
+            23000.0,
+            23000.0,
+            23000.0,
+            23000.0
+          ],
+          "final_instant_imbalance": 1000.0,
+          "bias": [
+            [
+              0.02200000360608101,
+              0.05399996414780617,
+              0.05399996414780617,
+              0.05399996414780617,
+              0.05399996414780617,
+              0.05399996414780617,
+              0.05399996414780617,
+              0.05399996414780617
+            ]
+          ]
+        }
+      },
+      {
+        "test": "T4",
+        "passed": true,
+        "seconds": 0.009358435869216919,
+        "detail": {
+          "max_abs": 1.4901161193847656e-08
+        }
+      },
+      {
+        "test": "T5",
+        "passed": true,
+        "seconds": 3.2562827467918396,
+        "detail": {
+          "median_spearman": 1.0,
+          "delta_L": [
+            [
+              -6.341934204101562e-05,
+              8.893013000488281e-05,
+              -0.0009975433349609375,
+              -0.0002930164337158203
+            ],
+            [
+              -0.000827789306640625,
+              0.0008161067962646484,
+              0.0005922317504882812,
+              -0.0005972385406494141
+            ],
+            [
+              -0.00027751922607421875,
+              0.00028824806213378906,
+              -0.0014672279357910156,
+              -0.0017588138580322266
+            ],
+            [
+              -0.0008287429809570312,
+              0.0008425712585449219,
+              -0.002137899398803711,
+              0.001840829849243164
+            ],
+            [
+              -0.0004870891571044922,
+              0.0004901885986328125,
+              -0.0002892017364501953,
+              0.00010967254638671875
+            ],
+            [
+              0.0005426406860351562,
+              -0.0005602836608886719,
+              0.001239776611328125,
+              0.0013494491577148438
+            ],
+            [
+              0.0010485649108886719,
+              -0.0010786056518554688,
+              0.004547595977783203,
+              0.0017504692077636719
+            ],
+            [
+              -0.0021343231201171875,
+              0.002205371856689453,
+              -0.002483367919921875,
+              -0.0007739067077636719
+            ],
+            [
+              -0.00035691261291503906,
+              0.00038504600524902344,
+              0.0010366439819335938,
+              0.0003871917724609375
+            ],
+            [
+              0.00041174888610839844,
+              -0.00040841102600097656,
+              0.0006666183471679688,
+              0.0013294219970703125
+            ],
+            [
+              0.001272439956665039,
+              -0.0012967586517333984,
+              0.002948284149169922,
+              0.00037026405334472656
+            ],
+            [
+              -0.0008637905120849609,
+              0.0008883476257324219,
+              0.0011463165283203125,
+              -7.843971252441406e-05
+            ],
+            [
+              -0.0008282661437988281,
+              0.0008428096771240234,
+              -0.0006847381591796875,
+              -0.0005125999450683594
+            ],
+            [
+              3.814697265625e-06,
+              -1.1682510375976562e-05,
+              0.003183603286743164,
+              -0.0005407333374023438
+            ],
+            [
+              0.0010852813720703125,
+              -0.00106048583984375,
+              9.298324584960938e-05,
+              0.0018467903137207031
+            ],
+            [
+              7.104873657226562e-05,
+              -6.580352783203125e-05,
+              -0.0019338130950927734,
+              -0.0016682147979736328
+            ],
+            [
+              -0.0006058216094970703,
+              0.0006356239318847656,
+              0.0019822120666503906,
+              -0.0002830028533935547
+            ],
+            [
+              0.0006170272827148438,
+              -0.0006270408630371094,
+              -0.001974344253540039,
+              0.001737356185913086
+            ],
+            [
+              -0.0008916854858398438,
+              0.0009062290191650391,
+              0.0011055469512939453,
+              0.00012874603271484375
+            ],
+            [
+              -0.0015528202056884766,
+              0.0016069412231445312,
+              0.0016169548034667969,
+              0.0015201568603515625
+            ],
+            [
+              0.002115488052368164,
+              -0.002219676971435547,
+              -0.00042128562927246094,
+              -0.005678653717041016
+            ],
+            [
+              -0.0006153583526611328,
+              0.0006535053253173828,
+              0.000202178955078125,
+              0.0007188320159912109
+            ],
+            [
+              -0.00032591819763183594,
+              0.0003273487091064453,
+              0.0011355876922607422,
+              -0.0006628036499023438
+            ],
+            [
+              0.00045871734619140625,
+              -0.0004649162292480469,
+              0.0003190040588378906,
+              0.0018038749694824219
+            ],
+            [
+              0.0006067752838134766,
+              -0.0006382465362548828,
+              -0.0005671977996826172,
+              -0.0004143714904785156
+            ],
+            [
+              -0.0008625984191894531,
+              0.0008618831634521484,
+              -0.0007014274597167969,
+              -0.0009922981262207031
+            ],
+            [
+              -0.0004990100860595703,
+              0.0004916191101074219,
+              0.00012087821960449219,
+              -0.0006310939788818359
+            ],
+            [
+              0.0006287097930908203,
+              -0.0006544589996337891,
+              0.0005016326904296875,
+              0.0023136138916015625
+            ],
+            [
+              0.0002353191375732422,
+              -0.00026226043701171875,
+              8.559226989746094e-05,
+              -0.00012421607971191406
+            ],
+            [
+              0.0015511512756347656,
+              -0.0015788078308105469,
+              0.0019278526306152344,
+              0.0008311271667480469
+            ],
+            [
+              0.00039505958557128906,
+              -0.0003952980041503906,
+              0.0007109642028808594,
+              0.0005533695220947266
+            ],
+            [
+              0.0009706020355224609,
+              -0.0009963512420654297,
+              0.0019745826721191406,
+              0.0010867118835449219
+            ],
+            [
+              0.0005474090576171875,
+              -0.0005483627319335938,
+              0.0021729469299316406,
+              0.0009856224060058594
+            ],
+            [
+              -0.0016961097717285156,
+              0.0017778873443603516,
+              0.0021109580993652344,
+              0.0009775161743164062
+            ],
+            [
+              -0.0011432170867919922,
+              0.0011932849884033203,
+              0.0035212039947509766,
+              0.0031969547271728516
+            ],
+            [
+              -8.058547973632812e-05,
+              7.963180541992188e-05,
+              0.0003161430358886719,
+              -0.00013327598571777344
+            ],
+            [
+              -0.0002200603485107422,
+              0.000225067138671875,
+              -0.00017380714416503906,
+              0.0005173683166503906
+            ],
+            [
+              0.00014591217041015625,
+              -0.0001704692840576172,
+              -0.0016026496887207031,
+              0.00177764892578125
+            ],
+            [
+              -0.0014338493347167969,
+              0.0015010833740234375,
+              -0.0014498233795166016,
+              -0.0010204315185546875
+            ],
+            [
+              -0.00024700164794921875,
+              0.00024509429931640625,
+              -0.004915475845336914,
+              0.000194549560546875
+            ],
+            [
+              0.00017976760864257812,
+              -0.00017261505126953125,
+              -0.0008988380432128906,
+              -0.0033130645751953125
+            ],
+            [
+              0.0007271766662597656,
+              -0.0007600784301757812,
+              -0.00035381317138671875,
+              -0.002605438232421875
+            ],
+            [
+              0.0002372264862060547,
+              -0.0002422332763671875,
+              0.0023415088653564453,
+              -0.0011353492736816406
+            ],
+            [
+              -0.0005834102630615234,
+              0.0005903244018554688,
+              0.0009472370147705078,
+              0.0012333393096923828
+            ],
+            [
+              -0.0003020763397216797,
+              0.0002989768981933594,
+              0.0006480216979980469,
+              -0.0003154277801513672
+            ],
+            [
+              -0.0002295970916748047,
+              0.00026488304138183594,
+              0.0012142658233642578,
+              -3.0517578125e-05
+            ],
+            [
+              -0.0007843971252441406,
+              0.0008256435394287109,
+              0.001001596450805664,
+              0.0027170181274414062
+            ],
+            [
+              -0.002488851547241211,
+              0.002508401870727539,
+              0.002358675003051758,
+              0.0030541419982910156
+            ],
+            [
+              -0.00043582916259765625,
+              0.00048041343688964844,
+              0.0015146732330322266,
+              0.001943349838256836
+            ],
+            [
+              -0.0011355876922607422,
+              0.0011456012725830078,
+              -0.0003960132598876953,
+              0.0035233497619628906
+            ],
+            [
+              -0.000713348388671875,
+              0.0006952285766601562,
+              -0.0014636516571044922,
+              0.0010666847229003906
+            ],
+            [
+              -0.0003921985626220703,
+              0.000400543212890625,
+              0.0014204978942871094,
+              -0.0006690025329589844
+            ],
+            [
+              -0.0004134178161621094,
+              0.0004124641418457031,
+              -0.0013210773468017578,
+              0.0012760162353515625
+            ],
+            [
+              -0.0003504753112792969,
+              0.0003514289855957031,
+              0.0013079643249511719,
+              -0.0014586448669433594
+            ],
+            [
+              0.0003535747528076172,
+              -0.0003485679626464844,
+              0.0013318061828613281,
+              0.0022792816162109375
+            ],
+            [
+              -0.0010082721710205078,
+              0.001020669937133789,
+              0.001867055892944336,
+              -0.0024912357330322266
+            ],
+            [
+              -0.00024437904357910156,
+              0.00026488304138183594,
+              -1.8596649169921875e-05,
+              -0.0015006065368652344
+            ],
+            [
+              0.00022935867309570312,
+              -0.00024271011352539062,
+              -0.0004336833953857422,
+              -0.0015485286712646484
+            ],
+            [
+              0.0007698535919189453,
+              -0.0007574558258056641,
+              0.00023365020751953125,
+              -0.0006899833679199219
+            ],
+            [
+              -0.0004138946533203125,
+              0.0004119873046875,
+              0.00020551681518554688,
+              -0.0024662017822265625
+            ],
+            [
+              -0.002305269241333008,
+              0.0023651123046875,
+              -0.0011348724365234375,
+              -0.00382232666015625
+            ],
+            [
+              -0.0009129047393798828,
+              0.0009510517120361328,
+              0.0005650520324707031,
+              -0.0015101432800292969
+            ],
+            [
+              0.0003859996795654297,
+              -0.00038933753967285156,
+              -0.0011217594146728516,
+              0.0022542476654052734
+            ],
+            [
+              -0.00033783912658691406,
+              -0.0001842975616455078,
+              0.0013585090637207031,
+              -0.00017023086547851562
+            ]
+          ],
+          "sign": "L_counterfactual - L_normal; correlate c with negative delta_L"
+        }
+      },
+      {
+        "test": "T6",
+        "passed": true,
+        "seconds": 0.10680321604013443,
+        "detail": {
+          "p": 0.7418422623360668,
+          "counts": [
+            249970,
+            249258,
+            249984,
+            249639,
+            250208,
+            250326,
+            250134,
+            250481
+          ],
+          "decisions": 1000000
+        }
+      },
+      {
+        "test": "T7_D",
+        "passed": true,
+        "seconds": 5.199109219014645,
+        "detail": {
+          "initial": 7.70343542098999,
+          "final": 0.09353692829608917,
+          "steps": 66,
+          "fixture": "tiny architecture, E1 256 facts; full-shape GPU checks still required for production kernels"
+        }
+      },
+      {
+        "test": "T7_L",
+        "passed": true,
+        "seconds": 5.108649015426636,
+        "detail": {
+          "initial": 7.716083526611328,
+          "final": 0.09739561378955841,
+          "steps": 66,
+          "fixture": "tiny architecture, E1 256 facts; full-shape GPU checks still required for production kernels"
+        }
+      },
+      {
+        "test": "T7_SO",
+        "passed": true,
+        "seconds": 6.794702738523483,
+        "detail": {
+          "initial": 7.728180885314941,
+          "final": 0.09434418380260468,
+          "steps": 67,
+          "fixture": "tiny architecture, E1 256 facts; full-shape GPU checks still required for production kernels"
+        }
+      },
+      {
+        "test": "T7_DOT",
+        "passed": true,
+        "seconds": 7.396055296063423,
+        "detail": {
+          "initial": 7.728180885314941,
+          "final": 0.09611755609512329,
+          "steps": 67,
+          "fixture": "tiny architecture, E1 256 facts; full-shape GPU checks still required for production kernels"
+        }
+      },
+      {
+        "test": "T7_SR",
+        "passed": true,
+        "seconds": 2.2696766182780266,
+        "detail": {
+          "initial": 7.718905448913574,
+          "final": 3.7760097980499268,
+          "steps": 23,
+          "fixture": "tiny architecture, E1 256 facts; full-shape GPU checks still required for production kernels"
+        }
+      },
+      {
+        "test": "T7_PL",
+        "passed": true,
+        "seconds": 6.720809131860733,
+        "detail": {
+          "initial": 7.719630241394043,
+          "final": 0.0991104394197464,
+          "steps": 65,
+          "fixture": "tiny architecture, E1 256 facts; full-shape GPU checks still required for production kernels"
+        }
+      },
+      {
+        "test": "T8",
+        "passed": true,
+        "seconds": 0.07061737775802612,
+        "detail": {}
+      },
+      {
+        "test": "T9",
+        "passed": true,
+        "seconds": 1.0474155843257904,
+        "detail": {}
+      },
+      {
+        "test": "T10",
+        "passed": true,
+        "seconds": 0.13967818766832352,
+        "detail": {
+          "q_atol": 1e-05,
+          "q_rtol": 1e-05,
+          "normalization": "summed task NLL; same four labeled tokens, full vs two microbatches"
+        }
+      }
+    ],
+    "complete": true,
+    "device": "cpu",
+    "failed": [
+      "T0_bf16"
+    ],
+    "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+  },
+  "distributed_resume": {
+    "passed": true,
+    "max_abs_weights": 0.0,
+    "world": 2,
+    "resumed_steps": 10,
+    "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+  },
+  "node_prelaunch": {
+    "host": "thiennh-p6-wc69-worker-0",
+    "utc": 1794430197.4027805,
+    "gpu": {
+      "host": "thiennh-p6-wc69-worker-0",
+      "time": "2026-11-11T20:49:57.673586+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-08f82f92-6e9a-1b21-56cb-4b359c898e3c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            163092
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-2909c891-748d-a78f-f72c-181231c00e7a",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            163093
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-d5679196-f3b9-f2fd-2a95-fc23676711ba",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            163094
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-8ec230a4-1d3c-13c5-3681-51bceba7df9a",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            163095
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-cdb11306-b5c0-52f0-d871-bba3d94e34d7",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            163096
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-d6a96000-88e7-7653-6d72-9a8e3bddf198",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            163097
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-96e1284a-b396-0253-6511-1d6b2ce193fa",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            163098
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-817e7cb4-510c-c53f-9db1-c5752571469f",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            163099
+          ]
+        }
+      ],
+      "workers": [
+        163092,
+        163093,
+        163094,
+        163095,
+        163096,
+        163097,
+        163098,
+        163099
+      ],
+      "stop_roots": [
+        163023
+      ],
+      "processes": {
+        "163092": {
+          "pid": 163092,
+          "ppid": 163023,
+          "start_ticks": 428872665,
+          "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "163093": {
+          "pid": 163093,
+          "ppid": 163023,
+          "start_ticks": 428872665,
+          "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "163094": {
+          "pid": 163094,
+          "ppid": 163023,
+          "start_ticks": 428872665,
+          "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "163095": {
+          "pid": 163095,
+          "ppid": 163023,
+          "start_ticks": 428872665,
+          "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "163096": {
+          "pid": 163096,
+          "ppid": 163023,
+          "start_ticks": 428872665,
+          "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "163097": {
+          "pid": 163097,
+          "ppid": 163023,
+          "start_ticks": 428872665,
+          "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "163098": {
+          "pid": 163098,
+          "ppid": 163023,
+          "start_ticks": 428872665,
+          "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "163099": {
+          "pid": 163099,
+          "ppid": 163023,
+          "start_ticks": 428872665,
+          "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "163023": {
+          "pid": 163023,
+          "ppid": 17115,
+          "start_ticks": 428872534,
+          "command_sha256": "ce602e3664b4b8c29feb98868dc6186f8080a41590887b148e362f78e940586d",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f12-20261111-a01/source/resources/llm_pretrain_burn.py"
+          ],
+          "launcher_kind": "gpu_burn"
+        }
+      },
+      "guard_disabled": false
+    },
+    "files": {
+      "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/data/ready.json": {
+        "sha256": "5c1e0213e938ad1f6a74d7c17ca67a759e2a951d9bdd4cee7cb0ee5469911340",
+        "value": {
+          "ready": true,
+          "e1": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/data/e1",
+          "e2": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/data/e2",
+          "tokenizer": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+          "data_manifest_sha256": "b999bca3b6eff6252b91e396c2257dad2c36f92e2cc71a097629fc5f425b2c14",
+          "kg_manifest_sha256": "1b1fb700f7f7b1e9f5271584cdd4236dffab29c5f27e765f2011c50b9693a8f2",
+          "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+        }
+      },
+      "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/data/e2/progress.json": {
+        "sha256": "1b3d3dd79c853f62070c5958620e7f460da77d4e4e00765aad4c55bacd3ce48b",
+        "value": {
+          "streams": {
+            "train": {
+              "source": "/mnt/local/_data/deep-llms_th2/a2_dclm_rebuild_20261103/packed/dclm/heal",
+              "source_identity": {
+                "rows": 7324218,
+                "tokens": 29999996928,
+                "length": 4096,
+                "token_sha256": "f12f73603025ddf56aca58409477fe2b960207f541384895855f9fa976e33c0d",
+                "starts_sha256": "2880f0d8c62a77c25df1f6616f1697a0a35e8cfc27222a31355fadc75ec11559"
+              },
+              "rows": 3906250,
+              "tokens": 2000000000,
+              "dropped_to_512": 0,
+              "source_document_starts": 1536107,
+              "maximum_id": 50276,
+              "order_sha256": "b6f0a0452b27fc0aea6957c3d6e6175a38739bc3624c242aec990918f2b8451f",
+              "token_sha256": "90d971d9203c9ab6c1498165dd35a2c6887ee8d5f886cd1242cc07ddc08368d6",
+              "starts_sha256": "8302b82ca68fa93c62ca378b60e7f57bd20090ad3490bdb2ce5eaa7e32b898ed"
+            },
+            "val": {
+              "source": "/mnt/local/_data/deep-llms_th2/a2_dclm_rebuild_20261103/packed/dclm/final",
+              "source_identity": {
+                "rows": 4096,
+                "tokens": 16777216,
+                "length": 4096,
+                "token_sha256": "810e5e5da9be5e4a0a972461841a21216d621d8e05e5337838ff09945c2071f8",
+                "starts_sha256": "17a6086380a1319fe3ee80d3f8d99d7990b0f1133ce5dbf95425cef92efe3804"
+              },
+              "rows": 19531,
+              "tokens": 9999872,
+              "dropped_to_512": 128,
+              "source_document_starts": 7552,
+              "maximum_id": 50276,
+              "order_sha256": "17db087576f87e478c496e4712771c2c6d2ba36f54ce43370a4330d8b5fdefe2",
+              "token_sha256": "744439769e1ebd600c56404391e4c5990520d7f322d5984e51477f92bec136eb",
+              "starts_sha256": "37a510ce47b21edc5bb38fd2b52fa82b25b74840caf662e7c1dcd2c694428975"
+            }
+          },
+          "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+        }
+      },
+      "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/data/started.json": {
+        "sha256": "99dcffcf96038b67c9b0e97bb47752931137355180796b0bb35da2578618587f",
+        "value": {
+          "host": "thiennh-p6-wc69-worker-0",
+          "source": "/mnt/local/_data/deep-llms_th2/a2_dclm_rebuild_20261103/packed/dclm",
+          "source_sha256": "b6b85acc4f0548d66464d6c3e2bf70e567b2abb29f5346f4385afe2443f13285",
+          "partition": "SHA256(exact UTF8 text), first8bytes big-endian mod10000: tuning0..1, final2..9, heal10..9999",
+          "tokenizer": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer.json",
+          "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+        }
+      }
+    },
+    "progress": [],
+    "source_errors": [],
+    "logs": {},
+    "ancestry": {
+      "163092": {
+        "pid": 163092,
+        "ppid": 163023,
+        "start_ticks": 428872665,
+        "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "163023": {
+        "pid": 163023,
+        "ppid": 17115,
+        "start_ticks": 428872534,
+        "command_sha256": "ce602e3664b4b8c29feb98868dc6186f8080a41590887b148e362f78e940586d",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f12-20261111-a01/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      },
+      "17115": {
+        "pid": 17115,
+        "ppid": 1,
+        "start_ticks": 359165444,
+        "command_sha256": "a4a2d7892752f60c5cd62acfc2be19d804bcd8726ed0bd755452dc326fe4e89a",
+        "exe": "/usr/bin/tmux",
+        "command_prefix": [
+          "tmux",
+          "new-session",
+          "-d"
+        ],
+        "launcher_kind": null
+      },
+      "163093": {
+        "pid": 163093,
+        "ppid": 163023,
+        "start_ticks": 428872665,
+        "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "163094": {
+        "pid": 163094,
+        "ppid": 163023,
+        "start_ticks": 428872665,
+        "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "163095": {
+        "pid": 163095,
+        "ppid": 163023,
+        "start_ticks": 428872665,
+        "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "163096": {
+        "pid": 163096,
+        "ppid": 163023,
+        "start_ticks": 428872665,
+        "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "163097": {
+        "pid": 163097,
+        "ppid": 163023,
+        "start_ticks": 428872665,
+        "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "163098": {
+        "pid": 163098,
+        "ppid": 163023,
+        "start_ticks": 428872665,
+        "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "163099": {
+        "pid": 163099,
+        "ppid": 163023,
+        "start_ticks": 428872665,
+        "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      }
+    }
+  },
+  "report_smoke": "actual tiny CPU trainer output replayed to tables/PNG/report; fixture missing optional backend handled with Config defaults",
+  "gpu_tests": "pending actual owned launch"
+}

@@ -48,7 +48,7 @@ class Queue:
   small=[p for p in path.iterdir() if p.is_file() and p.suffix in ('.json','.jsonl','.npz','.csv','.md','.png') and p.name not in ('downstream_scores.json','downstream_raw.json','artifact_manifest.json')]
   manifest=[]
   for p in sorted(path.rglob('*')):
-   if p.is_file():manifest.append(dict(path=str(p),bytes=p.stat().st_size,sha256=sha(p),tier=1 if p in small else 3 if p.suffix=='.pt' and 'pre_decay' in p.parts else 2 if p.name=='final_weights.pt' else 'local_training_state',locations=[str(p)],verified_utc=time.time(),off_node=False))
+   if p.is_file() and p.name!='artifact_manifest.json':manifest.append(dict(path=str(p),bytes=p.stat().st_size,sha256=sha(p),tier=1 if p in small else 3 if p.suffix=='.pt' and 'pre_decay' in p.parts else 2 if p.name=='final_weights.pt' else 'local_training_state',locations=[str(p)],verified_utc=time.time(),off_node=False))
   write(path/'artifact_manifest.json',dict(artifacts=manifest,flags=['Tier2/3 not yet off-node; awaiting approved large-transfer mechanism']))
   small.append(path/'artifact_manifest.json');dest=self.root/'tier1';dest.mkdir(exist_ok=True)
   revision='analysis' if (path/'analysis_complete.json').exists() else 'training';archive=dest/(path.name+'-'+revision+'.tar.gz')
@@ -123,10 +123,15 @@ class Queue:
     cfg=self.config('E2',arm,seed,f'E2-{arm}-s{seed}',int(tokens*1e9//262144),lr2['D' if arm=='D' else 'SO']);self.status('phase2_e2',current=cfg['name']);self.train(cfg,list(range(8)));self.runs.append(cfg)
   self.status('phase3_evaluation')
   completed=[c for c in self.runs if (Path(c['output'])/'final_eval.json').exists()]
+  language=[c for c in completed if c['study']=='E2']
+  def downstream_lane(pair):
+   gpu,configs=pair
+   for cfg in configs:self.command(cfg['name']+'-downstream',[self.python,'-m','scripts.dot_pool_evaluate','downstream','--run',cfg['output']],[gpu])
+  with ThreadPoolExecutor(max_workers=8) as pool:list(pool.map(downstream_lane,[(g,language[g::8]) for g in range(8)]))
   # Lane scheduling ensures at most one analysis/eval worker per GPU.
   def lane(pair):
    gpu,configs=pair
-   for cfg in configs:self.command(cfg['name']+'-analysis',[self.python,'-m','scripts.dot_pool_evaluate','analysis','--run',cfg['output']],[gpu]);self.backup(Path(cfg['output']))
+   for cfg in configs:self.command(cfg['name']+'-analysis',[self.python,'-m','scripts.dot_pool_evaluate','diagnostics','--run',cfg['output']],[gpu]);self.backup(Path(cfg['output']))
   with ThreadPoolExecutor(max_workers=8) as pool:list(pool.map(lane,[(g,completed[g::8]) for g in range(8)]))
   self.status('phase3_report')
   self.command('report',[self.python,'-m','scripts.dot_pool_report','--root',str(self.root)],[])
