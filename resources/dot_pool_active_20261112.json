@@ -1,13 +1,7 @@
 {
-  "snapshot_sgt": "2026-11-12T06:20:39+08:00",
-  "receipt_sha256": "31cf310caee0cd2b8ec435865c41e24bf54de8ac3fd157b31e3a4229d4cf4337",
-  "phase": "phase0_e2_lr",
-  "source_files": 429,
-  "source_errors": [],
-  "data_locks": {
-    "e1": true,
-    "e2": true
-  },
+  "receipt_sha256": "57627144cc082386ea24d3e0c8a4a08f4f33b330f6782ee38ef0bd20049187b1",
+  "snapshot_utc": 1794437430.293965,
+  "all10_workers_owned": true,
   "owner": {
     "pid": 172535,
     "ppid": 17115,
@@ -21,38 +15,54 @@
     ],
     "launcher_kind": null
   },
-  "workers": [
-    174547,
-    174548,
-    174549,
-    174550,
-    174551,
-    174552,
-    174553,
-    174554
-  ],
-  "all_workers_owned": true,
-  "completed_e1_benchmarks": 10,
-  "completed_e2_benchmarks": 5,
-  "e2_lr_fits_complete": 1,
-  "e2_lr_fit_active": "D lr0.002 step350/953",
-  "calibration_reuse_verified": true,
-  "flags": [
-    {
-      "flag": "Owned native handoff; prior logs retained, original elapsed time preserved; calibration reuse is recorded separately when requested",
-      "prior_root": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a02",
-      "prior_phase_log_sha256": "a5c57055772e9d7f45519a83c061de90b41c029968b213335e418a305c2b369a"
+  "source_files": 429,
+  "source_hash_errors": [],
+  "data_locks": {
+    "e1": true,
+    "e2": true
+  },
+  "budget": {
+    "E1_epochs": 2000,
+    "E2_billions": 1.5,
+    "E1_lr": 0.001,
+    "E2_lr": {
+      "D": 0.002,
+      "SO": 0.002
     },
-    {
-      "flag": "E1 minimum exceeds target3h",
-      "predicted_seconds": 30801.804974347353
-    }
-  ],
-  "small_export_verified": {
-    "commit": "a37fd92226bacedb8152794820f8ce86dd63a3e6",
-    "bytes": 8609,
-    "members": 10,
-    "lr_schedule_checks": 97,
-    "proof": "results/dot_pool_20261112/e2_calibration_small/cal-e2-D-0.001/verification.json"
+    "E1_slowest_seconds": 0.20001172061264516,
+    "E2_seconds": {
+      "D": 0.17760520334355534,
+      "PL": 0.22925746822729706,
+      "SO": 0.24639203103259205,
+      "DOT": 0.5581551660597325,
+      "SR": 0.22347072880715133
+    },
+    "flags": [
+      {
+        "flag": "Owned native handoff; prior logs retained, original elapsed time preserved; calibration reuse is recorded separately when requested",
+        "prior_root": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a02",
+        "prior_phase_log_sha256": "a5c57055772e9d7f45519a83c061de90b41c029968b213335e418a305c2b369a"
+      },
+      {
+        "flag": "E1 minimum exceeds target3h",
+        "predicted_seconds": 30801.804974347353
+      }
+    ],
+    "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+  },
+  "e2_lr_choice_replayed": true,
+  "e2_calibrations_complete": 6,
+  "tier1_new_export_bytes": 17095208,
+  "phase": "phase1_e1",
+  "pending_export_commit": "a348d12291e360cba8dc4b2eb26eb0db7c76b0de",
+  "pending_export_files": 5,
+  "eta_sgt": {
+    "E1": "12Nov15:15\u201315:30 provisional",
+    "all": "12Nov21\u201322 provisional"
+  },
+  "watcher": {
+    "pid": 3211258,
+    "actual_delivery_tick": 7,
+    "next_sgt": "12Nov07:49:10"
   }
 }
