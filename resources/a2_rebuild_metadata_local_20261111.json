@@ -1,0 +1,16 @@
+{
+  "complete": true,
+  "verified_utc": "2026-11-11T16:18:16.085927+00:00",
+  "archive": "/disk/thuat/efficient_llm/artifacts/a2_rebuild_metadata_20261111.tar.gz",
+  "archive_sha256": "0757117b9627bea4692d1299b369114d8ec4f0c9040ed02bca0039780d293d24",
+  "archive_bytes": 10125960,
+  "verified_paths": 1663,
+  "verified_objects": 832,
+  "omitted_paths": 63,
+  "no_remote_deletion": true,
+  "full_mixture_rebuild_tested": false,
+  "directory": "/disk/thuat/efficient_llm/artifacts/a2_rebuild_metadata_20261111",
+  "readme": "/disk/thuat/efficient_llm/artifacts/a2_rebuild_metadata_20261111/README.md",
+  "old_local_kit": "artifacts/a2_reproduction_20261031.tar.gz",
+  "old_local_kit_bytes": 1463520
+}

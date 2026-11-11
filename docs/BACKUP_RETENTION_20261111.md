@@ -64,3 +64,14 @@ Compare regenerated content hashes to the saved expected hashes before use.
 Timestamp/path-dependent provenance JSON will need new bindings even when
 content is identical. DCLM/FWE have historical successful content rebuilds;
 a complete independent second rebuild of the mixture is not claimed.
+
+## Lightweight local metadata copy
+
+Verified 12 November 00:18 SGT: `artifacts/a2_rebuild_metadata_20261111.tar.gz`
+(10,125,960 bytes) adds Why/Family recipes, actual manifests/plans, source locks
+and the shared tokenizer. All 832 unique objects / 1,663 paths were SHA256
+verified. See `resources/a2_rebuild_metadata_local_20261111.json` and the
+local kit README. The 63 omitted large metadata/index items are explicitly
+listed in `index.json`; they remain on the node. Keep the original October
+reproduction kit too. Archives are local, Git-ignored; the resource index alone
+is not a copy of their contents.
