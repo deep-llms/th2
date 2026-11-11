@@ -54,15 +54,15 @@
   "e2_calibrations_complete": 6,
   "tier1_new_export_bytes": 17095208,
   "phase": "phase1_e1",
-  "pending_export_commit": "a348d12291e360cba8dc4b2eb26eb0db7c76b0de",
-  "pending_export_files": 5,
   "eta_sgt": {
     "E1": "12Nov15:15\u201315:30 provisional",
     "all": "12Nov21\u201322 provisional"
   },
   "watcher": {
     "pid": 3211258,
-    "actual_delivery_tick": 7,
-    "next_sgt": "12Nov07:49:10"
-  }
+    "actual_delivery_tick": 8,
+    "next_sgt": "12Nov08:19:10"
+  },
+  "pending_health_commit": "e1f222dd6f028f313374383e37b05e23a712532e",
+  "calibration_local_backup": "results/dot_pool_20261112/backup_local_manifest.json"
 }
