@@ -30,10 +30,10 @@ def run(output,device):
         error=float(torch.linalg.vector_norm(a-b)/torch.linalg.vector_norm(b));return dict(passed=error<=1e-3,relative_l2=error,max_abs=float((a-b).abs().max()))
     check('T0_bf16',t0bf)
     def t3():
-        cases.test_identity_routing_and_balancing();m=Model(tiny('SO'));score=torch.zeros(1000,8);score[:,0]=.03;first=None
+        cases.test_identity_routing_and_balancing();m=Model(tiny('SO'));score=torch.zeros(1000,8);score[:,0]=.03;first=None;aggregate=torch.zeros(8)
         for i in range(100):
-            ids=(score+m.beta[0]).topk(2,-1).indices;counts=torch.bincount(ids.flatten(),minlength=8).float();imb=float(counts.max()-counts.min());first=imb if first is None else first;m.loads[0].copy_(counts);m.finish_update()
-        return dict(passed=float(m.beta.max()-m.beta.min())>0,initial_instant_imbalance=first,final_instant_imbalance=imb,bias=m.beta.tolist(),note='Ties may retain instantaneous imbalance; aggregate 100-step loads verified separately')
+            ids=(score+m.beta[0]).topk(2,-1).indices;counts=torch.bincount(ids.flatten(),minlength=8).float();aggregate+=counts;imb=float(counts.max()-counts.min());first=imb if first is None else first;m.loads[0].copy_(counts);m.finish_update()
+        return dict(passed=float(aggregate.max()-aggregate.min())<100*first,initial_instant_imbalance=first,aggregate_100_updates=aggregate.tolist(),final_instant_imbalance=imb,bias=m.beta.tolist())
     check('T3',t3)
     def t4():
         c=tiny();p=Experts(8,c);import copy
@@ -69,7 +69,7 @@ def run(output,device):
         check('T7_'+arm,t7)
     check('T8',lambda:(cases.test_identity_routing_and_balancing() or {}))
     check('T9',lambda:(cases.test_save_resume_pending_taylor() or {}))
-    check('T10',lambda:(cases.test_taylor_microbatch() or {}))
+    check('T10',lambda:(cases.test_taylor_microbatch() or dict(q_atol=1e-5,q_rtol=1e-5,normalization='summed task NLL; same four labeled tokens, full vs two microbatches')))
     write(output,dict(checks=items,complete=True,device=str(device),failed=[x['test'] for x in items if not x['passed']]))
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--device',default='cpu');a=p.parse_args();run(a.output,torch.device(a.device))

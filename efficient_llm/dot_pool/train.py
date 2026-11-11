@@ -22,7 +22,7 @@ def lr_at(step,total,lr,study):
     if step<=warm:return lr*step/warm
     if study=='E1':return lr
     start=math.floor(total*.8)
-    return lr if step<=start else lr*max(0,(total-step)/(total-start))
+    return lr if step<=start else lr*max(0,(total-step)/(step-start))
 def save(root,m,opt,step,cfg,rank,world):
     root=Path(root)
     if rank==0:root.mkdir(parents=True,exist_ok=False)
@@ -39,8 +39,8 @@ def load(root,m,opt,cfg,rank,world,device):
     for name in ['state.pt',f'rank{rank}.pt']:
         if sha(root/name)!=receipt['files'][name]['sha256']:raise ValueError('Checkpoint hash mismatch')
     state=torch.load(root/'state.pt',map_location=device,weights_only=False)
-    for k in ['study','arm','seed','lr','batch','model','data']:
-        if state['config'][k]!=cfg[k]:raise ValueError('Resume config differs '+k)
+    for k in ['study','arm','seed','lr','batch','model','data','microbatch','data_ready_sha256','source_manifest_sha256']:
+        if state['config'].get(k)!=cfg.get(k):raise ValueError('Resume config differs '+k)
     if cfg['study']=='E2' and state['config']['steps']!=cfg['steps']:raise ValueError('E2 schedule mutation')
     m.load_state_dict(state['model']);opt.load_state_dict(state['optimizer']);r=torch.load(root/f'rank{rank}.pt',map_location=device,weights_only=False);m.pending=r['pending'];restore_rng(r['rng']);return state['step']
 
@@ -67,20 +67,24 @@ def run(cfg):
     torch.set_num_threads(int(cfg.get('cpu_threads',2)));seed(cfg['seed'])
     root=Path(cfg['output']);mc=Config(**cfg['model']);m=Model(mc).to(device)
     wrapped=DDP(m,device_ids=[local] if device.type=='cuda' else None,find_unused_parameters=False,broadcast_buffers=False) if world>1 else m
+    seed(1000000+cfg['seed']*1000+rank)
     opt=torch.optim.AdamW(m.parameter_groups(),lr=cfg['lr'],betas=(.9,.95),eps=1e-8,fused=device.type=='cuda')
     data=Path(cfg['data']);study=cfg['study']
     train=np.load(data/'train.npy',mmap_mode='r') if study=='E1' else Stream(data,'train')
     vals={name:np.load(data/(name+'.npy'),mmap_mode='r') for name in ['id_dev','ood_dev','id_test','ood_test','atoms','ood_atoms']} if study=='E1' else {'val':Stream(data,'val')}
-    total=cfg['steps'];batch=cfg['batch'];micro=cfg.get('microbatch',batch//world)
+    total=cfg['steps'];stop_after=cfg.get('stop_after',total);batch=cfg['batch'];micro=cfg.get('microbatch',batch//world)
     if batch%world:raise ValueError('Global batch not divisible by world')
     if rank==0:
         root.mkdir(parents=True,exist_ok=bool(cfg.get('resume')));write(root/'config.json',dict(cfg,actual_world=world,counts=m.counts(),runtime=dict(torch=torch.__version__,device=str(device))))
     if world>1:dist.barrier()
     start=load(cfg['resume'],m,opt,cfg,rank,world,device) if cfg.get('resume') else 0
     seed_state=rng_state();metrics=(root/'metrics.jsonl').open('a') if rank==0 else None
+    taylor_log=(root/'taylor_stats.jsonl').open('a') if rank==0 and mc.arm=='DOT' else None
     epoch_order=None;epoch_previous=-1;epoch_steps=math.ceil(len(train)/batch) if study=='E1' else None
+    from collections import deque
+    usage=deque(maxlen=100)
     flags=[];t0=time.monotonic();period=cfg.get('eval_every',50*epoch_steps if study=='E1' else 250);pre=math.floor(total*.8)
-    for step in range(start+1,total+1):
+    for step in range(start+1,min(total,stop_after)+1):
         if study=='E1':
             epoch=(step-1)//epoch_steps
             if epoch!=epoch_previous:epoch_order=np.random.default_rng(10000+epoch).permutation(len(train));epoch_previous=epoch
@@ -98,34 +102,56 @@ def run(cfg):
         loss_total=torch.zeros((),device=device);balance_total=0.
         for i,inp in enumerate(batches):
             context=wrapped.no_sync() if world>1 and i<len(batches)-1 else contextlib.nullcontext()
-            with context,autocast(device):
+            with context:
+              with autocast(device):
                 m.gradient_factor=float(denominator)/world
                 out=wrapped(**inp);frac=len(inp['tokens'])*world/len(global_ix)
                 loss=out['nll_sum']*world/denominator+(out['balance_loss']+out['taylor_loss'])*frac
-            loss.backward();loss_total+=out['nll_sum'].detach();balance_total+=float(out['balance_loss'].detach())*frac
+              loss.backward()
+            loss_total+=out['nll_sum'].detach();balance_total+=float(out['balance_loss'].detach())*frac
         norm=torch.nn.utils.clip_grad_norm_(m.parameters(),1.)
         if not torch.isfinite(norm):flags.append(dict(step=step,flag='nonfinite_gradient'));opt.zero_grad(set_to_none=True)
         else:opt.step()
         m.finish_update();m.promote_labels()
+        if hasattr(m,'last_loads'):usage.append(m.last_loads.numpy())
         if world>1:dist.all_reduce(loss_total)
+        summary=None
+        if mc.arm=='DOT':
+            stats=torch.cat([z['std'] for z in m.pending]) if m.pending else torch.empty(0,device=device)
+            if world>1:
+                n=torch.tensor([len(stats)],device=device);sizes=[torch.zeros_like(n) for _ in range(world)];dist.all_gather(sizes,n);largest=max(int(x) for x in sizes)
+                if largest:
+                    padded=torch.nn.functional.pad(stats,(0,largest-len(stats)));parts=[torch.zeros_like(padded) for _ in range(world)];dist.all_gather(parts,padded);stats=torch.cat([v[:int(n)] for v,n in zip(parts,sizes)])
+            if len(stats):summary=dict(median=float(stats.median()),p05=float(torch.quantile(stats,.05)),below_1e4=float((stats<1e-4).float().mean()))
+            if taylor_log is not None and summary:taylor_log.write(json.dumps(dict(step=step,**summary),separators=(',',':'))+'\n');taylor_log.flush()
         if step%10==0 or step==1 or step==total:
             if device.type=='cuda':torch.cuda.synchronize()
             item=dict(step=step,epoch=step/epoch_steps if epoch_steps else None,nll=float(loss_total/denominator),lr=lr,grad_norm=float(norm) if torch.isfinite(norm) else None,elapsed=time.monotonic()-t0,seconds_per_update=(time.monotonic()-t0)/(step-start),balance_loss=balance_total,spec_sha256=SPEC_SHA)
-            if m.pending:
-                std=torch.cat([z['std'] for z in m.pending]);item.update(taylor_std_median=float(std.median()),taylor_std_p05=float(torch.quantile(std,.05)),taylor_std_below_1e4=float((std<1e-4).float().mean()))
+            if summary:item.update(taylor_std_median=summary['median'],taylor_std_p05=summary['p05'],taylor_std_below_1e4=summary['below_1e4'])
             if rank==0:metrics.write(json.dumps(item)+'\n');metrics.flush();print(json.dumps(item),flush=True)
         if not cfg.get('benchmark') and (step%period==0 or step==total or (study=='E2' and step==pre)):
             result={name:evaluate(m,v,study,device,rank,world,limit=None if study=='E1' or step in (pre,total) else 1000000//512,batch=cfg.get('eval_batch',32)) for name,v in vals.items() if name in ('id_dev','ood_dev','val')}
             if rank==0:write(root/f'eval-{step}.json',dict(step=step,metrics=result))
-        if not cfg.get('benchmark') and (study=='E2' and step==pre or study=='E1' and step%(1000*epoch_steps)==0):save(root/('pre_decay' if study=='E2' else f'checkpoint-{step}'),m,opt,step,cfg,rank,world)
+        if not cfg.get('benchmark') and (study=='E2' and step==pre or study=='E1' and step%(1000*epoch_steps)==0):
+            save(root/('pre_decay' if study=='E2' else f'checkpoint-{step}'),m,opt,step,cfg,rank,world)
+            if study=='E1' and rank==0:
+                import shutil
+                saved=sorted(root.glob('checkpoint-*'),key=lambda p:int(p.name.split('-')[-1]))
+                for old in saved[:-2]:
+                    if old.is_symlink() or old.parent.resolve()!=root.resolve() or not (old/'complete.json').exists():raise ValueError('Unsafe checkpoint retention path')
+                    shutil.rmtree(old)
+            if world>1:dist.barrier()
     if not cfg.get('benchmark'):
-        save(root/'final_state',m,opt,total,cfg,rank,world)
+        save(root/'final_state',m,opt,step,cfg,rank,world)
         final={name:evaluate(m,v,study,device,rank,world,batch=cfg.get('eval_batch',32)) for name,v in vals.items()}
         if rank==0:
             torch.save({k:v.detach().cpu().to(torch.bfloat16) if v.is_floating_point() else v.detach().cpu() for k,v in m.state_dict().items()},root/'final_weights.pt')
-            write(root/'final_eval.json',dict(metrics=final,flags=flags,step=total,elapsed=time.monotonic()-t0))
+            write(root/'final_eval.json',dict(metrics=final,flags=flags,step=step,elapsed=time.monotonic()-t0))
     if rank==0:
-        write(root/'train_complete.json',dict(step=total,elapsed=time.monotonic()-t0,seconds_per_update=(time.monotonic()-t0)/(total-start),flags=flags,benchmark=cfg.get('benchmark',False)));metrics.close()
+        if usage:
+            counts=np.sum(usage,axis=0);means=counts.mean(-1,keepdims=True);write(root/'usage.json',dict(updates=len(usage),counts=counts.tolist(),dead=(counts<.1*means).tolist(),max_over_mean=(counts.max(-1)/means[:,0]).tolist()))
+        write(root/'train_complete.json',dict(step=step,elapsed=time.monotonic()-t0,seconds_per_update=(time.monotonic()-t0)/(step-start),flags=flags,benchmark=cfg.get('benchmark',False)));metrics.close()
+    if taylor_log is not None:taylor_log.close()
     if world>1:dist.barrier();dist.destroy_process_group()
 
 def main():

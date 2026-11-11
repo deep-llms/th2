@@ -61,7 +61,7 @@ class Attention(nn.Module):
             start=torch.ones_like(segments,dtype=torch.bool);start[:,1:]=segments[:,1:]!=segments[:,:-1]
             starts=start.flatten().nonzero().flatten().to(torch.int32)
             cu=torch.cat([starts,starts.new_tensor([b*t])]);maxlen=int((cu[1:]-cu[:-1]).max())
-            out=flash_attn_varlen_func(q.flatten(0,1),k.flatten(0,1),v.flatten(0,1),cu,cu,maxlen,maxlen,causal=True)
+            out=flash_attn_varlen_func(q.to(v.dtype).flatten(0,1).contiguous(),k.to(v.dtype).flatten(0,1).contiguous(),v.flatten(0,1).contiguous(),cu_seqlens_q=cu,cu_seqlens_k=cu,max_seqlen_q=maxlen,max_seqlen_k=maxlen,causal=True)
             if isinstance(out,tuple):out=out[0]
             out=out.reshape(b,t,-1)
         else:
@@ -132,19 +132,26 @@ class Model(nn.Module):
     def _router_logits(self,s,x,previous):
         if self.c.arm=='DOT' and previous is not None:
             ids,gates=previous;x=x+(self.path[ids]*gates[...,None]).sum(-2)
-        return F.linear(x.float(),self.router[s].float())
+        with torch.autocast(device_type=x.device.type,enabled=False):
+            return F.linear(x.float(),self.router[s].float())
     def replay_loss(self):
+        count=sum(len(r['q']) for r in self.pending)
+        denominator=torch.tensor(float(count),device=self.embed_tokens.weight.device)
+        world=1
+        if self.c.arm=='DOT' and torch.distributed.is_initialized():
+            world=torch.distributed.get_world_size();torch.distributed.all_reduce(denominator)
         if not self.pending:return self.embed_tokens.weight.sum()*0
         losses=[]
         for r in self.pending:
             z=self._router_logits(r['s'],r['x'],r['previous']);logq=F.log_softmax(z.gather(-1,r['ids']),-1)
             losses.append(-(r['q']*logq).sum(-1))
-        return self.c.label_alpha*torch.cat(losses).mean()
+        return self.c.label_alpha*torch.cat(losses).sum()*world/denominator.clamp_min(1)
     def promote_labels(self):
         self.pending=self.labels;self.labels=[]
     def finish_update(self):
         if self.routed and self.c.arm!='SR':
             if torch.distributed.is_initialized():torch.distributed.all_reduce(self.loads)
+            self.last_loads=self.loads.detach().cpu().clone()
             with torch.no_grad():self.beta.add_(self.c.balance_rate*torch.sign(self.loads.mean(-1,keepdim=True)-self.loads));self.loads.zero_()
     def _label(self,s,x,y,score,previous,pool,eligible,label_mask):
         mask=label_mask if label_mask is not None else (torch.rand(eligible.shape,device=x.device)<self.c.label_rate)&eligible

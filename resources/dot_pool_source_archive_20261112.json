@@ -1,0 +1,8 @@
+{
+  "original": "docs/results/selective_decode_20261026/research/supervised/run/retrieval.json",
+  "archive": "docs/results/selective_decode_20261026/research/supervised/run/retrieval.json.gz",
+  "original_sha256": "538c12803ee75a507f858c913f347007eabb18ada13c97fa730c2f569f270ea9",
+  "original_bytes": 323454,
+  "compressed_bytes": 41089,
+  "roundtrip_verified": true
+}
