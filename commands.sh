@@ -1,9 +1,9 @@
 #1 +20+a
-#th2-wc69-backup-health-20261111-a02
+#th2-wc69-backup-health-20261111-a03
 set -euo pipefail
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1
 date -u
-ps -p 164676 -o pid,ppid,etime,args || true
+ps -p 164676 -o pid,ppid,etime,pcpu,stat,args || true
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'CODE'
 from pathlib import Path
 import json,hashlib
