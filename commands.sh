@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-family-f12-health-20261111-a04
+#th2-wc69-family-f12-health-20261111-a05
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1
@@ -10,9 +10,18 @@ from scripts.a2_family_f10_health import health as f10health
 from scripts.a2_family_f11_health import health as f11health
 from eval.a2_family_f12 import read
 from efficient_llm.diagnostic_data import sha256
-health('resources/a2_family_f12_plan_20261111.json')
-f11health('resources/a2_family_f11_plan_20261111.json')
-f10health('/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f10-20261111-a01')
+import time
+def stable_health(fn,arg):
+ for attempt in range(3):
+  try:
+   fn(arg);return
+  except (FileNotFoundError,ProcessLookupError) as error:
+   print('HEALTH_RETRY',attempt,repr(error),flush=True)
+   if attempt==2:raise
+   time.sleep(1)
+stable_health(health,'resources/a2_family_f12_plan_20261111.json')
+stable_health(f11health,'resources/a2_family_f11_plan_20261111.json')
+stable_health(f10health,'/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f10-20261111-a01')
 root=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f12-queue-20261111-a01')
 for name in ('prepared_config.json','actual_inputs.json'):
  p=root/name
