@@ -1,3 +1,7 @@
+12Nov06:10SGT smallcalexport ddbbb6b RESOLVED: exact401864byte archive downloaded/hashverified, all48members SHA/sizePASS; results/dot_pool_20261112/calibration_small/verification.json. No weights/input downloaded. Submit unique read-only healtha05 to verifyactuala03progress/ownership after automatic handoff; no relaunch.
+
+Smallcalexport ddbbb6b SUBMITTED/remoteheadverified. Retrieve exact401864byte archive and exportreceipt before further remote writes; no duplicate. a04 resolved, a03 submittedcorrectedsource; actualphaseprogress needs freshhealth after export.
+
 12Nov06:06SGT: a04 599c189 receipt RETRIEVED SHA295213daec542d0d757c05886e816722a32b47abae8fd204cd7c128839c56ba7. BothE1cal38500complete; reuseproof fullcheckpointmembersverified/scores0.094,0.884. Automatic a03 submitted05:59:17SGT correctedsource d3ed9a6/429filesunchanged; guard172535, freshsnapshot06:00:04 duringnativeGPUreclaim, actualtrainingpendingfreshhealth. E1/E2datalocksPASS. Smallcalarchive401864bytes/48members SHAa1108c676e8d3c2de39832d9534c16f48ab6a4a13445b272b582797d14101da3 READY. Submit exactsmall#2+a export only; no weights/input.
 
 DOT handoff+smallpack a04 599c189 SUBMITTED/remoteheadverified. Retrieve receipt before writes/#2export; no duplicate. No GPU mutation: health only plus small result allowlist archive if both calibration runs complete. Source bytes26021131 below26214400 cap.
