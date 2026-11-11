@@ -1,0 +1,24 @@
+{
+  "complete": true,
+  "removed_files": 109,
+  "removed_bytes": 344554067497,
+  "retained_files": 24138,
+  "retained_bytes": 847757812265,
+  "protected_file_identity_check": "exact path/dev/inode/size/mtime/mode equality",
+  "candidate_hash_check": "both original and backup matched historical SHA256 before deletion",
+  "original_files_untouched": true,
+  "original_ledger_historical": true,
+  "preserved_legacy_culturax": true,
+  "durable_off_node_backup": false,
+  "plan_sha256": "e929484f849c95bad95797af484e78fa456882ae003d8a668f291da644d37412",
+  "journal_sha256": "75ca2bcbee05857cbf82d15def1322c59cb4b0167241333fd53d73d4f53877c2",
+  "final_total": {
+    "files": 24143,
+    "bytes": 847762486394
+  },
+  "receipt_sha256": "5914dc4049d1f60b9c2626a220b3a6285a3c63a54342dc962335052683067569",
+  "execution_commit": "4a1ad63d22d7d99aaac81c9a679afb5c2ff075b8",
+  "verified_utc": "2026-11-11T15:19:47.389835+00:00",
+  "remaining_work": [],
+  "watcher": "stopped"
+}
