@@ -1,3 +1,5 @@
+2026-11-11 21:51 SGT: Authorized wc69 backup fill COMPLETE. Added 16,884 files / 669,021,743,046 bytes; reused 86. All 16,970 selected files rehashed; exit 0; no overwrite/conflict. Proof: results/node_preservation_20261111/verification.json. Target /mnt/local/_backup/deep-llms_th2 remains on the same ephemeral filesystem; off-node durability unverified. No remaining copy work; watcher stopped, commands #0, GPU untouched.
+
 2026-11-11T13:18:27.187534+00:00: Backup fill51b6764 ACK: CPU copy active,16970files planned/3001copied in startup snapshot. Unique healtha01 prepared; no duplicate copy/GPU changes. Same ephemeral _backup; verification pending.
 
 2026-11-11T13:12:51.553165+00:00: Backup inventory59be16b retrieved/complete: wc69 outputs absent from old backup, 24TBfree; same ephemeral filesystem. Authorized additive copy prepared, preserve existing conflicts, SHA verify, skip intermediate checkpoints/raw data cache; include output scientific results/final weights/models/source/data metadata. Local copy fixture PASS. No GPU actions; watcher stopped.
