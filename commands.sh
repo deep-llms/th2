@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-backup-health-20261111-a05
+#th2-wc69-backup-health-20261111-a06
 set -euo pipefail
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1
 date -u
@@ -12,6 +12,7 @@ c=Path('/mnt/local/_outputs/deep-llms_th2/wc69-preservation-control-20261111-a01
 v=json.loads((r/'plan.json').read_text());v.pop('excluded',None);print('PLAN',json.dumps(v))
 for p in (r/'progress.json',r/'complete.json',c/'exit.json'):
  print(str(p),p.read_text() if p.exists() else 'ABSENT')
+print('LEDGER_ROWS',sum(1 for _ in (r/'files.jsonl').open()))
 log=c/'copy.log'
 if log.exists():print('TAIL', '\n'.join(log.read_text().splitlines()[-12:]))
 if (r/'complete.json').exists():
