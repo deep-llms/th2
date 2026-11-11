@@ -1,14 +1,15 @@
 #1 +20+a
-#th2-wc69-backup-health-20261111-a01
+#th2-wc69-backup-health-20261111-a02
 set -euo pipefail
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1
 date -u
-ps -eo pid,ppid,etime,args | grep -E '[p]ython3.11 -u copy.py|[b]ash .*preservation-control' || true
+ps -p 164676 -o pid,ppid,etime,args || true
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'CODE'
 from pathlib import Path
 import json,hashlib
 r=Path('/mnt/local/_backup/deep-llms_th2/wc69-preservation-20261111-a01')
 c=Path('/mnt/local/_outputs/deep-llms_th2/wc69-preservation-control-20261111-a01')
+v=json.loads((r/'plan.json').read_text());v.pop('excluded',None);print('PLAN',json.dumps(v))
 for p in (r/'progress.json',r/'complete.json',c/'exit.json'):
  print(str(p),p.read_text() if p.exists() else 'ABSENT')
 log=c/'copy.log'
