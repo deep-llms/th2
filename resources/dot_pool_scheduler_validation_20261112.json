@@ -1,0 +1,14 @@
+{
+  "cpu_schedule_tests": 2,
+  "calibration_reuse_tests": 2,
+  "native_job_contract_passed": true,
+  "actual_cpu_training": {
+    "steps": 300,
+    "pre_decay_checkpoint": 240,
+    "final_lr": 0.0,
+    "flags": [],
+    "log_sha256": "3a10fdb367b96e0dc09a59424cb7610cf390bca02f65973d769f97c1bc9b6c5a"
+  },
+  "fix": "E2 decay denominator total-start, not step-start; E1 unchanged",
+  "deployment": "pending a02 receipt before safe deferred handoff"
+}

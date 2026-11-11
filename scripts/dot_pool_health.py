@@ -7,7 +7,7 @@ from efficient_llm.dot_pool.data import sha
 def main():
  p=argparse.ArgumentParser();p.add_argument('--base',default='/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112');p.add_argument('--name',default='a01');a=p.parse_args();base=Path(a.base);ex=base/('execution-'+a.name);run=base/('run-'+a.name)
  result=dict(host=socket.gethostname(),utc=time.time(),gpu=inspect(),files={},progress=[],source_errors=[],logs={})
- for path in [base/'data/ready.json',base/'data/e2/progress.json',base/'data/started.json',ex/'submitted.json',ex/'data-admission.json',ex/'supervised/supervisor.json',ex/'supervised/run/run.json',ex/'supervised/burn-verified.json',run/'status.json',run/'budget.json',run/'tests.json',run/'kernel_tests.json',run/'queue_complete.json',run/'REPORT_SMALL.json',run/'manifest.json']:
+ for path in [base/'pending-a03/status.json',base/'pending-a03/reuse-proof.json',base/'pending-a03/stop-proof.json',base/'data/ready.json',base/'data/e2/progress.json',base/'data/started.json',ex/'submitted.json',ex/'data-admission.json',ex/'supervised/supervisor.json',ex/'supervised/run/run.json',ex/'supervised/burn-verified.json',run/'status.json',run/'budget.json',run/'tests.json',run/'kernel_tests.json',run/'queue_complete.json',run/'REPORT_SMALL.json',run/'manifest.json']:
   if path.is_file():result['files'][str(path)]=dict(sha256=sha(path),value=json.loads(path.read_text()))
  if (ex/'source-manifest.json').exists():
   m=json.loads((ex/'source-manifest.json').read_text());result['source_files']=len(m['files'])
@@ -22,6 +22,12 @@ def main():
  for path in [ex/'supervisor.log']+sorted(run.glob('*.log'),key=lambda p:p.stat().st_mtime)[-5:]:
   if path.exists():
    with path.open('rb') as f:f.seek(max(0,path.stat().st_size-5000));result['logs'][str(path)]=f.read().decode(errors='replace')
+ pending=base/'pending-a03/status.json'
+ if pending.exists():
+  state=json.loads(pending.read_text())
+  if state.get('pid'):
+   try:result['handoff_process']=process(state['pid'])
+   except (FileNotFoundError,ProcessLookupError):result['handoff_process']=None
  chains={}
  for pid in result['gpu']['workers']:
   seen=[];current=pid

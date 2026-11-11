@@ -22,7 +22,7 @@ def lr_at(step,total,lr,study):
     if step<=warm:return lr*step/warm
     if study=='E1':return lr
     start=math.floor(total*.8)
-    return lr if step<=start else lr*max(0,(total-step)/(step-start))
+    return lr if step<=start else lr*max(0,(total-step)/(total-start))
 def save(root,m,opt,step,cfg,rank,world):
     root=Path(root)
     if rank==0:root.mkdir(parents=True,exist_ok=False)

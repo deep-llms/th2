@@ -11,11 +11,12 @@ E1_CAL_GPUS=[list(range(4)),list(range(4,8))]
 
 ARMS={'E1':['D','L','SO','DOT','SR'],'E2':['D','PL','SO','DOT','SR']}
 class Queue:
- def __init__(self,root,python,prior_root=None):
+ def __init__(self,root,python,prior_root=None,calibration_source=None):
   self.lock=threading.RLock();self.root=Path(root);self.python=python;self.flags=[];self.start=time.time();self.runs=[];self.root.mkdir(parents=True,exist_ok=False)
   if prior_root:
-   prior=Path(prior_root);first=json.loads((prior/'phases.jsonl').read_text().splitlines()[0]);self.start=first['utc']
-   self.flags.append(dict(flag='Intentional calibration restart after verified native handoff; global batch unchanged, two LR fits now use four GPUs each; prior partial logs retained',prior_root=str(prior),prior_phase_log_sha256=sha(prior/'phases.jsonl')))
+   prior=Path(prior_root);first=json.loads((prior/'phases.jsonl').read_text().splitlines()[0]);self.start=first['utc']-first.get('elapsed_hours',0)*3600
+   self.flags.append(dict(flag='Owned native handoff; prior logs retained, original elapsed time preserved; calibration reuse is recorded separately when requested',prior_root=str(prior),prior_phase_log_sha256=sha(prior/'phases.jsonl')))
+  self.calibration_source=Path(calibration_source) if calibration_source else None
   self.source_manifest=Path.cwd().parent/'source-manifest.json';self.data=self.root.parent/'data';self.ready=json.loads((self.data/'ready.json').read_text());self.cfgdir=self.root/'configs';self.cfgdir.mkdir()
   if sha(self.data/'e2/manifest.json')!=self.ready['data_manifest_sha256']:raise ValueError('Data manifest changed')
  def status(self,phase,**detail):
@@ -90,7 +91,17 @@ class Queue:
   with ThreadPoolExecutor(max_workers=8) as pool:list(pool.map(fit_lane,[(g,pairs[g::8]) for g in range(8)]))
   self.status('phase0_e1_lr')
   lrs=[3e-4,1e-3];lrjobs=[(self.config('E1','D',0,f'cal-e1-lr{i}',500*77,lr),E1_CAL_GPUS[i]) for i,lr in enumerate(lrs)]
-  self.parallel(lrjobs);valid=[]
+  valid=[]
+  if self.calibration_source:
+   from scripts.dot_pool_calibration_reuse import validated_score
+   proofs=[]
+   try:
+    for cfg,_ in lrjobs:
+     score,proof=validated_score(self.calibration_source/cfg['name'],cfg);valid.append((score,cfg['lr']));proofs.append(proof)
+    write(self.root/'calibration_reuse.json',dict(e1_lr=proofs,reason='E1 numerics unchanged; correcting E2 decay denominator',verified=True))
+   except (ValueError,OSError,KeyError) as error:
+    valid=[];self.flags.append(dict(flag='Calibration reuse rejected; recalibrating from verified data',error=repr(error)));self.parallel(lrjobs)
+  else:self.parallel(lrjobs)
   for cfg,_ in lrjobs:
    f=Path(cfg['output'])/'final_eval.json'
    if f.exists():valid.append((json.loads(f.read_text())['metrics']['id_dev']['accuracy'],cfg['lr']))
@@ -170,7 +181,7 @@ class Queue:
   self.status('complete_with_flags' if self.flags else 'complete',completed_runs=len(completed))
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--receipt');p.add_argument('--prior-root');a=p.parse_args();q=Queue(a.root,sys.executable,a.prior_root)
+ p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--receipt');p.add_argument('--prior-root');p.add_argument('--calibration-source');a=p.parse_args();q=Queue(a.root,sys.executable,a.prior_root,a.calibration_source)
  original=q.config
  def config(*args,**kwargs):
   cfg=original(*args,**kwargs)
