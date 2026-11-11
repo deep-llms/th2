@@ -6,10 +6,16 @@ from efficient_llm.dot_pool import SPEC_SHA
 from efficient_llm.dot_pool.model import Config
 from efficient_llm.dot_pool.data import write,sha
 
+E2_STEPS={1.:3815,1.25:4768,1.5:5722,2.:7629}
+E1_CAL_GPUS=[list(range(4)),list(range(4,8))]
+
 ARMS={'E1':['D','L','SO','DOT','SR'],'E2':['D','PL','SO','DOT','SR']}
 class Queue:
- def __init__(self,root,python):
+ def __init__(self,root,python,prior_root=None):
   self.lock=threading.RLock();self.root=Path(root);self.python=python;self.flags=[];self.start=time.time();self.runs=[];self.root.mkdir(parents=True,exist_ok=False)
+  if prior_root:
+   prior=Path(prior_root);first=json.loads((prior/'phases.jsonl').read_text().splitlines()[0]);self.start=first['utc']
+   self.flags.append(dict(flag='Intentional calibration restart after verified native handoff; global batch unchanged, two LR fits now use four GPUs each; prior partial logs retained',prior_root=str(prior),prior_phase_log_sha256=sha(prior/'phases.jsonl')))
   self.source_manifest=Path.cwd().parent/'source-manifest.json';self.data=self.root.parent/'data';self.ready=json.loads((self.data/'ready.json').read_text());self.cfgdir=self.root/'configs';self.cfgdir.mkdir()
   if sha(self.data/'e2/manifest.json')!=self.ready['data_manifest_sha256']:raise ValueError('Data manifest changed')
  def status(self,phase,**detail):
@@ -83,7 +89,7 @@ class Queue:
     if not out.exists() or not json.loads(out.read_text())['passed']:self.flags.append(dict(flag='T7 production overfit failed after two LR attempts; arm suspect',study=study,arm=arm))
   with ThreadPoolExecutor(max_workers=8) as pool:list(pool.map(fit_lane,[(g,pairs[g::8]) for g in range(8)]))
   self.status('phase0_e1_lr')
-  lrs=[3e-4,1e-3];lrjobs=[(self.config('E1','D',0,f'cal-e1-lr{i}',500*77,lr),[i]) for i,lr in enumerate(lrs)]
+  lrs=[3e-4,1e-3];lrjobs=[(self.config('E1','D',0,f'cal-e1-lr{i}',500*77,lr),E1_CAL_GPUS[i]) for i,lr in enumerate(lrs)]
   self.parallel(lrjobs);valid=[]
   for cfg,_ in lrjobs:
    f=Path(cfg['output'])/'final_eval.json'
@@ -112,7 +118,7 @@ class Queue:
    if options:
     best=min(v for _,v in options);lr2[arm]=min(lr for lr,v in options if v<=best+.005)
    else:lr2[arm]=.001;self.flags.append(dict(flag='LR calibration missing; provisional lower LR',arm=arm))
-  choices=[1.,1.25,1.5,2.];fits=[t for t in choices if sum(speed2.values())*2*int(t*1e9//262144)*1.05<=21600];tokens=max(fits) if fits else 1.
+  choices=[1.,1.25,1.5,2.];fits=[t for t in choices if sum(speed2.values())*2*E2_STEPS[t]*1.05<=21600];tokens=max(fits) if fits else 1.
   if not fits:self.flags.append(dict(flag='E2 minimum exceeds6h target'))
   write(self.root/'budget.json',dict(E1_epochs=epochs,E2_billions=tokens,E1_lr=lr1,E2_lr=lr2,E1_slowest_seconds=speed,E2_seconds=speed2,flags=self.flags))
   self.status('phase1_e1',epochs=epochs)
@@ -120,7 +126,7 @@ class Queue:
   self.status('phase2_e2',tokens_billions=tokens)
   for seed in [0,1]:
    for arm in ARMS['E2']:
-    cfg=self.config('E2',arm,seed,f'E2-{arm}-s{seed}',int(tokens*1e9//262144),lr2['D' if arm=='D' else 'SO']);self.status('phase2_e2',current=cfg['name']);self.train(cfg,list(range(8)));self.runs.append(cfg)
+    cfg=self.config('E2',arm,seed,f'E2-{arm}-s{seed}',E2_STEPS[tokens],lr2['D' if arm=='D' else 'SO']);self.status('phase2_e2',current=cfg['name']);self.train(cfg,list(range(8)));self.runs.append(cfg)
   self.status('phase3_evaluation')
   completed=[c for c in self.runs if (Path(c['output'])/'final_eval.json').exists()]
   language=[c for c in completed if c['study']=='E2']
@@ -164,7 +170,7 @@ class Queue:
   self.status('complete_with_flags' if self.flags else 'complete',completed_runs=len(completed))
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--receipt');a=p.parse_args();q=Queue(a.root,sys.executable)
+ p=argparse.ArgumentParser();p.add_argument('--root',required=True);p.add_argument('--receipt');p.add_argument('--prior-root');a=p.parse_args();q=Queue(a.root,sys.executable,a.prior_root)
  original=q.config
  def config(*args,**kwargs):
   cfg=original(*args,**kwargs)
