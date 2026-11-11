@@ -1,3 +1,5 @@
+2026-11-11 23:05 SGT: Plan9b80f7b startup receipt retrieved: correct wc69 host, 109 exact input files /344554067497 bytes undergoing original+backup hash preflight. No deletion yet. Request fresh plan receipt; do not duplicate plan.
+
 2026-11-11: Input audit574f537 retrieved: 24247 files /1192311879762 bytes, no symlinks. Cleanup plan only prepared, no deletion yet. Tight allowlist of mixture/FWE/Why input caches; retain original CulturaX packed inputs because legacy restore depends on them. Plan hashes originals and backup against historical ledger; protected metadata and all weights/results retained. Five CPU safety tests pass.
 
 2026-11-11: USER AUTHORIZED removing reproducible bulky input data from node backup only; preserve all checkpoints/results/tokenizers/code and reconstruction metadata. Audit exact paths first, protect scientific artifacts, verify byte identities before deletion, produce retained/deleted manifests. No GPU changes; original _outputs/_data/_models remain untouched. Watcher stays stopped.
