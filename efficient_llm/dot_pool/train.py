@@ -39,7 +39,7 @@ def load(root,m,opt,cfg,rank,world,device):
     for name in ['state.pt',f'rank{rank}.pt']:
         if sha(root/name)!=receipt['files'][name]['sha256']:raise ValueError('Checkpoint hash mismatch')
     state=torch.load(root/'state.pt',map_location=device,weights_only=False)
-    for k in ['study','arm','seed','lr','batch','model','data','microbatch','data_ready_sha256','source_manifest_sha256']:
+    for k in ['study','arm','seed','lr','batch','model','data','microbatch','data_ready_sha256','source_manifest_sha256','spec_sha256']:
         if state['config'].get(k)!=cfg.get(k):raise ValueError('Resume config differs '+k)
     if cfg['study']=='E2' and state['config']['steps']!=cfg['steps']:raise ValueError('E2 schedule mutation')
     m.load_state_dict(state['model']);opt.load_state_dict(state['optimizer']);r=torch.load(root/f'rank{rank}.pt',map_location=device,weights_only=False);m.pending=r['pending'];restore_rng(r['rng']);return state['step']
@@ -132,7 +132,7 @@ def run(cfg):
         if not cfg.get('benchmark') and (step%period==0 or step==total or (study=='E2' and step==pre)):
             result={name:evaluate(m,v,study,device,rank,world,limit=None if study=='E1' or step in (pre,total) else 1000000//512,batch=cfg.get('eval_batch',32)) for name,v in vals.items() if name in ('id_dev','ood_dev','val')}
             if rank==0:write(root/f'eval-{step}.json',dict(step=step,metrics=result))
-        if not cfg.get('benchmark') and (study=='E2' and step==pre or study=='E1' and step%(1000*epoch_steps)==0):
+        if not cfg.get('benchmark') and (study=='E2' and step==pre or study=='E1' and step%(cfg.get('checkpoint_epochs',1000)*epoch_steps)==0):
             save(root/('pre_decay' if study=='E2' else f'checkpoint-{step}'),m,opt,step,cfg,rank,world)
             if study=='E1' and rank==0:
                 import shutil
@@ -141,6 +141,8 @@ def run(cfg):
                     if old.is_symlink() or old.parent.resolve()!=root.resolve() or not (old/'complete.json').exists():raise ValueError('Unsafe checkpoint retention path')
                     shutil.rmtree(old)
             if world>1:dist.barrier()
+    if device.type=='cuda':torch.cuda.synchronize()
+    training_seconds=time.monotonic()-t0
     if not cfg.get('benchmark'):
         save(root/'final_state',m,opt,step,cfg,rank,world)
         final={name:evaluate(m,v,study,device,rank,world,batch=cfg.get('eval_batch',32)) for name,v in vals.items()}
@@ -150,7 +152,7 @@ def run(cfg):
     if rank==0:
         if usage:
             counts=np.sum(usage,axis=0);means=counts.mean(-1,keepdims=True);write(root/'usage.json',dict(updates=len(usage),counts=counts.tolist(),dead=(counts<.1*means).tolist(),max_over_mean=(counts.max(-1)/means[:,0]).tolist()))
-        write(root/'train_complete.json',dict(step=step,elapsed=time.monotonic()-t0,seconds_per_update=(time.monotonic()-t0)/(step-start),flags=flags,benchmark=cfg.get('benchmark',False)));metrics.close()
+        write(root/'train_complete.json',dict(step=step,elapsed=time.monotonic()-t0,training_seconds=training_seconds,start_step=start,seconds_per_update=(time.monotonic()-t0)/(step-start),flags=flags,benchmark=cfg.get('benchmark',False)));metrics.close()
     if taylor_log is not None:taylor_log.close()
     if world>1:dist.barrier();dist.destroy_process_group()
 

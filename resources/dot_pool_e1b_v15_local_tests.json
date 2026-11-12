@@ -1,0 +1,24 @@
+{
+  "spec_sha256": "41aea5e294682e4ee703cff1df4e95a2de84662b7eba880eb862b08067ff2065",
+  "tests": {
+    "core_new_schedule": 15,
+    "explicit_v15": 6
+  },
+  "tests_passed": true,
+  "GPU_tests_pending": [
+    "T1",
+    "T2",
+    "T7",
+    "T9"
+  ],
+  "source_pin": "resources/dot_pool_e1b_v15_admission.json",
+  "source_pin_sha256": "4b40b1270c9f45193c1431d97893423929deaef3dadce96c75414cf4df2d0fd7",
+  "no_gpu_launch_yet": true,
+  "watcher_pid": 3388692,
+  "first_message_queued_not_actual_delivery": true,
+  "local_KG_manifest_mismatch": "Do not equate metadata hash; launcher requires actual old node .npy hashes for R4b; canonical data remains original node KG",
+  "cpu_logs": {
+    "cpu_tests_full.log": "6d8d9c8467d2f57d543e163b95735a2e9aefb999515ceb6391f5e86695573228",
+    "cpu_tests_v15.log": "ba962c3c09b592a8e82b7b001d333ddadb0be71e5bc5ed200a9dc9e17ce86420"
+  }
+}
