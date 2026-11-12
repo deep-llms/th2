@@ -113,11 +113,12 @@
   },
   "report_recovery_pending": false,
   "pending": {
-    "commit": "0fc4344338ea361886d0db7077e590a977e05fe5",
-    "job": "th2-wc69-dot-pool-final-small-export-20261112-a01",
-    "submitted_sgt": "2026-11-12T21:20:57.292989+08:00",
-    "bytes": 3143850,
-    "retrieve_before_writes": true
+    "commit": "d4f1b23eac97fe25e37b5fb5500225feefa3c5a8",
+    "job": "th2-wc69-dot-pool-sr-diagnostics-correction-20261112-a01",
+    "submitted_sgt": "2026-11-12T21:59:42.135389+08:00",
+    "evaluation_only": true,
+    "retrieve_before_writes": true,
+    "root": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/sr-recheck-a01"
   },
   "report_recovery_verified": {
     "artifacts": 1126,
@@ -125,5 +126,7 @@
     "downstream_rows": 10,
     "native_burn_unchanged": true,
     "report_sha256": "d9caa9a2fcdf2ec8f4a4d213cc52c81081c96713a45e2b1fcd07e9e0be5471a0"
-  }
+  },
+  "local_main_tier1_verified": 20,
+  "local_final_report_verified": true
 }
