@@ -5,6 +5,12 @@ import numpy as np
 from efficient_llm.dot_pool.data import write,sha
 from efficient_llm.dot_pool import SPEC_SHA
 
+def diagnostic_row(study, arm, seed, payload):
+ row=dict(payload)
+ if 'seed' in row:row['diagnostic_seed']=row.pop('seed')
+ row.update(study=study,arm=arm,seed=seed)
+ return row
+
 def main():
  p=argparse.ArgumentParser();p.add_argument('--root',required=True);a=p.parse_args();root=Path(a.root)
  flags=[];tables={'E1':[],'E2':[]};details=[];downstream=[];diagnostics={k:[] for k in ['shuffle','reentry','usage','taylor_validity']}
@@ -28,7 +34,7 @@ def main():
     else:flags.extend([f'{path.name}: {x}' for x in json.loads(analysis.read_text())['flags']])
     if (path/'downstream.json').exists():downstream.append(dict(arm=arm,seed=seed,**json.loads((path/'downstream.json').read_text())['metrics']))
     for name in diagnostics:
-     if (path/(name+'.json')).exists():diagnostics[name].append(dict(study=study,arm=arm,seed=seed,**json.loads((path/(name+'.json')).read_text())))
+     if (path/(name+'.json')).exists():diagnostics[name].append(diagnostic_row(study,arm,seed,json.loads((path/(name+'.json')).read_text())))
  for key,rows in {**tables,'downstream':downstream}.items():
   if rows:
    with (root/(key.lower()+'_summary.csv' if key in tables else key+'.csv')).open('w') as f:w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
@@ -38,6 +44,10 @@ def main():
    keys=sorted(set().union(*(r.keys() for r in rows)))
    with (root/(name+'.csv')).open('w') as f:
     w=csv.DictWriter(f,fieldnames=keys);w.writeheader();w.writerows({k:json.dumps(v) if isinstance(v,(list,dict)) else v for k,v in r.items()} for r in rows)
+ e1_reentry=[r for r in diagnostics['reentry'] if r['study']=='E1']
+ if e1_reentry:
+  with (root/'e1_reentry.csv').open('w') as f:
+   keys=sorted(set().union(*(r.keys() for r in e1_reentry)));w=csv.DictWriter(f,fieldnames=keys);w.writeheader();w.writerows({k:json.dumps(v) if isinstance(v,(list,dict)) else v for k,v in r.items()} for r in e1_reentry)
  readings=[]
  def means(study,metric):
   out={}
@@ -88,6 +98,8 @@ def main():
   if rows:
    keys=list(rows[0]);text+=['| '+' | '.join(keys)+' |','|'+'|'.join(['---']*len(keys))+'|']+['| '+' | '.join(str(row[k]) for k in keys)+' |' for row in rows]
  text+=['','## Registered readings','']+['- '+json.dumps(r,ensure_ascii=False) for r in readings]
+ if downstream:
+  keys=list(downstream[0]);text+=['','## Downstream (reported only)','','| '+' | '.join(keys)+' |','|'+'|'.join(['---']*len(keys))+'|']+['| '+' | '.join(str(row[k]) for k in keys)+' |' for row in downstream]
  text+=['','## Artifacts','','Per-run artifact_manifest.json lists paths, sizes, hashes, locations and verification times. manifest.json indexes compact Tier1 exports. Native checkpoint states remain on node until an approved large transfer.','', 'Downstream reference: 13686ed is the A2 project downstream commit, not a lm-eval upstream revision; reused canonical lm-eval0.4.13 request/replay bridge, context512.','Taylor gradient comes from the main backward with summed-task scaling; the accepted auxiliary-balance contribution is retained.']
  extended=[]
  for path in sorted(root.glob('E1-*-extended')):

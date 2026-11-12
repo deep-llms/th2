@@ -1,13 +1,115 @@
 {
-  "snapshot_sgt": "2026-11-12T18:51:38.533071+08:00",
-  "receipt_sha256": "6abadecc7085024b04000d927899e2d7bcd048bde772a4a63a5155ecc911fcb5",
-  "E1_complete": 10,
-  "E2_complete": 9,
-  "E2_current": "SR-s1 270/5722",
-  "ownership_source_data_pass": true,
-  "E2_logged_lr_checks": 5196,
-  "checkpoint_markers": 38,
-  "checkpoint_scope": "actual member sizes and marker hashes only; no weight rehash/resume test",
-  "new_tier1_bytes": 17057077,
-  "new_tier1_downloaded": false
+  "snapshot": "2026-11-12T19:51:33+08:00",
+  "receipt_sha256": "9290359615b4800cf17d40f8848d20a7b1e734d815b062da1fddce23dbff5102",
+  "training_complete": 20,
+  "downstream_complete": 10,
+  "analysis_complete": 20,
+  "report_failed": "TypeError duplicate seed metadata",
+  "native_burn_verified": {
+    "at": "2026-11-12T11:37:49.420274+00:00",
+    "session": "dot_pool_20261112_a03_burn",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-08f82f92-6e9a-1b21-56cb-4b359c898e3c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          188554
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-2909c891-748d-a78f-f72c-181231c00e7a",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          188555
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-d5679196-f3b9-f2fd-2a95-fc23676711ba",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          188556
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-8ec230a4-1d3c-13c5-3681-51bceba7df9a",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          188557
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-cdb11306-b5c0-52f0-d871-bba3d94e34d7",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          188558
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-d6a96000-88e7-7653-6d72-9a8e3bddf198",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          188559
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-96e1284a-b396-0253-6511-1d6b2ce193fa",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          188560
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-817e7cb4-510c-c53f-9db1-c5752571469f",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          188561
+        ]
+      }
+    ],
+    "collective_progress_verified": true
+  },
+  "source_data_locks_pass": true,
+  "phase4": {
+    "elapsed_seconds": 52888.887921094894,
+    "loop_last500_deltas": [
+      -0.0049504950495049506,
+      0.0029702970297029703
+    ],
+    "extra_epochs": 0,
+    "reason": "condition not met or no safe complete ten-run extension",
+    "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+  },
+  "report_recovery_pending": true
 }
