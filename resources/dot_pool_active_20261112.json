@@ -1,6 +1,6 @@
 {
-  "receipt_sha256": "ee47f00c757eac9abc52217a8358d4be1e2037280e4910f786678ac04cacbcc3",
-  "snapshot_sgt": "2026-11-12T09:51:17.596046+08:00",
+  "receipt_sha256": "f705d724eb4311cb7f442c5e9bd9d2ac96cc1493da28225f0dc5260947776f8c",
+  "snapshot_sgt": "2026-11-12T10:21:54.188028+08:00",
   "phase": "phase1_e1",
   "owner": {
     "pid": 172535,
@@ -23,71 +23,71 @@
     "e1": true,
     "e2": true
   },
-  "logged_rows": 81189,
+  "logged_rows": 94357,
   "logged_nonfinite_count": 0,
   "progress": [
     {
       "run": "E1-D-s0",
-      "step": 57830,
+      "step": 67230,
       "total": 154000,
-      "seconds_per_update": 0.19563800394533454
+      "seconds_per_update": 0.1956153880465938
     },
     {
       "run": "E1-D-s1",
-      "step": 57780,
+      "step": 67160,
       "total": 154000,
-      "seconds_per_update": 0.1958194387166617
+      "seconds_per_update": 0.19581223500166156
     },
     {
       "run": "E1-DOT-s0",
-      "step": 77800,
+      "step": 90390,
       "total": 154000,
-      "seconds_per_update": 0.14542897577776998
+      "seconds_per_update": 0.14549065655000926
     },
     {
       "run": "E1-DOT-s1",
-      "step": 77180,
+      "step": 89640,
       "total": 154000,
-      "seconds_per_update": 0.1465828042732222
+      "seconds_per_update": 0.1466993766143629
     },
     {
       "run": "E1-L-s0",
-      "step": 57840,
+      "step": 67240,
       "total": 154000,
-      "seconds_per_update": 0.19560954038404446
+      "seconds_per_update": 0.19558799381050404
     },
     {
       "run": "E1-L-s1",
-      "step": 57780,
+      "step": 67160,
       "total": 154000,
-      "seconds_per_update": 0.1958210116604813
+      "seconds_per_update": 0.19581652305295835
     },
     {
       "run": "E1-SO-s0",
-      "step": 104100,
+      "step": 121020,
       "total": 154000,
-      "seconds_per_update": 0.1086809761481186
+      "seconds_per_update": 0.10866608151811549
     },
     {
       "run": "E1-SO-s1",
-      "step": 103810,
+      "step": 120650,
       "total": 154000,
-      "seconds_per_update": 0.10899019472730019
+      "seconds_per_update": 0.10899750198408578
     },
     {
       "run": "E1-SR-s0",
-      "step": 107540,
+      "step": 125010,
       "total": 154000,
-      "seconds_per_update": 0.10520910017468799
+      "seconds_per_update": 0.10520040071427461
     },
     {
       "run": "E1-SR-s1",
-      "step": 109830,
+      "step": 127670,
       "total": 154000,
-      "seconds_per_update": 0.10301529971321685
+      "seconds_per_update": 0.10300915187519892
     }
   ],
-  "e1_completion_linear_sgt": "2026-11-12T15:05:19.493788+08:00",
+  "e1_completion_linear_sgt": "2026-11-12T15:05:18.894890+08:00",
   "checkpoints": {
     "E1-DOT-s0": [
       {
