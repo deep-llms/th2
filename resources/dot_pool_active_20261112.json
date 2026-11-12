@@ -111,5 +111,11 @@
     "reason": "condition not met or no safe complete ten-run extension",
     "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
   },
-  "report_recovery_pending": true
+  "report_recovery_pending": true,
+  "pending": {
+    "commit": "a10ac0015bf08d7b02d723ac06c40acdedfdd5c5",
+    "job": "th2-wc69-dot-pool-report-recovery-20261112-a01",
+    "submitted_sgt": "2026-11-12T20:28:30.865154+08:00",
+    "retrieve_before_writes": true
+  }
 }
