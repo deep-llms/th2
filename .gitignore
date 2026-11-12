@@ -45,3 +45,6 @@ project.local.json
 
 # Original retained locally; lossless tracked .gz and historical blob preserve bytes.
 /docs/results/a2_branches_20261028/final_check/sets.json
+
+# Historical A2 JSON retained locally; lossless tracked .json.gz and hash receipt.
+/docs/results/a2_nem_s1_20261028/final/supervised/run/pair/P300-pre.json

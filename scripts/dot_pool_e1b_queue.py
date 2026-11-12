@@ -31,6 +31,7 @@ class E1bQueue(Queue):
         super().__init__(root,python)
         self.flags += ['pilot SR reference has unmatched 12-layer layout and 2000epoch budget',
                        'final weights/full training state not yet off-node', 'eager execution; no optional compile speed claim']
+        self.flags.extend(json.loads((Path.cwd()/'resources/dot_pool_e1b_v15_admission.json').read_text()).get('prelaunch_history',[]))
         self.mapping=[(a,s,g) for g,(a,s) in enumerate((a,s) for a in ARMS for s in [0,1])]
     def config(self,arm,s,name,epochs,**extra):
         cfg=dict(study='E1',experiment='E1b',arm=arm,seed=s,name=name,steps=epochs*77,lr=.001,batch=4096,

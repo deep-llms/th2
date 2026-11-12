@@ -1,5 +1,5 @@
 """Admit v1.5 E1b, preserved pilot inputs, exact native ownership; no E2 runs."""
-import argparse,json,os,shlex,shutil,socket,subprocess,sys,time
+import argparse,gzip,hashlib,json,os,shlex,shutil,socket,subprocess,sys,time
 from pathlib import Path
 from importlib.metadata import version
 from efficient_llm.dot_pool import SPEC_SHA, E1B_SPEC_SHA, PILOT_SPEC_SHA
@@ -11,6 +11,11 @@ from run_experiments import load_jobs
 HOST='thiennh-p6-wc69-worker-0'
 BASE=Path('/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112')
 BURN=BASE/'sr-recheck-a01/source/resources/llm_pretrain_burn.py'
+def pilot_reference(source,pin):
+ reference=Path(source)/'resources/dot_pool_v12_reference.md.gz'
+ raw=gzip.decompress(reference.read_bytes())
+ if hashlib.sha256(raw).hexdigest()!=pin['pilot_report_sha256']:raise ValueError('Pilot report changed')
+ return raw
 def job_config(run):
  return dict(jobs=[dict(name='dot-pool-e1b-v15',gpus=list(range(8)),argv=['{python}','-u','-m','scripts.dot_pool_e1b_queue','--root',str(run),'--receipt','{run_dir}/dot-result.json'],required_outputs=[dict(path='dot-result.json',json_equals=dict(reported=True))])])
 
@@ -18,8 +23,12 @@ def main():
  p=argparse.ArgumentParser();p.add_argument('--commit',required=True);a=p.parse_args()
  burn=BURN
  if SPEC_SHA!=E1B_SPEC_SHA:raise ValueError('v1.5 process protocol not selected')
- source=Path(__file__).resolve().parents[1];admission=BASE/'execution-e1b-v15-a01';run=BASE/'run-e1b-v15-a01';session='dot_pool_e1b_v15_a01'
+ source=Path(__file__).resolve().parents[1];admission=BASE/'execution-e1b-v15-a02';run=BASE/'run-e1b-v15-a02';session='dot_pool_e1b_v15_a02'
  if socket.gethostname()!=HOST or len(a.commit)!=40 or any(c not in '0123456789abcdef' for c in a.commit):raise ValueError('Identity mismatch')
+ # a01 failed while freezing the reference, before the supervisor was submitted.
+ for old in [BASE/'run-e1b-v15-a01',BASE/'execution-e1b-v15-a01/submitted.json',BASE/'execution-e1b-v15-a01/supervised']:
+  if old.exists():raise ValueError('Previous attempt may have started; refuse duplicate '+str(old))
+ if subprocess.run(['tmux','has-session','-t','dot_pool_e1b_v15_a01'],capture_output=True).returncode==0:raise ValueError('Previous E1b session exists')
  if admission.exists() or run.exists():raise ValueError('Existing execution, refuse duplicate')
  if subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0:raise ValueError('Existing session')
  if sha(source/'docs/DOT_pool_pilot_spec_v1.5.md')!=SPEC_SHA:raise ValueError('Spec mismatch')
@@ -50,16 +59,15 @@ def main():
  check_burn(pin['burn'])
  for rel,digest in pin['source_files'].items():
   if sha(source/rel)!=digest:raise ValueError('Admission source changed '+rel)
+ reference=pilot_reference(source,pin)
  if sha(burn)!=BURN_HASH or sha('/mnt/local/_gpu_guard/gpu_guard.sh')!=GUARD_HASH or Path('/mnt/local/_gpu_guard/DISABLED').exists():raise ValueError('Unexpected burn/guard ownership')
  admission.mkdir();frozen=admission/'source';files=list(source.glob('*.py'))
  for d in ['efficient_llm','scripts','eval','tests']:files+=list((source/d).rglob('*.py'))
- files += [source/p for p in ['resources/llm_pretrain_burn.py','resources/downstream_english_20261023.json','resources/a2_inputs_20261028.json','resources/dot_pool_e1b_v15_admission.json','docs/DOT_pool_pilot_spec_v1.5.md','envs/dot_pool.txt']]
+ files += [source/p for p in ['resources/llm_pretrain_burn.py','resources/downstream_english_20261023.json','resources/a2_inputs_20261028.json','resources/dot_pool_e1b_v15_admission.json','resources/dot_pool_v12_reference.md.gz','docs/DOT_pool_pilot_spec_v1.5.md','envs/dot_pool.txt']]
  hashes={}
  for path in sorted(set(files)):
   rel=path.relative_to(source);target=frozen/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(path,target);hashes[str(rel)]=sha(target)
- reference=source/'results/dot_pool_20261112/final_recovery_a01/REPORT_WITH_SR_CORRECTION.md'
- shutil.copyfile(reference,frozen/'pilot_reference.md');hashes['pilot_reference.md']=sha(frozen/'pilot_reference.md')
- if hashes['pilot_reference.md']!=pin['pilot_report_sha256']:raise ValueError('Pilot report changed')
+ (frozen/'pilot_reference.md').write_bytes(reference);hashes['pilot_reference.md']=sha(frozen/'pilot_reference.md')
  write(admission/'source-manifest.json',dict(commit=a.commit,files=hashes))
  write(admission/'data-admission.json',dict(ready=ready,ready_sha256=sha(BASE/'data/ready.json'),physical_content_verified=True,utc=time.time(),runtime={k:version(k) for k in ['torch','transformers','numpy','flash-attn-4','nvidia-cutlass-dsl']}))
  write(admission/'inspection.json',check_burn(pin['burn']))

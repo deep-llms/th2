@@ -154,21 +154,30 @@
     "efficient_llm/dot_pool/train.py": "07c078917c0002b43e18a463b71446100f857a7b62c3c847105661c57cbead69",
     "efficient_llm/dot_pool/data.py": "7a0c531f4164f683139b3f4d4f7c54038e72b351dbb4c4b7d12f4a74c3cfa90c",
     "efficient_llm/dot_pool/model.py": "367abbf9827d806debcc19318736ca9833b948db778e3d0d652875c7a79bf7bb",
-    "scripts/dot_pool_e1b_queue.py": "90847f705353454ab53b101d9e009ee3104065323eabf51c840334028c9806a5",
+    "scripts/dot_pool_e1b_queue.py": "f6f81309f4efbe8ae09cce88ba9b1afd1d2f67efca50b07add354e5e6d9b6a7c",
     "scripts/dot_pool_e1b_report.py": "005e5f2b7864a380726550aef7ce5bcbd3b0b44cb493ba866d5d8b40e44c2fe2",
     "scripts/dot_pool_e1b_analysis.py": "db1b65d813b4a377fc093c94a153b9c212ff01cba3839bc52fe99d1fc3a41ad5",
     "scripts/dot_pool_e1b_checks.py": "6e0e17d86234a59b6109fcbcbc029a1e4ce261f2a7c2806d3157f3a1cd7ca5a7",
     "scripts/dot_pool_overfit.py": "81bc05f6196e53d58f8065f66877034e3457ea77013a8f1c198a3424f385e48a",
     "scripts/dot_pool_evaluate.py": "6170ae8257e756a6d427e5d3d37a3bc91957c091eab614f1298e7e4b213f774d",
     "scripts/dot_pool_queue.py": "e9c2f723bf2107b58dab5805a2c3155ca173bb6de64cf7a125096a43a4b7e7f7",
-    "scripts/launch_dot_pool_e1b.py": "b72dba2dd3e3030f466633d30443aeeffd79b3264122b5e496b4e4558a60c01e",
+    "scripts/launch_dot_pool_e1b.py": "c1e6c456cedd589a488f94742e59dbfb023e619ed381233ec7e239affd08830a",
     "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc",
     "scripts/gpu_process.py": "0bd5b1e6d6fd51c887b14ffdc35493075ce45e2d6421af367a4d2d6d06b6c446",
     "run_experiments.py": "752c7913adbd4b2b1e58ae21a535b20462f2622be00ce5f48a9e76ec80e3172d",
-    "docs/DOT_pool_pilot_spec_v1.5.md": "41aea5e294682e4ee703cff1df4e95a2de84662b7eba880eb862b08067ff2065"
+    "docs/DOT_pool_pilot_spec_v1.5.md": "41aea5e294682e4ee703cff1df4e95a2de84662b7eba880eb862b08067ff2065",
+    "resources/dot_pool_v12_reference.md.gz": "7ae430dcd274f2bf4bd1453e26dffaaf9b934903da8f10d9d32ef61caa93768f"
   },
   "local_reproduced_analysis_inputs": {
     "ood_test.npy": "6978571b6c862bd63dafbad70e881e816275b3c58a0cf5b2c0c04cf3e0f4cf58",
     "ood_bridge.npy": "f22b290d7362b7fc392e7ca5d796560f9a539259da7539e8154ae6a053088e5a"
-  }
+  },
+  "prelaunch_history": [
+    {
+      "flag": "a01 launcher packaging error before any GPU handoff; fixed by tracked reference archive, a02 fresh output",
+      "failed_commit": "b7e5fc18167133feb101a031316c9bd3e83a3476",
+      "receipt_sha256": "fbbcfc16b86787e5395e20e229585a4df2fd411bba120dcf7c0e2edaa67f48be",
+      "training_started": false
+    }
+  ]
 }

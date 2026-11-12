@@ -1,0 +1,10 @@
+{
+  "reason": "Preserve historical A2 result losslessly while staying below runner25MiB source cap; original remains locally; no active DOT dependency",
+  "original": "docs/results/a2_nem_s1_20261028/final/supervised/run/pair/P300-pre.json",
+  "original_bytes": 233091,
+  "original_sha256": "abf9cb708f7c0c78001295a40719ac3a98ede22eadc263f4765516bdd74c70ed",
+  "archive": "docs/results/a2_nem_s1_20261028/final/supervised/run/pair/P300-pre.json.gz",
+  "archive_bytes": 72045,
+  "archive_sha256": "90573205a35292961045120b59ba2527cace78ceaa4b40efe48c2ac2c788b37f",
+  "decompression_byte_match": true
+}
