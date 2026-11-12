@@ -1,161 +1,199 @@
 {
-  "receipt_sha256": "c212fe06fd45cfad87083d31b5fdecdd99eecf001c471953430130cafdba0d53",
-  "snapshot_sgt": "2026-11-12T10:52:10.453192+08:00",
+  "receipt_sha256": "3a827fa438a17ab73775c082e1e3fa50beb0966894e0ca36fdce5572daa48440",
+  "snapshot_sgt": "2026-11-12T11:21:29.199854+08:00",
   "phase": "phase1_e1",
-  "owner": {
-    "pid": 172535,
-    "ppid": 17115,
-    "start_ticks": 432693250,
-    "command_sha256": "de867d8ae8e9566a0d8d283a7edb19a9e0053017e03248e9ab9c5d8c0837404d",
-    "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
-    "command_prefix": [
-      "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
-      "-u",
-      "-m"
-    ],
-    "launcher_kind": null
-  },
-  "all10_workers_owned": true,
-  "all10_progressed": true,
+  "completed": [
+    "E1-SR-s0",
+    "E1-SR-s1"
+  ],
+  "active_runs": 8,
+  "active_gpus": 6,
+  "all_active_workers_owned": true,
   "source_files": 429,
-  "source_hash_errors": [],
   "data_locks": {
     "e1": true,
     "e2": true
   },
-  "logged_rows": 107405,
+  "logged_rows": 118633,
   "logged_nonfinite_count": 0,
   "progress": [
     {
       "run": "E1-D-s0",
-      "step": 76530,
-      "total": 154000,
-      "seconds_per_update": 0.1955708937008164
+      "last": {
+        "step": 85520,
+        "epoch": 1110.6493506493507,
+        "nll": 0.014944755472242832,
+        "lr": 0.001,
+        "grad_norm": 0.34711170196533203,
+        "elapsed": 16726.429400221445,
+        "seconds_per_update": 0.1955850023453183,
+        "balance_loss": 0.0,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+      },
+      "complete": false
     },
     {
       "run": "E1-D-s1",
-      "step": 76440,
-      "total": 154000,
-      "seconds_per_update": 0.19578485304273105
+      "last": {
+        "step": 85420,
+        "epoch": 1109.3506493506493,
+        "nll": 0.014323115348815918,
+        "lr": 0.001,
+        "grad_norm": 0.28874343633651733,
+        "elapsed": 16725.448991192505,
+        "seconds_per_update": 0.19580249346316678,
+        "balance_loss": 0.0,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+      },
+      "complete": false
     },
     {
       "run": "E1-DOT-s0",
-      "step": 102900,
-      "total": 154000,
-      "seconds_per_update": 0.14545500137991624
+      "last": {
+        "step": 114810,
+        "epoch": 1491.0389610389611,
+        "nll": 0.007423902861773968,
+        "lr": 0.001,
+        "grad_norm": 0.1222437396645546,
+        "elapsed": 16725.56363335997,
+        "seconds_per_update": 0.14568037308306223,
+        "balance_loss": 0.00011398376227589324,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05",
+        "taylor_std_median": 7.284550633812614e-07,
+        "taylor_std_p05": 2.50159857273502e-08,
+        "taylor_std_below_1e4": 0.8894624710083008
+      },
+      "complete": false
     },
     {
       "run": "E1-DOT-s1",
-      "step": 102020,
-      "total": 154000,
-      "seconds_per_update": 0.14669846583333415
+      "last": {
+        "step": 113880,
+        "epoch": 1478.9610389610389,
+        "nll": 0.004398699849843979,
+        "lr": 0.001,
+        "grad_norm": 0.12268542498350143,
+        "elapsed": 16725.032760102302,
+        "seconds_per_update": 0.14686540885463528,
+        "balance_loss": 0.0001148840892710723,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05",
+        "taylor_std_median": 1.0485581469765748e-06,
+        "taylor_std_p05": 3.334862697101926e-08,
+        "taylor_std_below_1e4": 0.8792999386787415
+      },
+      "complete": false
     },
     {
       "run": "E1-L-s0",
-      "step": 76540,
-      "total": 154000,
-      "seconds_per_update": 0.1955468313335698
+      "last": {
+        "step": 85520,
+        "epoch": 1110.6493506493507,
+        "nll": 0.013612288050353527,
+        "lr": 0.001,
+        "grad_norm": 0.2254096120595932,
+        "elapsed": 16725.18113014847,
+        "seconds_per_update": 0.19557040611132143,
+        "balance_loss": 0.0,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+      },
+      "complete": false
     },
     {
       "run": "E1-L-s1",
-      "step": 76440,
-      "total": 154000,
-      "seconds_per_update": 0.19578609858444113
+      "last": {
+        "step": 85420,
+        "epoch": 1109.3506493506493,
+        "nll": 0.04097456857562065,
+        "lr": 0.001,
+        "grad_norm": 0.35076212882995605,
+        "elapsed": 16724.95587658696,
+        "seconds_per_update": 0.19579672063991962,
+        "balance_loss": 0.0,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+      },
+      "complete": false
     },
     {
       "run": "E1-SO-s0",
-      "step": 137770,
-      "total": 154000,
-      "seconds_per_update": 0.10863922911303313
+      "last": {
+        "step": 153940,
+        "epoch": 1999.2207792207791,
+        "nll": 0.0122525654733181,
+        "lr": 0.001,
+        "grad_norm": 0.15737709403038025,
+        "elapsed": 16725.912153053097,
+        "seconds_per_update": 0.10865215118495294,
+        "balance_loss": 0.00011914905189769343,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+      },
+      "complete": false
     },
     {
       "run": "E1-SO-s1",
-      "step": 137350,
-      "total": 154000,
-      "seconds_per_update": 0.10896735324831168
+      "last": {
+        "step": 153480,
+        "epoch": 1993.2467532467533,
+        "nll": 0.01331512350589037,
+        "lr": 0.001,
+        "grad_norm": 0.11916369199752808,
+        "elapsed": 16726.17026008293,
+        "seconds_per_update": 0.1089794778505414,
+        "balance_loss": 0.00012576852168422192,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+      },
+      "complete": false
     },
     {
       "run": "E1-SR-s0",
-      "step": 142310,
-      "total": 154000,
-      "seconds_per_update": 0.10517309905766659
+      "last": {
+        "step": 154000,
+        "epoch": 2000.0,
+        "nll": 0.013734727270073362,
+        "lr": 0.001,
+        "grad_norm": 0.437887042760849,
+        "elapsed": 16197.228150156327,
+        "seconds_per_update": 0.10517680617209596,
+        "balance_loss": 0.0,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+      },
+      "complete": true
     },
     {
       "run": "E1-SR-s1",
-      "step": 145320,
-      "total": 154000,
-      "seconds_per_update": 0.10299130763326372
+      "last": {
+        "step": 154000,
+        "epoch": 2000.0,
+        "nll": 0.02372793687714471,
+        "lr": 0.001,
+        "grad_norm": 0.7123656272888184,
+        "elapsed": 15859.91779320687,
+        "seconds_per_update": 0.10298647917868788,
+        "balance_loss": 0.0,
+        "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
+      },
+      "complete": true
     }
   ],
-  "e1_completion_linear_sgt": "2026-11-12T15:05:15.622998+08:00",
-  "checkpoints": {
-    "E1-DOT-s0": [
-      {
-        "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-DOT-s0/checkpoint-77000/complete.json",
-        "marker_sha256": "fd45639124f246c85fbd46fa9d922b700ddcf689fb60f1343644a4d9b08ce890",
-        "step": 77000,
-        "actual_member_sizes_match": {
-          "rank0.pt": true,
-          "state.pt": true
-        }
-      }
-    ],
-    "E1-DOT-s1": [
-      {
-        "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-DOT-s1/checkpoint-77000/complete.json",
-        "marker_sha256": "1e9f3dd629602b0e29b21567ce61cbfe362e3d2ce250cb94d2843d58a3bdfa47",
-        "step": 77000,
-        "actual_member_sizes_match": {
-          "rank0.pt": true,
-          "state.pt": true
-        }
-      }
-    ],
-    "E1-SO-s0": [
-      {
-        "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SO-s0/checkpoint-77000/complete.json",
-        "marker_sha256": "4b0e887cac45d8999e4d2e01950d9626fc191129613a7e6d00791824cb2cb36c",
-        "step": 77000,
-        "actual_member_sizes_match": {
-          "rank0.pt": true,
-          "state.pt": true
-        }
-      }
-    ],
-    "E1-SO-s1": [
-      {
-        "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SO-s1/checkpoint-77000/complete.json",
-        "marker_sha256": "8c39e06df7560ccde8fb84463799088fb0c0554df2f79d4f1c9b61b4b0cea5b0",
-        "step": 77000,
-        "actual_member_sizes_match": {
-          "rank0.pt": true,
-          "state.pt": true
-        }
-      }
-    ],
-    "E1-SR-s0": [
-      {
-        "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s0/checkpoint-77000/complete.json",
-        "marker_sha256": "57e1448fa616be9280f8c7162d6b2967c658707d720ed04c777513a95dd20283",
-        "step": 77000,
-        "actual_member_sizes_match": {
-          "rank0.pt": true,
-          "state.pt": true
-        }
-      }
-    ],
-    "E1-SR-s1": [
-      {
-        "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s1/checkpoint-77000/complete.json",
-        "marker_sha256": "58940b51492b94ef8f1ccd61c70e60fb9076f716bf9779cb01484121e603750a",
-        "step": 77000,
-        "actual_member_sizes_match": {
-          "rank0.pt": true,
-          "state.pt": true
-        }
-      }
-    ]
-  },
-  "checkpoint_verification_scope": "completion marker hash and actual member existence/sizes only; no actual weight rehash or resume test in this snapshot",
-  "calibration_backup": "all E1/E2 calibration Tier1 local verified"
+  "checkpoint_markers": 12,
+  "checkpoint_scope": "marker hash + member existence/size; no independent state rehash/resume",
+  "exports": [
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/tier1/E1-SR-s0-training.tar.gz",
+      "bytes": 830792,
+      "sha256": "cc83a09382c20ce5b68995e0405bf63fc39c4b5be74536fc928664a9cdf076fd",
+      "ready_for_small_export": true,
+      "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05",
+      "actual_size_matches": true,
+      "actual_hash_matches": true
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/tier1/E1-SR-s1-training.tar.gz",
+      "bytes": 830457,
+      "sha256": "fe8d584dbd6caec46684f7e7d9c2d39aac41e0ce96b4c93fd5bacc8f9e8384f1",
+      "ready_for_small_export": true,
+      "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05",
+      "actual_size_matches": true,
+      "actual_hash_matches": true
+    }
+  ]
 }
