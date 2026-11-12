@@ -1,3 +1,5 @@
+2026-11-13T02:53:31.393114+08:00: Submitting unique authorized v1.5 E1b launch a01, source f9da3512ba6443fa07282201f239080a58340b63. CPU tests15+6PASS; native jobs schema and shell syntaxPASS; code26184971bytes<25MiB. Prior pending export resolved; informational probea87d833 freshly retrieved but ACK absent, no mutation and no duplicate probe. Launcher performs fresh exact identity/hash/native checks before GPU handoff. Actual node admission/tests/train not yet observed. Retrieve launch receipt before further writes. Watch3388692 alive; actual first delivery still unconfirmed.
+
 # Current task — DOT-pool v1.5 E1b
 
 Updated 2026-11-13T02:51:32.663725+08:00. User explicitly authorized docs/DOT_pool_pilot_spec_v1.5.md and requires a live watcher. Spec SHA256 `41aea5e294682e4ee703cff1df4e95a2de84662b7eba880eb862b08067ff2065`.
