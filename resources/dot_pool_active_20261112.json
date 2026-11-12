@@ -111,12 +111,19 @@
     "reason": "condition not met or no safe complete ten-run extension",
     "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
   },
-  "report_recovery_pending": true,
+  "report_recovery_pending": false,
   "pending": {
-    "commit": "a948f6b0228ae27ee627de76faeafc72c0dd89ec",
-    "job": "th2-wc69-dot-pool-recovery-terminal-20261112-a01",
-    "submitted_sgt": "2026-11-12T20:54:46.856818+08:00",
-    "retrieve_before_writes": true,
-    "action": "#2 three small existing receipt/proof files"
+    "commit": "0fc4344338ea361886d0db7077e590a977e05fe5",
+    "job": "th2-wc69-dot-pool-final-small-export-20261112-a01",
+    "submitted_sgt": "2026-11-12T21:20:57.292989+08:00",
+    "bytes": 3143850,
+    "retrieve_before_writes": true
+  },
+  "report_recovery_verified": {
+    "artifacts": 1126,
+    "report_rows": 20,
+    "downstream_rows": 10,
+    "native_burn_unchanged": true,
+    "report_sha256": "d9caa9a2fcdf2ec8f4a4d213cc52c81081c96713a45e2b1fcd07e9e0be5471a0"
   }
 }
