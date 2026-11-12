@@ -901,3 +901,6 @@ User supplied docs/A2_depth_spec.md v1.1 SHA 2cbef31e9bb6576ec9f3a20918ca69d7019
 
 
 13Nov2026 DOT v1.5 authorization: owner requests eight fresh no-stem/coda E1b fits and continued watcher. v1.2 remains immutable/complete. Use explicit process spec SHA for v1.5; default historical code remains v1.2. One GPU/run; preserve first200 fullstate to continue same trajectories after shared N selection. Add same-relation R4b from original routes; SR is historical mismatched-layout reference, not new training. Only small Tier1 off-node; fullstate/weights stay node with flag. Same-thread watcher3388692 running every30min; queue acceptance separate from actual delivery.
+
+
+2026-11-13T03:00:39.659730+08:00 — DOT scientific autonomy reaffirmed. Owner explicitly reaffirms autonomous continuation: fix project/code/scientific problems, and modify DOT-pool method when needed to make the idea work, without waiting for unanswered questions. Record rationale, tests and before/after results; use fresh labeled outputs for method changes and preserve registered v1.5 controls/checkpoints. Do not silently relabel changed-method results as preregistered. Infrastructure errors, GPU ownership, network/transfer and no-duplicate constraints remain. Keep existing watcher alive; do not stop for scientific setbacks.
