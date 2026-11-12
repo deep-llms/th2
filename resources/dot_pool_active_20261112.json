@@ -1,7 +1,7 @@
 {
-  "receipt_sha256": "57627144cc082386ea24d3e0c8a4a08f4f33b330f6782ee38ef0bd20049187b1",
-  "snapshot_utc": 1794437430.293965,
-  "all10_workers_owned": true,
+  "receipt_sha256": "2e6cbd0c1217f8c2abeeb3988ae778c5e2d91ed5b80ec35f56db82661f5ccd12",
+  "snapshot_sgt": "2026-11-12T07:51:21.891288+08:00",
+  "phase": "phase1_e1",
   "owner": {
     "pid": 172535,
     "ppid": 17115,
@@ -15,54 +15,78 @@
     ],
     "launcher_kind": null
   },
+  "all10_workers_owned": true,
   "source_files": 429,
   "source_hash_errors": [],
   "data_locks": {
     "e1": true,
     "e2": true
   },
-  "budget": {
-    "E1_epochs": 2000,
-    "E2_billions": 1.5,
-    "E1_lr": 0.001,
-    "E2_lr": {
-      "D": 0.002,
-      "SO": 0.002
+  "logged_rows": 29648,
+  "logged_nonfinite_count": 0,
+  "progress": [
+    {
+      "run": "E1-D-s0",
+      "step": 21020,
+      "total": 154000,
+      "seconds_per_update": 0.19593292106958468
     },
-    "E1_slowest_seconds": 0.20001172061264516,
-    "E2_seconds": {
-      "D": 0.17760520334355534,
-      "PL": 0.22925746822729706,
-      "SO": 0.24639203103259205,
-      "DOT": 0.5581551660597325,
-      "SR": 0.22347072880715133
+    {
+      "run": "E1-D-s1",
+      "step": 21010,
+      "total": 154000,
+      "seconds_per_update": 0.195991028723631
     },
-    "flags": [
-      {
-        "flag": "Owned native handoff; prior logs retained, original elapsed time preserved; calibration reuse is recorded separately when requested",
-        "prior_root": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a02",
-        "prior_phase_log_sha256": "a5c57055772e9d7f45519a83c061de90b41c029968b213335e418a305c2b369a"
-      },
-      {
-        "flag": "E1 minimum exceeds target3h",
-        "predicted_seconds": 30801.804974347353
-      }
-    ],
-    "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
-  },
-  "e2_lr_choice_replayed": true,
-  "e2_calibrations_complete": 6,
-  "tier1_new_export_bytes": 17095208,
-  "phase": "phase1_e1",
-  "eta_sgt": {
-    "E1": "12Nov15:15\u201315:30 provisional",
-    "all": "12Nov21\u201322 provisional"
-  },
-  "watcher": {
-    "pid": 3211258,
-    "actual_delivery_tick": 8,
-    "next_sgt": "12Nov08:19:10"
-  },
-  "pending_health_commit": "e1f222dd6f028f313374383e37b05e23a712532e",
-  "calibration_local_backup": "results/dot_pool_20261112/backup_local_manifest.json"
+    {
+      "run": "E1-DOT-s0",
+      "step": 28760,
+      "total": 154000,
+      "seconds_per_update": 0.1431754563190302
+    },
+    {
+      "run": "E1-DOT-s1",
+      "step": 28720,
+      "total": 154000,
+      "seconds_per_update": 0.143383868285591
+    },
+    {
+      "run": "E1-L-s0",
+      "step": 21030,
+      "total": 154000,
+      "seconds_per_update": 0.19587110949377295
+    },
+    {
+      "run": "E1-L-s1",
+      "step": 21010,
+      "total": 154000,
+      "seconds_per_update": 0.1960138660027552
+    },
+    {
+      "run": "E1-SO-s0",
+      "step": 37840,
+      "total": 154000,
+      "seconds_per_update": 0.10883553995365419
+    },
+    {
+      "run": "E1-SO-s1",
+      "step": 37740,
+      "total": 154000,
+      "seconds_per_update": 0.10913563551957199
+    },
+    {
+      "run": "E1-SR-s0",
+      "step": 39050,
+      "total": 154000,
+      "seconds_per_update": 0.10547211681574907
+    },
+    {
+      "run": "E1-SR-s1",
+      "step": 39910,
+      "total": 154000,
+      "seconds_per_update": 0.1031958645386087
+    }
+  ],
+  "e1_completion_linear_sgt": "2026-11-12T15:05:49.775327+08:00",
+  "checkpoint_status": "none expected until77000 steps per run",
+  "calibration_backup": "all E1/E2 calibration Tier1 local verified"
 }
