@@ -1,0 +1,214 @@
+{
+  "runs": [
+    {
+      "run": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s0",
+      "inputs": {
+        "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s0/config.json": {
+          "bytes": 1257,
+          "sha256": "eedd7cc87dd4bf957f170b5d66455fd0cbab12532cbae1dabc6878896c997ae5"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s0/final_eval.json": {
+          "bytes": 955,
+          "sha256": "2093c8ffa581cf2a3a999b402bfde07b20ddc64e88feec38bce9499c17e00912"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s0/final_state/complete.json": {
+          "bytes": 402,
+          "sha256": "f9a8318179c5c66d599b934ebda5cf3893789361d9c8844e39bdbfaeb74de38e"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s0/final_state/rank0.pt": {
+          "bytes": 14741,
+          "sha256": "99b2fe6fb1caae2d2ab8724fcee35047adb5b8e4ee1a0f756b8d9190b8ab2f03"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s0/final_state/state.pt": {
+          "bytes": 1146564963,
+          "sha256": "127760169040de59b9b68bc34b9a6e15eedc08cd3f9e88526ede62e829bdbe86"
+        }
+      },
+      "data_manifest": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/data/e1/manifest.json",
+      "data_manifest_sha256": "1b1fb700f7f7b1e9f5271584cdd4236dffab29c5f27e765f2011c50b9693a8f2"
+    },
+    {
+      "run": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s1",
+      "inputs": {
+        "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s1/config.json": {
+          "bytes": 1257,
+          "sha256": "07b9a3c1ebbd5fac7100f3897c9872ced0081caf74bcff10f2a2b5fbafae4a1d"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s1/final_eval.json": {
+          "bytes": 924,
+          "sha256": "3df08fcb7ab200c98ba6dfb7e2627807b08fb0239945fa62c7a9ca2d041949bf"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s1/final_state/complete.json": {
+          "bytes": 402,
+          "sha256": "8bcbdeed3ae9058bc67429800a60ce7d94efe415d861035af975bfe1b171dee5"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s1/final_state/rank0.pt": {
+          "bytes": 14741,
+          "sha256": "e91f7d7f616ca189477804e036cc0bebc4facd59306f05872846fa091caf31c4"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SR-s1/final_state/state.pt": {
+          "bytes": 1146564963,
+          "sha256": "de70040b4aba9fd9d2a84f9a0ac6d348056cbf91749e32cedd109fa1518e13ac"
+        }
+      },
+      "data_manifest": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/data/e1/manifest.json",
+      "data_manifest_sha256": "1b1fb700f7f7b1e9f5271584cdd4236dffab29c5f27e765f2011c50b9693a8f2"
+    }
+  ],
+  "burn": {
+    "host": "thiennh-p6-wc69-worker-0",
+    "gpu_uuids": [
+      "GPU-08f82f92-6e9a-1b21-56cb-4b359c898e3c",
+      "GPU-2909c891-748d-a78f-f72c-181231c00e7a",
+      "GPU-d5679196-f3b9-f2fd-2a95-fc23676711ba",
+      "GPU-8ec230a4-1d3c-13c5-3681-51bceba7df9a",
+      "GPU-cdb11306-b5c0-52f0-d871-bba3d94e34d7",
+      "GPU-d6a96000-88e7-7653-6d72-9a8e3bddf198",
+      "GPU-96e1284a-b396-0253-6511-1d6b2ce193fa",
+      "GPU-817e7cb4-510c-c53f-9db1-c5752571469f"
+    ],
+    "workers": [
+      188554,
+      188555,
+      188556,
+      188557,
+      188558,
+      188559,
+      188560,
+      188561
+    ],
+    "identities": {
+      "188554": {
+        "pid": 188554,
+        "ppid": 188485,
+        "start_ticks": 437600533,
+        "command_sha256": "108ab2ce586d965b2f0c50bdd35d65c114e1a1849d3cbfd8e4583c7f129722bb",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "188555": {
+        "pid": 188555,
+        "ppid": 188485,
+        "start_ticks": 437600533,
+        "command_sha256": "b9fda15aa6fec07ab97f66f62c6cdc778bc7806cd676fa7c9f1c88ef3ddaa16d",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "188556": {
+        "pid": 188556,
+        "ppid": 188485,
+        "start_ticks": 437600534,
+        "command_sha256": "10785fa1c176cf0ca902660398041f484360d14a207e46e6793be28cce64ec1c",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "188557": {
+        "pid": 188557,
+        "ppid": 188485,
+        "start_ticks": 437600534,
+        "command_sha256": "e360a9b657f393281a80135b2a685360e76da3ba3c98ae5e761d09eb4b3a41ba",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "188558": {
+        "pid": 188558,
+        "ppid": 188485,
+        "start_ticks": 437600534,
+        "command_sha256": "fc158f6fef12910baf8f6144b7a7a01e76ca4931bc3c3cae245e7af3dd161d2a",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "188559": {
+        "pid": 188559,
+        "ppid": 188485,
+        "start_ticks": 437600534,
+        "command_sha256": "e47e4065fa2d531a525aa0d135712cb8e59365379716d26e3a3e64c13247c4ec",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "188560": {
+        "pid": 188560,
+        "ppid": 188485,
+        "start_ticks": 437600534,
+        "command_sha256": "8159cc3231cb96f7aaada7b82ef2a274f41c97d02659083f82b31011c133ccc7",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "188561": {
+        "pid": 188561,
+        "ppid": 188485,
+        "start_ticks": 437600534,
+        "command_sha256": "52f58b21aeb4e9cad5ebdb17a9e01dccf40015b05f1a13180ed8fac53552d25f",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "188485": {
+        "pid": 188485,
+        "ppid": 17115,
+        "start_ticks": 437600416,
+        "command_sha256": "9bf449d0812d77d062627a7b4517de8a1e1fede13ef8bb9a71ed25adc1dddc3a",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/execution-a03/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    }
+  },
+  "source_files": {
+    "run_experiments.py": "752c7913adbd4b2b1e58ae21a535b20462f2622be00ce5f48a9e76ec80e3172d",
+    "scripts/launch_dot_pool_sr_recheck.py": "700bf18b41d20647d388214f031690ca3fdd5196110f23d6bcf4dfef5a593d98",
+    "scripts/dot_pool_sr_recheck.py": "81698d2c1507259d0a15e442435316b94a74c8bc6513a7cb69e06020cc813b65",
+    "scripts/dot_pool_evaluate.py": "6170ae8257e756a6d427e5d3d37a3bc91957c091eab614f1298e7e4b213f774d",
+    "scripts/dot_pool_report_recovery.py": "5742b63975b8ae8dfd3cc6ac2ca165a018a54bf3d217ee8436522eabb80caa23",
+    "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc",
+    "scripts/gpu_status.py": "63506e500bd24c4b105234116cd601543e1cdf5bd50c599b22550730b31c38eb",
+    "scripts/gpu_process.py": "0bd5b1e6d6fd51c887b14ffdc35493075ce45e2d6421af367a4d2d6d06b6c446",
+    "efficient_llm/dot_pool/model.py": "367abbf9827d806debcc19318736ca9833b948db778e3d0d652875c7a79bf7bb",
+    "efficient_llm/dot_pool/train.py": "f10ec6ce8a3db8dbbcc816ea7cc28044d3e6567e7650719f0da17b65a73b879b",
+    "efficient_llm/dot_pool/data.py": "7a0c531f4164f683139b3f4d4f7c54038e72b351dbb4c4b7d12f4a74c3cfa90c",
+    "efficient_llm/dot_pool/__init__.py": "28e43ee3ffb60d3211de20379d47d15a0d7590845e295261356ca79152d72ed4",
+    "resources/llm_pretrain_burn.py": "2b32968798e2200a8148a3395f1d37ae06e92b6340a74a2f192bfe1a48bcf174"
+  }
+}
