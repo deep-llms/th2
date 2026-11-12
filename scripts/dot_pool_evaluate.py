@@ -14,18 +14,21 @@ def load(run):
  return run,cfg,m
 @torch.no_grad()
 def routes(run,cfg,m):
- seed(9182);data=Path(cfg['data']);m.capture=True;out={};study=cfg['study']
+ seed(9182);data=Path(cfg['data']);m.capture=True;out={};study=cfg['study'];device=next(m.parameters()).device
  names=['id_dev','ood_dev','id_test','ood_test','ood_bridge','ood_dev_bridge'] if study=='E1' else ['val']
  for name in names:
+  # E1 final evaluation resets the RNG for each split. Match that exact draw,
+  # so SR's correct/wrong re-entry groups describe the reported accuracy.
+  if study=='E1':seed(9182)
   rows=np.load(data/(name+'.npy'),mmap_mode='r') if study=='E1' else Stream(data,name)
   n=len(rows) if study=='E1' else min(64,len(rows));ids=[];gates=[];correct=[]
   for start in range(0,n,32):
-   ix=np.arange(start,min(start+32,n));inp=e1_batch(rows[ix],'cuda') if study=='E1' else rows.batch(ix,'cuda')
-   with autocast(torch.device('cuda')):logits=m(**{k:v for k,v in inp.items() if k!='labels'})
+   ix=np.arange(start,min(start+32,n));inp=e1_batch(rows[ix],device) if study=='E1' else rows.batch(ix,device)
+   with autocast(device):logits=m(**{k:v for k,v in inp.items() if k!='labels'})
    if m.routed:
     ii=torch.stack([r['ids'] for r in m.routes],dim=2);gg=torch.stack([r['gates'] for r in m.routes],dim=2)
     if study=='E1':
-     pos=(inp['labels']!=-100).long().argmax(1)-1;b=torch.arange(len(ix),device='cuda');ii=ii[b,pos];gg=gg[b,pos];correct.extend((logits[b,pos].argmax(-1)==inp['labels'][b,pos+1]).cpu().tolist())
+     pos=(inp['labels']!=-100).long().argmax(1)-1;b=torch.arange(len(ix),device=device);ii=ii[b,pos];gg=gg[b,pos];correct.extend((logits[b,pos].argmax(-1)==inp['labels'][b,pos+1]).cpu().tolist())
     ids.append(ii.cpu().numpy().astype(np.int16));gates.append(gg.cpu().numpy().astype(np.float32))
    del logits
   if ids:out[name+'_ids']=np.concatenate(ids);out[name+'_gates']=np.concatenate(gates)
