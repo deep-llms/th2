@@ -113,9 +113,10 @@
   },
   "report_recovery_pending": true,
   "pending": {
-    "commit": "a10ac0015bf08d7b02d723ac06c40acdedfdd5c5",
-    "job": "th2-wc69-dot-pool-report-recovery-20261112-a01",
-    "submitted_sgt": "2026-11-12T20:28:30.865154+08:00",
-    "retrieve_before_writes": true
+    "commit": "a948f6b0228ae27ee627de76faeafc72c0dd89ec",
+    "job": "th2-wc69-dot-pool-recovery-terminal-20261112-a01",
+    "submitted_sgt": "2026-11-12T20:54:46.856818+08:00",
+    "retrieve_before_writes": true,
+    "action": "#2 three small existing receipt/proof files"
   }
 }
