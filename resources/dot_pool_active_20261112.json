@@ -1,6 +1,6 @@
 {
-  "receipt_sha256": "b9c10761753f416a0ad2eedee61bb2760b61bb0159fa10fc1a1910229122446f",
-  "snapshot_sgt": "2026-11-12T13:21:01.515674+08:00",
+  "receipt_sha256": "1b853d478cd4dc70cba809ff8b32e15170ddf222155fb0ad3495e71666ef4977",
+  "snapshot_sgt": "2026-11-12T14:21:01.986154+08:00",
   "phase": "phase1_e1",
   "completed": [
     "E1-DOT-s0",
@@ -18,19 +18,19 @@
     "e1": true,
     "e2": true
   },
-  "logged_rows": 141300,
+  "logged_rows": 148670,
   "logged_nonfinite_count": 0,
   "progress": [
     {
       "run": "E1-D-s0",
       "last": {
-        "step": 122250,
-        "epoch": 1587.6623376623377,
-        "nll": 0.00813467800617218,
+        "step": 140670,
+        "epoch": 1826.8831168831168,
+        "nll": 0.018112696707248688,
         "lr": 0.001,
-        "grad_norm": 0.13757553696632385,
-        "elapsed": 23897.79256963823,
-        "seconds_per_update": 0.19548296580801133,
+        "grad_norm": 0.31943196058273315,
+        "elapsed": 27497.933641417883,
+        "seconds_per_update": 0.19547830839478061,
         "balance_loss": 0.0,
         "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
       },
@@ -39,13 +39,13 @@
     {
       "run": "E1-D-s1",
       "last": {
-        "step": 122150,
-        "epoch": 1586.3636363636363,
-        "nll": 0.017689159139990807,
+        "step": 140580,
+        "epoch": 1825.7142857142858,
+        "nll": 0.014703843742609024,
         "lr": 0.001,
-        "grad_norm": 0.266276478767395,
-        "elapsed": 23898.238589060493,
-        "seconds_per_update": 0.19564665239064136,
+        "grad_norm": 0.216665118932724,
+        "elapsed": 27499.092107186094,
+        "seconds_per_update": 0.19561169517394392,
         "balance_loss": 0.0,
         "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
       },
@@ -90,13 +90,13 @@
     {
       "run": "E1-L-s0",
       "last": {
-        "step": 122260,
-        "epoch": 1587.7922077922078,
-        "nll": 0.018967699259519577,
+        "step": 140680,
+        "epoch": 1827.012987012987,
+        "nll": 0.012789729982614517,
         "lr": 0.001,
-        "grad_norm": 0.22829526662826538,
-        "elapsed": 23897.711426729336,
-        "seconds_per_update": 0.19546631299912667,
+        "grad_norm": 0.22512230277061462,
+        "elapsed": 27497.844139650464,
+        "seconds_per_update": 0.19546377694205522,
         "balance_loss": 0.0,
         "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
       },
@@ -105,13 +105,13 @@
     {
       "run": "E1-L-s1",
       "last": {
-        "step": 122150,
-        "epoch": 1586.3636363636363,
-        "nll": 0.020791351795196533,
+        "step": 140580,
+        "epoch": 1825.7142857142858,
+        "nll": 0.02892308309674263,
         "lr": 0.001,
-        "grad_norm": 0.3479747474193573,
-        "elapsed": 23897.55582650937,
-        "seconds_per_update": 0.19564106284826385,
+        "grad_norm": 0.4322899878025055,
+        "elapsed": 27498.59968812205,
+        "seconds_per_update": 0.19560819240648,
         "balance_loss": 0.0,
         "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05"
       },
@@ -180,25 +180,6 @@
   ],
   "checkpoint_markers": 16,
   "checkpoint_scope": "marker hash + member existence/size; no independent state rehash/resume",
-  "exports": [
-    {
-      "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/tier1/E1-DOT-s0-training.tar.gz",
-      "bytes": 6506954,
-      "sha256": "dfd85247f0597a376d12dd6c0f95e7abc7d14e27c0a46f5deadb9ccc0080f69c",
-      "ready_for_small_export": true,
-      "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05",
-      "actual_size_matches": true,
-      "actual_hash_matches": true
-    },
-    {
-      "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/tier1/E1-DOT-s1-training.tar.gz",
-      "bytes": 6497504,
-      "sha256": "7b1d6c5bca575df7b8daca11386cab90ebe1beab76de76da18384d2226f8c292",
-      "ready_for_small_export": true,
-      "spec_sha256": "a0b41acecbd462db6f9277ebec7173fe242d3493d9fb7f2d77b127d88bc97f05",
-      "actual_size_matches": true,
-      "actual_hash_matches": true
-    }
-  ],
-  "e1_completion_linear_sgt": "2026-11-12T15:04:52.861552+08:00"
+  "all_completed_tier1_local_verified": true,
+  "e1_completion_linear_sgt": "2026-11-12T15:04:47.095103+08:00"
 }
