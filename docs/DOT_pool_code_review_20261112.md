@@ -1,3 +1,5 @@
+Closure addendum (13 Nov 2026): the E1-SR diagnostic RNG mismatch described below is now resolved using the two original final checkpoints, without retraining. All four split accuracies match original headlines; corrected route archives and re-entry/CI replay are verified locally. See `results/dot_pool_20261112/final_recovery_a01/FINAL_VERIFICATION.json` and `SR_ERRATUM.json`. Original diagnostic artifacts and this historical review are retained.
+
 # DOT-pool v1.2 — post-run code review, 12 November 2026
 
 Reviewed against `docs/DOT_pool_pilot_spec_v1.2.md` (SHA-256
