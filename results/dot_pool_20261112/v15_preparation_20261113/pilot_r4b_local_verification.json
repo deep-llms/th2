@@ -1,0 +1,66 @@
+{
+  "verified": true,
+  "computation": "local CPU, independent Boolean-matrix Jaccard vs original set algorithm; all10000-draw intervals replay within1e-14",
+  "runs": [
+    {
+      "run": "E1-SO-s0",
+      "routes_sha256": "7038ef71946661aee14abae48066b13766a6a425e466441040792546a2796261",
+      "result_sha256": "fdecb44e761ac9245a1be493adf254ea4d52b7672a1ebca675b87718817e5020",
+      "independent_matrix_replay": true
+    },
+    {
+      "run": "E1-SO-s1",
+      "routes_sha256": "b28fdb11edf6bd401f0932cb2e6f07bc88db0b05107bd1b87495493ba0b5dff7",
+      "result_sha256": "455b2cbe9d6077ff5cad68a7e3c21288df5b8710453554d0d015dbb4923dd9f9",
+      "independent_matrix_replay": true
+    },
+    {
+      "run": "E1-DOT-s0",
+      "routes_sha256": "d5feaa593078424165652bc8e2df807410c48a71c28ee4dbfbc10bfc46a7625d",
+      "result_sha256": "1ae2d05b515af730820bc2f2e625ebebea11a55f4b2ab0c07e518b721d72dad0",
+      "independent_matrix_replay": true
+    },
+    {
+      "run": "E1-DOT-s1",
+      "routes_sha256": "16aa12dd3af54803a666b8aa4f9fd383c668b2a9a5544bdb645c1f0728e2a325",
+      "result_sha256": "ea00cd8e449109a8df77589dae2b521407482195e4d20f45d64e4de71f7e38fd",
+      "independent_matrix_replay": true
+    },
+    {
+      "run": "E1-SR-s0",
+      "routes_sha256": "7ee189c958f5af12538866f04437e363b34d6905ce605e65b990865821ee079a",
+      "result_sha256": "4f42e361c1f7d58c5181f24b2aac982a61e564f3f8b42ac0b9bd85f3a2819f0a",
+      "independent_matrix_replay": true
+    },
+    {
+      "run": "E1-SR-s1",
+      "routes_sha256": "937b6206d9da19d8ce02cd92636fd70663b352733c59da8401b34eeeedc21726",
+      "result_sha256": "087fdb173529321b18fecf5c23d67f60b14e542967fdd815e2d13ddb8ae8d72c",
+      "independent_matrix_replay": true
+    }
+  ],
+  "rows": 18,
+  "data_array_sha256": {
+    "ood_test.npy": "6978571b6c862bd63dafbad70e881e816275b3c58a0cf5b2c0c04cf3e0f4cf58",
+    "ood_bridge.npy": "f22b290d7362b7fc392e7ca5d796560f9a539259da7539e8154ae6a053088e5a"
+  },
+  "node_input_admission_evidence": {
+    "receipt_sha256": "fbbcfc16b86787e5395e20e229585a4df2fd411bba120dcf7c0e2edaa67f48be",
+    "source": "f9da3512ba6443fa07282201f239080a58340b63",
+    "basis": "Traceback occurs after original KG, two array, six route and ownership checks; no GPU was launched"
+  },
+  "flags": [
+    "canonical node R4b rerun queued in a02",
+    "pilot random SR uses same deterministic route draw across seeds; the positive bootstrap label is descriptive, not causal evidence",
+    "pilot SR layout/budget not matched to E1b"
+  ],
+  "original_R4_sources": {
+    "results/dot_pool_20261112/final_recovery_a01/files/analysis_delta/E1-SO-s0/reentry.json": "6203ec938163f5454903ca278ac2ec4dae75c8bb36a73f0d4fa63332c72411ba",
+    "results/dot_pool_20261112/final_recovery_a01/files/analysis_delta/E1-SO-s1/reentry.json": "2832443ec5305072908aeb3cea49407533cf54a5428fc2708bebc25c56c02cd7",
+    "results/dot_pool_20261112/final_recovery_a01/files/analysis_delta/E1-DOT-s0/reentry.json": "b7c87dc59f010cae25dd3730fb946935649c424d8a7015b43a249589069acdab",
+    "results/dot_pool_20261112/final_recovery_a01/files/analysis_delta/E1-DOT-s1/reentry.json": "43b6d08c8a179871d32b24dea0beee64f6401f8af34754a428c73502e4aea885",
+    "results/dot_pool_20261112/sr_correction_a01/E1-SR-s0/files/reentry.json": "8caac5bf656a2ac5900029485991eb85778528e165bedebece8f077cd2ff5ee9",
+    "results/dot_pool_20261112/sr_correction_a01/E1-SR-s1/files/reentry.json": "8f5910e91a39cb1f3a3c9c91eb73af51636359ae74b22a0d524f91849de4e08f"
+  },
+  "combined_csv_sha256": "093978c5fc3d1e139fb05249ce0291ffc6214c38cf906855bb6f5dbce1c62ba2"
+}
