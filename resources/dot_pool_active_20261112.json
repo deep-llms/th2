@@ -1,6 +1,6 @@
 {
-  "receipt_sha256": "8c26a795e1246f76d9b3bf99c6581f5134b0c870157cef7b591dba34d69322fb",
-  "snapshot_sgt": "2026-11-12T09:21:47.660990+08:00",
+  "receipt_sha256": "ee47f00c757eac9abc52217a8358d4be1e2037280e4910f786678ac04cacbcc3",
+  "snapshot_sgt": "2026-11-12T09:51:17.596046+08:00",
   "phase": "phase1_e1",
   "owner": {
     "pid": 172535,
@@ -23,72 +23,94 @@
     "e1": true,
     "e2": true
   },
-  "logged_rows": 68511,
+  "logged_rows": 81189,
   "logged_nonfinite_count": 0,
   "progress": [
     {
       "run": "E1-D-s0",
-      "step": 48780,
+      "step": 57830,
       "total": 154000,
-      "seconds_per_update": 0.19565126257908483
+      "seconds_per_update": 0.19563800394533454
     },
     {
       "run": "E1-D-s1",
-      "step": 48740,
+      "step": 57780,
       "total": 154000,
-      "seconds_per_update": 0.19581217832460535
+      "seconds_per_update": 0.1958194387166617
     },
     {
       "run": "E1-DOT-s0",
-      "step": 65720,
+      "step": 77800,
       "total": 154000,
-      "seconds_per_update": 0.14522187975337314
+      "seconds_per_update": 0.14542897577776998
     },
     {
       "run": "E1-DOT-s1",
-      "step": 65270,
+      "step": 77180,
       "total": 154000,
-      "seconds_per_update": 0.14622389580827574
+      "seconds_per_update": 0.1465828042732222
     },
     {
       "run": "E1-L-s0",
-      "step": 48790,
+      "step": 57840,
       "total": 154000,
-      "seconds_per_update": 0.19562140862501548
+      "seconds_per_update": 0.19560954038404446
     },
     {
       "run": "E1-L-s1",
-      "step": 48740,
+      "step": 57780,
       "total": 154000,
-      "seconds_per_update": 0.19581749042288574
+      "seconds_per_update": 0.1958210116604813
     },
     {
       "run": "E1-SO-s0",
-      "step": 87800,
+      "step": 104100,
       "total": 154000,
-      "seconds_per_update": 0.10870861898517928
+      "seconds_per_update": 0.1086809761481186
     },
     {
       "run": "E1-SO-s1",
-      "step": 87540,
+      "step": 103810,
       "total": 154000,
-      "seconds_per_update": 0.10903030204251987
+      "seconds_per_update": 0.10899019472730019
     },
     {
       "run": "E1-SR-s0",
-      "step": 90680,
+      "step": 107540,
       "total": 154000,
-      "seconds_per_update": 0.10526163602937186
+      "seconds_per_update": 0.10520910017468799
     },
     {
       "run": "E1-SR-s1",
-      "step": 92620,
+      "step": 109830,
       "total": 154000,
-      "seconds_per_update": 0.10305653688296937
+      "seconds_per_update": 0.10301529971321685
     }
   ],
-  "e1_completion_linear_sgt": "2026-11-12T15:05:19.410031+08:00",
+  "e1_completion_linear_sgt": "2026-11-12T15:05:19.493788+08:00",
   "checkpoints": {
+    "E1-DOT-s0": [
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-DOT-s0/checkpoint-77000/complete.json",
+        "marker_sha256": "fd45639124f246c85fbd46fa9d922b700ddcf689fb60f1343644a4d9b08ce890",
+        "step": 77000,
+        "actual_member_sizes_match": {
+          "rank0.pt": true,
+          "state.pt": true
+        }
+      }
+    ],
+    "E1-DOT-s1": [
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-DOT-s1/checkpoint-77000/complete.json",
+        "marker_sha256": "1e9f3dd629602b0e29b21567ce61cbfe362e3d2ce250cb94d2843d58a3bdfa47",
+        "step": 77000,
+        "actual_member_sizes_match": {
+          "rank0.pt": true,
+          "state.pt": true
+        }
+      }
+    ],
     "E1-SO-s0": [
       {
         "path": "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/run-a03/E1-SO-s0/checkpoint-77000/complete.json",
