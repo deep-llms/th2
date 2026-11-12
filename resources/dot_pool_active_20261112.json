@@ -1,6 +1,6 @@
 {
-  "receipt_sha256": "8377865964ca0dafc35e0e610d876e9a13d709b9aefd64fbfd4c7e9a9702d46d",
-  "snapshot_sgt": "2026-11-12T08:21:26.305148+08:00",
+  "receipt_sha256": "c231bf4d8495524c480cd0c68fa73d9b790cd914b431f2f41ca1643f8d046a23",
+  "snapshot_sgt": "2026-11-12T08:51:34.861845+08:00",
   "phase": "phase1_e1",
   "owner": {
     "pid": 172535,
@@ -23,71 +23,71 @@
     "e1": true,
     "e2": true
   },
-  "logged_rows": 42577,
+  "logged_rows": 55512,
   "logged_nonfinite_count": 0,
   "progress": [
     {
       "run": "E1-D-s0",
-      "step": 30250,
+      "step": 39500,
       "total": 154000,
-      "seconds_per_update": 0.19578893053750238
+      "seconds_per_update": 0.19574037111501055
     },
     {
       "run": "E1-D-s1",
-      "step": 30230,
+      "step": 39460,
       "total": 154000,
-      "seconds_per_update": 0.19589077591328577
+      "seconds_per_update": 0.19590078786230758
     },
     {
       "run": "E1-DOT-s0",
-      "step": 41080,
+      "step": 53360,
       "total": 154000,
-      "seconds_per_update": 0.1441754051031202
+      "seconds_per_update": 0.14487331637812811
     },
     {
       "run": "E1-DOT-s1",
-      "step": 40960,
+      "step": 53080,
       "total": 154000,
-      "seconds_per_update": 0.14457922929443612
+      "seconds_per_update": 0.1456382721927285
     },
     {
       "run": "E1-L-s0",
-      "step": 30260,
+      "step": 39510,
       "total": 154000,
-      "seconds_per_update": 0.1957473335986168
+      "seconds_per_update": 0.19570267604429664
     },
     {
       "run": "E1-L-s1",
-      "step": 30230,
+      "step": 39460,
       "total": 154000,
-      "seconds_per_update": 0.19590731648619808
+      "seconds_per_update": 0.19590804465851444
     },
     {
       "run": "E1-SO-s0",
-      "step": 54440,
+      "step": 71090,
       "total": 154000,
-      "seconds_per_update": 0.1087981599254238
+      "seconds_per_update": 0.108761703312179
     },
     {
       "run": "E1-SO-s1",
-      "step": 54280,
+      "step": 70870,
       "total": 154000,
-      "seconds_per_update": 0.10911297597635851
+      "seconds_per_update": 0.1090853179711152
     },
     {
       "run": "E1-SR-s0",
-      "step": 56200,
+      "step": 73400,
       "total": 154000,
-      "seconds_per_update": 0.10539378588928036
+      "seconds_per_update": 0.10533207877290407
     },
     {
       "run": "E1-SR-s1",
-      "step": 57430,
+      "step": 74990,
       "total": 154000,
-      "seconds_per_update": 0.10313925657065558
+      "seconds_per_update": 0.10310305949237934
     }
   ],
-  "e1_completion_linear_sgt": "2026-11-12T15:05:33.753710+08:00",
+  "e1_completion_linear_sgt": "2026-11-12T15:05:34.169280+08:00",
   "checkpoint_status": "none expected until77000 steps per run",
   "calibration_backup": "all E1/E2 calibration Tier1 local verified"
 }
