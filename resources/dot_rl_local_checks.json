@@ -48,5 +48,10 @@
     "run_experiments.py": "752c7913adbd4b2b1e58ae21a535b20462f2622be00ce5f48a9e76ec80e3172d",
     "envs/dot_pool.txt": "33937c00a1c5c5cd168f7f8c13a02d4fdcaf943adce6e19fb8dda91ca0d0caf0",
     "resources/dot_rl_data_expected.json": "e489592376d031b33fe58a32bc2a054e31d607aa3cdd7caaef54a90655776c42"
+  },
+  "post_submit_audit": {
+    "passed": 4,
+    "log_sha256": "fce2c87184a76155ce82b5529cb870ba0cbb9a68dce74564abc7ee18f37a21c4",
+    "same_submitted_scientific_source": true
   }
 }
