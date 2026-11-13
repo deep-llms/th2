@@ -6,6 +6,16 @@ from scripts.gpu_process import inspect,process
 from scripts.launch_dot_rl import BASE
 
 def read(path):return json.loads(path.read_text()) if path.exists() else None
+def tail_jsonl(path):
+    if not path.exists():return []
+    with path.open('rb') as f:
+        f.seek(max(0,path.stat().st_size-32768));lines=f.read().decode(errors='replace').splitlines()
+    records=[]
+    for line in lines:
+        try:records.append(json.loads(line))
+        except json.JSONDecodeError:pass  # Partial first/last line while the worker appends.
+    return records[-2:]
+
 def main():
     execution=BASE/'execution-a01';run=BASE/'results/dot_rl_20261114/run-a01'
     result=dict(utc=time.time(),ownership=inspect(),submitted=read(execution/'submitted.json'),admission=read(execution/'admission.json'),supervisor=read(execution/'supervised/supervisor.json'),native=read(execution/'supervised/burn-verified.json'),status=read(run/'status.json'),budget=read(run/'budget.json'),tests=read(run/'tests_summary.json'),source_errors=[],data_errors=[],runs={},exports=[])
@@ -39,6 +49,8 @@ def main():
             if sha(data/rel)!=r['sha256']:result['data_errors'].append(rel)
     for cfg in sorted((run/'configs').glob('*.json')):
         c=read(cfg);p=Path(c['output']);result['runs'][p.name]={k:read(p/(k+'.json')) for k in ['progress','first200','train_complete','complete']}
+        result['runs'][p.name]['curves_tail']=tail_jsonl(p/'curves.jsonl')
+        result['runs'][p.name]['checkpoints']=[dict(path=str(f.parent),manifest=read(f),manifest_sha256=sha(f),mode='metadata; state hash recorded at save, not rehashed in this health') for f in sorted(p.glob('checkpoint-*/complete.json'))]
         metrics=p/'metrics.jsonl'
         if metrics.exists():
             with metrics.open('rb') as f:
