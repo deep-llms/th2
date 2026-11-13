@@ -1,0 +1,52 @@
+{
+  "spec_sha256": "9c8bc06bf1c702f40e334fd23f7b0604b99661a65381e1f12b0883bb4efbe33b",
+  "cpu_tests": {
+    "passed": 12,
+    "log_sha256": "a77bf4b67b7820117311500e769c5f4d13a3fc5db0db56a0f09c4a6ed806589a"
+  },
+  "entrypoint_smoke": {
+    "passed": true,
+    "arms": [
+      "L",
+      "P-rand",
+      "J-RL",
+      "WS-RL"
+    ],
+    "device": "cpu",
+    "tiny_model": true,
+    "epochs": 1,
+    "log_sha256": "8ac486984c75547c23137ce6cdf19daffdfa77fe4d1a4bf291017138567f0e45"
+  },
+  "T11": {
+    "passed": true,
+    "loop_probability": 0.9999468338448588,
+    "updates": 1000,
+    "device": "cpu"
+  },
+  "T13": {
+    "passed": true,
+    "draws_per_step": 1000000,
+    "min_chisquare_p": 0.045768310709278615
+  },
+  "production_gpu_tests": "queued before main fits; not yet run",
+  "files": {
+    "docs/DOT_RL_router_spec.md": "9c8bc06bf1c702f40e334fd23f7b0604b99661a65381e1f12b0883bb4efbe33b",
+    "efficient_llm/dot_pool/rl.py": "4cf880f2c65e0d6d999ebb6c937e1a6c4a5994a74f639b14f6d26de1cbdc1d62",
+    "efficient_llm/dot_pool/rl_run.py": "dd895c6d63a38ec1ae24c3b2c53cb9a8b0bdeedbd5cab6c534a5c5cae93a2ffe",
+    "efficient_llm/dot_pool/model.py": "367abbf9827d806debcc19318736ca9833b948db778e3d0d652875c7a79bf7bb",
+    "efficient_llm/dot_pool/data.py": "7a0c531f4164f683139b3f4d4f7c54038e72b351dbb4c4b7d12f4a74c3cfa90c",
+    "efficient_llm/dot_pool/train.py": "07c078917c0002b43e18a463b71446100f857a7b62c3c847105661c57cbead69",
+    "scripts/dot_rl_checks.py": "cec51ba1c205092ef8bb03257989c63c7768875ceb7b3b15947ded00b47329e9",
+    "scripts/dot_rl_queue.py": "f23fef9fa247bd02eb394981d4fd65bacd42f9762615bd5845e74c64d27f9e85",
+    "scripts/dot_rl_report.py": "e685b411b40104d91b9cbd83fdba64d9f5e4e766074ae7df42c1ca70febd0057",
+    "scripts/dot_rl_health.py": "52d477b1a8804954effce6b698c8063363c50064d9364a653c82190f79722b82",
+    "scripts/launch_dot_rl.py": "f54625327e0ea590257c1d5c225e7508238999328f3162a403934e48616661e4",
+    "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc",
+    "scripts/gpu_process.py": "0bd5b1e6d6fd51c887b14ffdc35493075ce45e2d6421af367a4d2d6d06b6c446",
+    "scripts/gpu_status.py": "63506e500bd24c4b105234116cd601543e1cdf5bd50c599b22550730b31c38eb",
+    "scripts/dot_pool_report_recovery.py": "5742b63975b8ae8dfd3cc6ac2ca165a018a54bf3d217ee8436522eabb80caa23",
+    "run_experiments.py": "752c7913adbd4b2b1e58ae21a535b20462f2622be00ce5f48a9e76ec80e3172d",
+    "envs/dot_pool.txt": "33937c00a1c5c5cd168f7f8c13a02d4fdcaf943adce6e19fb8dda91ca0d0caf0",
+    "resources/dot_rl_data_expected.json": "e489592376d031b33fe58a32bc2a054e31d607aa3cdd7caaef54a90655776c42"
+  }
+}

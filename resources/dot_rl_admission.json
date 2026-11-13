@@ -1,0 +1,163 @@
+{
+  "burn": {
+    "host": "thiennh-p6-wc69-worker-0",
+    "gpu_uuids": [
+      "GPU-08f82f92-6e9a-1b21-56cb-4b359c898e3c",
+      "GPU-2909c891-748d-a78f-f72c-181231c00e7a",
+      "GPU-d5679196-f3b9-f2fd-2a95-fc23676711ba",
+      "GPU-8ec230a4-1d3c-13c5-3681-51bceba7df9a",
+      "GPU-cdb11306-b5c0-52f0-d871-bba3d94e34d7",
+      "GPU-d6a96000-88e7-7653-6d72-9a8e3bddf198",
+      "GPU-96e1284a-b396-0253-6511-1d6b2ce193fa",
+      "GPU-817e7cb4-510c-c53f-9db1-c5752571469f"
+    ],
+    "workers": [
+      196122,
+      196123,
+      196124,
+      196125,
+      196126,
+      196127,
+      196128,
+      196129
+    ],
+    "identities": {
+      "196122": {
+        "pid": 196122,
+        "ppid": 196053,
+        "start_ticks": 444905315,
+        "command_sha256": "108ab2ce586d965b2f0c50bdd35d65c114e1a1849d3cbfd8e4583c7f129722bb",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "196123": {
+        "pid": 196123,
+        "ppid": 196053,
+        "start_ticks": 444905315,
+        "command_sha256": "b9fda15aa6fec07ab97f66f62c6cdc778bc7806cd676fa7c9f1c88ef3ddaa16d",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "196124": {
+        "pid": 196124,
+        "ppid": 196053,
+        "start_ticks": 444905315,
+        "command_sha256": "10785fa1c176cf0ca902660398041f484360d14a207e46e6793be28cce64ec1c",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "196125": {
+        "pid": 196125,
+        "ppid": 196053,
+        "start_ticks": 444905315,
+        "command_sha256": "e360a9b657f393281a80135b2a685360e76da3ba3c98ae5e761d09eb4b3a41ba",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "196126": {
+        "pid": 196126,
+        "ppid": 196053,
+        "start_ticks": 444905315,
+        "command_sha256": "fc158f6fef12910baf8f6144b7a7a01e76ca4931bc3c3cae245e7af3dd161d2a",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "196127": {
+        "pid": 196127,
+        "ppid": 196053,
+        "start_ticks": 444905315,
+        "command_sha256": "e47e4065fa2d531a525aa0d135712cb8e59365379716d26e3a3e64c13247c4ec",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "196128": {
+        "pid": 196128,
+        "ppid": 196053,
+        "start_ticks": 444905315,
+        "command_sha256": "8159cc3231cb96f7aaada7b82ef2a274f41c97d02659083f82b31011c133ccc7",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "196129": {
+        "pid": 196129,
+        "ppid": 196053,
+        "start_ticks": 444905315,
+        "command_sha256": "52f58b21aeb4e9cad5ebdb17a9e01dccf40015b05f1a13180ed8fac53552d25f",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "196053": {
+        "pid": 196053,
+        "ppid": 17115,
+        "start_ticks": 444905198,
+        "command_sha256": "659ac35658ba418c55e848084d1f9faa4a2e0758dda450d4c09c1ba1ccd5380b",
+        "exe": "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/dot_pool/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/dot_pool_20261112/execution-e1b-v15-a02/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    }
+  },
+  "files": {
+    "docs/DOT_RL_router_spec.md": "9c8bc06bf1c702f40e334fd23f7b0604b99661a65381e1f12b0883bb4efbe33b",
+    "efficient_llm/dot_pool/rl.py": "4cf880f2c65e0d6d999ebb6c937e1a6c4a5994a74f639b14f6d26de1cbdc1d62",
+    "efficient_llm/dot_pool/rl_run.py": "dd895c6d63a38ec1ae24c3b2c53cb9a8b0bdeedbd5cab6c534a5c5cae93a2ffe",
+    "efficient_llm/dot_pool/model.py": "367abbf9827d806debcc19318736ca9833b948db778e3d0d652875c7a79bf7bb",
+    "efficient_llm/dot_pool/data.py": "7a0c531f4164f683139b3f4d4f7c54038e72b351dbb4c4b7d12f4a74c3cfa90c",
+    "efficient_llm/dot_pool/train.py": "07c078917c0002b43e18a463b71446100f857a7b62c3c847105661c57cbead69",
+    "scripts/dot_rl_checks.py": "cec51ba1c205092ef8bb03257989c63c7768875ceb7b3b15947ded00b47329e9",
+    "scripts/dot_rl_queue.py": "f23fef9fa247bd02eb394981d4fd65bacd42f9762615bd5845e74c64d27f9e85",
+    "scripts/dot_rl_report.py": "e685b411b40104d91b9cbd83fdba64d9f5e4e766074ae7df42c1ca70febd0057",
+    "scripts/dot_rl_health.py": "52d477b1a8804954effce6b698c8063363c50064d9364a653c82190f79722b82",
+    "scripts/launch_dot_rl.py": "f54625327e0ea590257c1d5c225e7508238999328f3162a403934e48616661e4",
+    "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc",
+    "scripts/gpu_process.py": "0bd5b1e6d6fd51c887b14ffdc35493075ce45e2d6421af367a4d2d6d06b6c446",
+    "scripts/gpu_status.py": "63506e500bd24c4b105234116cd601543e1cdf5bd50c599b22550730b31c38eb",
+    "scripts/dot_pool_report_recovery.py": "5742b63975b8ae8dfd3cc6ac2ca165a018a54bf3d217ee8436522eabb80caa23",
+    "run_experiments.py": "752c7913adbd4b2b1e58ae21a535b20462f2622be00ce5f48a9e76ec80e3172d",
+    "envs/dot_pool.txt": "33937c00a1c5c5cd168f7f8c13a02d4fdcaf943adce6e19fb8dda91ca0d0caf0",
+    "resources/dot_rl_data_expected.json": "e489592376d031b33fe58a32bc2a054e31d607aa3cdd7caaef54a90655776c42"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "seed": 2026,
+  "split_order": "permutation first4000 RL, next2000 OOD-test, remaining34000 ID",
+  "counts": {
+    "id_dev": 1000,
+    "id_test": 1000,
+    "train_compositions": 244800,
+    "rl_train": 7164,
+    "rl_dev": 796,
+    "ood_dev": 994,
+    "ood_test": 995,
+    "atoms": 40000,
+    "ood_rl_atoms": 4000,
+    "ood_test_atoms": 2000,
+    "train": 284800
+  },
+  "files": {
+    "atoms.npy": {
+      "bytes": 1280128,
+      "sha256": "5e41282b73b4fc3110e1edb94ea5735e00b744f980416f9e746405e1d1d41db4"
+    },
+    "id_dev.npy": {
+      "bytes": 32128,
+      "sha256": "ca551aa61c636bb4d50d1e76fdeb1a25eff3c3c3f4a845ee756fb7ea40fa6f3c"
+    },
+    "id_test.npy": {
+      "bytes": 32128,
+      "sha256": "e61a5d325410a3f38016ade3fafc2f764e14a7c75ff6cb5dc2d15b849daacf52"
+    },
+    "ood_dev.npy": {
+      "bytes": 31936,
+      "sha256": "81bb275d1ee9165072cc5e70e442e1cf7d2b3b09ad601853f695d1b665f5ff31"
+    },
+    "ood_rl_atoms.npy": {
+      "bytes": 128128,
+      "sha256": "68ee429d0289d13f320b1fa75fc3e379196150ee023872300efaea8ed7475a71"
+    },
+    "ood_test.npy": {
+      "bytes": 31968,
+      "sha256": "319f69817a6031ea47beaaf0c947ab01968289598c6b1f45d4f4a03f463184c4"
+    },
+    "ood_test_atoms.npy": {
+      "bytes": 64128,
+      "sha256": "9c28fcde2a2d6f09da8e4c8db7e1fc772dfe818203c6fa736c1a6df902a5c3c4"
+    },
+    "rl_dev.npy": {
+      "bytes": 25600,
+      "sha256": "42a58ef09cea87660dd26c1348e2d10d44dab6d9126dab514c554d112713c35c"
+    },
+    "rl_train.npy": {
+      "bytes": 229376,
+      "sha256": "6702cf360c0691614ebfadbd23953f8ed72acf81380be220addb72b31aa8b130"
+    },
+    "split_indices.npz": {
+      "bytes": 15856730,
+      "sha256": "c5c32bdc466fea5e05a85eb9f5ef76933835fb4ee9bac07d5f3f2643b17b0e62"
+    },
+    "train.npy": {
+      "bytes": 9113728,
+      "sha256": "bc7b05d5ebe03314bf333d8d51d9d3711e2e67516f191b3563d2c7796087a6c4"
+    },
+    "train_compositions.npy": {
+      "bytes": 7833728,
+      "sha256": "6d6b8a1836acdecc01c86d80b84af7c28389c054519f19326914851df09a4891"
+    }
+  },
+  "spec_sha256": "9c8bc06bf1c702f40e334fd23f7b0604b99661a65381e1f12b0883bb4efbe33b"
+}
