@@ -16,11 +16,12 @@
     "efficient_llm/dot_pool/train.py": "07c078917c0002b43e18a463b71446100f857a7b62c3c847105661c57cbead69",
     "resources/a2_corpora_30b_20261029.json": "26b086fc1550cc646fad73252f506aa7629cfd52b32dfd915fa6cdd3055d044e",
     "resources/a2_data_rebuild_wc69_20261103.json": "14981417d7b44b3ace9bf7c2e56c0ccfb03b43e0e8dd1ea021c6264b331b9fe4",
-    "resources/a2_dot_data_ohmv_20261118.json": "94effcd635248b9180541ab4155652f5bcf989782a00a67e50db46ca22a566b2",
+    "resources/a2_dot_data_ohmv_20261118.json": "9ce9b72cca975676f37bdebf97851df2282fb8fd41c2c90c7c8e2a1b04ce64d6",
     "resources/dot_rl_data_expected.json": "e489592376d031b33fe58a32bc2a054e31d607aa3cdd7caaef54a90655776c42",
     "scripts/a2_dot_rebuild_data.py": "b846bd20c4a7cf2ba3a994dfd89592a04df7235a01e62f300000f34df8687336",
     "scripts/a2_prepare_corpora.py": "c8bc298dcd71e136ef4f4838f25b3c25b0bdff474b9e15c142fd18419b933d68",
     "scripts/a2_stage1_data.py": "cac4e434319b847b0e96422b46d5a59516b6516bf9f736db2745a2c2aa549aa7",
-    "tests/a2/test_data_rebuild.py": "0e60394195d62a480dbf6f1e4a91f8f473be235afaf39119a9a7f33fa3926db0"
+    "tests/a2/test_data_rebuild.py": "0e60394195d62a480dbf6f1e4a91f8f473be235afaf39119a9a7f33fa3926db0",
+    "resources/a2_inputs_20261028.json": "3150a15914791bbb59d8972be25d1e46e7f0b34870bdd7df1462a057ba9dd99e"
   }
 }

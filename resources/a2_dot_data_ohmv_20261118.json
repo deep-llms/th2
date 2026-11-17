@@ -112,6 +112,7 @@
     "scripts/a2_prepare_corpora.py": "c8bc298dcd71e136ef4f4838f25b3c25b0bdff474b9e15c142fd18419b933d68",
     "scripts/a2_stage1_data.py": "cac4e434319b847b0e96422b46d5a59516b6516bf9f736db2745a2c2aa549aa7",
     "efficient_llm/dot_pool/data.py": "7a0c531f4164f683139b3f4d4f7c54038e72b351dbb4c4b7d12f4a74c3cfa90c",
-    "efficient_llm/dot_pool/rl.py": "4cf880f2c65e0d6d999ebb6c937e1a6c4a5994a74f639b14f6d26de1cbdc1d62"
+    "efficient_llm/dot_pool/rl.py": "4cf880f2c65e0d6d999ebb6c937e1a6c4a5994a74f639b14f6d26de1cbdc1d62",
+    "resources/a2_inputs_20261028.json": "3150a15914791bbb59d8972be25d1e46e7f0b34870bdd7df1462a057ba9dd99e"
   }
 }
