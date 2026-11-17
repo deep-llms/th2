@@ -1,27 +1,16 @@
-#1 +30+a
-#th2-ohmv-data-inventory-20261118-a01
-set -euo pipefail
-date -u
-hostname
-nvidia-smi --query-gpu=index,uuid,name,memory.used --format=csv,noheader
-nvidia-smi --query-compute-apps=pid,gpu_uuid,process_name --format=csv,noheader
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PYINV'
-import json,os,socket,shutil
-from pathlib import Path
-assert socket.gethostname()=='thiennh-p6-ohmv-worker-0'
-roots=['/mnt/local/_data/deep-llms_th2','/mnt/local/_models/deep-llms_th2','/mnt/local/_backup/deep-llms_th2','/mnt/local/_outputs/deep-llms_th2']
-result={'host':socket.gethostname(),'free_bytes':shutil.disk_usage('/mnt/local').free,'cpus':len(os.sched_getaffinity(0)),'roots':{},'raw':{}}
-for name in roots:
- p=Path(name);result['roots'][name]={'exists':p.exists(),'children':[{'name':x.name,'dir':x.is_dir(),'symlink':x.is_symlink()} for x in sorted(p.iterdir())][:100] if p.is_dir() else []}
-plan=json.loads(Path('resources/a2_corpora_30b_20261029.json').read_text())
-for name,limit in [('dclm',216),('fineweb_edu',44)]:
- files=plan['corpora'][name]['files'][:limit];found=[]
- for r in files:
-  p=Path(r['local']);p=p/Path(r['path']).name if p.is_dir() else p
-  if p.exists():found.append({'index':r['index'],'bytes':p.stat().st_size,'size_matches':p.stat().st_size==r['bytes']})
- result['raw'][name]=found
-for name in ['tokenizer.json','tokenizer_config.json','special_tokens_map.json']:
- p=Path(plan['tokenizer_path'])/name;result[name]={'exists':p.exists(),'bytes':p.stat().st_size if p.exists() else None}
-print('A2_DOT_DATA_INVENTORY '+json.dumps(result),flush=True)
-PYINV
-printf 'DATA_INVENTORY_COMPLETE\n'
+#d +a # ohmv-a2-dot-data-batch01-20261118
+#models
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/tokenizer.json /mnt/local/_data/deep-llms_th2/a2_dot_20261118/tokenizer/tokenizer.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/tokenizer_config.json /mnt/local/_data/deep-llms_th2/a2_dot_20261118/tokenizer/tokenizer_config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/special_tokens_map.json /mnt/local/_data/deep-llms_th2/a2_dot_20261118/tokenizer/special_tokens_map.json
+#datasets
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_02_of_10/local-shard_2_of_10/shard_00000249_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00000.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_05_of_10/local-shard_1_of_10/shard_00000144_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00001.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_01_of_10/local-shard_5_of_10/shard_00000048_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00002.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_09_of_10/local-shard_9_of_10/shard_00000157_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00003.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_01_of_10/local-shard_2_of_10/shard_00000138_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00004.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_07_of_10/local-shard_5_of_10/shard_00000006_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00005.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_06_of_10/local-shard_0_of_10/shard_00000089_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00006.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_06_of_10/local-shard_0_of_10/shard_00000027_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00007.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_02_of_10/local-shard_1_of_10/shard_00000110_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00008.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_06_of_10/local-shard_0_of_10/shard_00000084_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00009.parquet
