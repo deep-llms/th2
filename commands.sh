@@ -1,19 +1,12 @@
-#1 +30+a
-#th2-ohmv-a2-dot-data-health-20261118-a01
-set -euo pipefail
-export CUDA_VISIBLE_DEVICES="" HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
-TASK_SOURCE=/mnt/local/_outputs/deep-llms_th2/a2_dot_data_20261118_a01/source
-cd "$TASK_SOURCE"
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u -m scripts.a2_dot_rebuild_data health
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PYHEALTH'
-import hashlib,json,subprocess
-from pathlib import Path
-out=Path('/mnt/local/_outputs/deep-llms_th2/a2_dot_data_20261118_a01')
-source=json.loads((out/'source-manifest.json').read_text());assert all(hashlib.sha256((out/'source'/p).read_bytes()).hexdigest()==h for p,h in source['files'].items())
-root=Path('/mnt/local/_data/deep-llms_th2/a2_dot_20261118')
-parts={c:[p.parent.name for p in sorted((root/'corpora'/c/'parts'/c).glob('*/complete.json'))] for c in ['dclm','fineweb_edu']}
-print('FROZEN_SOURCE_PASS',len(source['files']))
-print('HASH_ADMITTED_TOKENIZED_SHARDS',json.dumps(parts))
-print('TMUX_CPU_ALIVE',subprocess.run(['tmux','has-session','-t','a2_dot_data_20261118_a01'],capture_output=True).returncode==0)
-assert not (out/'failure.json').exists(), 'CPU worker failed; inspect health output'
-PYHEALTH
+#d +a # ohmv-a2-dot-data-batch02-20261118
+#datasets
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_08_of_10/local-shard_2_of_10/shard_00000119_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00010.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_07_of_10/local-shard_3_of_10/shard_00000148_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00011.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_03_of_10/local-shard_2_of_10/shard_00000022_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00012.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_06_of_10/local-shard_2_of_10/shard_00000175_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00013.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_03_of_10/local-shard_1_of_10/shard_00000051_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00014.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_09_of_10/local-shard_1_of_10/shard_00000140_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00015.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_06_of_10/local-shard_1_of_10/shard_00000036_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00016.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_06_of_10/local-shard_8_of_10/shard_00000236_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00017.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_08_of_10/local-shard_3_of_10/shard_00000200_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00018.parquet
+--url https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0-parquet/resolve/817d6752765f6a41261085171dd546b104f60626/filtered/OH_eli5_vs_rw_v2_bigram_200k_train/fasttext_openhermes_reddit_eli5_vs_rw_v2_bigram_200k_train/processed_data/global-shard_03_of_10/local-shard_0_of_10/shard_00000214_processed.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/dclm/00019.parquet
