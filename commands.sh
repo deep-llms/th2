@@ -1,55 +1,27 @@
 #1 +30+a
-#th2-ohmv-a2-runtime-check-20261118-a01
+#th2-ohmv-data-inventory-20261118-a01
 set -euo pipefail
-export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=disabled
-export PYTORCH_NVML_BASED_CUDA_CHECK=1
-printf 'A2_RUNTIME_CHECK_BEGIN\n'
 date -u
 hostname
-nvidia-smi --query-gpu=index,uuid,name,driver_version,memory.total,memory.used --format=csv,noheader
+nvidia-smi --query-gpu=index,uuid,name,memory.used --format=csv,noheader
 nvidia-smi --query-compute-apps=pid,gpu_uuid,process_name --format=csv,noheader
-TASK_RC=0
-for TASK_ENV in a2_env eval; do
-  TASK_PYTHON="/mnt/local/conda-py311/envs/$TASK_ENV/bin/python3.11"
-  if ! test -x "$TASK_PYTHON"; then
-    printf 'MISSING_INTERPRETER %s\n' "$TASK_PYTHON"
-    TASK_RC=1
-    continue
-  fi
-  if ! "$TASK_PYTHON" -m pip check; then TASK_RC=1; fi
-  if ! "$TASK_PYTHON" - "$TASK_ENV" <<'PYVERIFY'
-import hashlib, importlib, importlib.metadata as md, json, socket, sys
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PYINV'
+import json,os,socket,shutil
 from pathlib import Path
-from packaging.requirements import Requirement
-name=sys.argv[1]
-p=Path('envs')/(name+'.txt')
-result={'env':name,'hostname':socket.gethostname(),'python':sys.version,'executable':sys.executable,'recipe_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'packages':{},'errors':[],'gpu_workload_executed':False}
-if sys.version_info[:2]!=(3,11): result['errors'].append('Python is not 3.11')
-for line in p.read_text().splitlines():
-    if not line.strip() or line.startswith('#'): continue
-    req=Requirement(line)
-    try:
-        version=md.version(req.name); result['packages'][req.name]=version
-        if req.specifier and not req.specifier.contains(version): result['errors'].append(f'{req.name}: {version} violates {req.specifier}')
-    except Exception as e: result['errors'].append(f'{req.name}: {e}')
-mods=['torch','transformers','datasets','tokenizers','numpy','safetensors','pyarrow','zstandard']
-mods+=['accelerate','matplotlib','huggingface_hub'] if name=='a2_env' else ['lm_eval']
-for module in mods:
-    try: importlib.import_module(module)
-    except Exception as e: result['errors'].append(f'import {module}: {type(e).__name__}: {e}')
-try:
-    import torch
-    result['torch_cuda_build']=torch.version.cuda
-    result['cuda_available']=torch.cuda.is_available()
-    result['gpu_count']=torch.cuda.device_count()
-    if not result['cuda_available']: result['errors'].append('CUDA unavailable')
-except Exception as e: result['errors'].append(f'CUDA detection: {e}')
-result['status']='PASS' if not result['errors'] else 'FAIL'
-print('A2_RUNTIME_RESULT '+json.dumps(result,sort_keys=True),flush=True)
-print('A2_PIP_FREEZE '+json.dumps(sorted((d.metadata['Name']+'=='+d.version) for d in md.distributions() if d.metadata['Name'])),flush=True)
-sys.exit(bool(result['errors']))
-PYVERIFY
-  then TASK_RC=1; fi
-done
-printf 'A2_RUNTIME_CHECK_EXIT=%s\n' "$TASK_RC"
-exit "$TASK_RC"
+assert socket.gethostname()=='thiennh-p6-ohmv-worker-0'
+roots=['/mnt/local/_data/deep-llms_th2','/mnt/local/_models/deep-llms_th2','/mnt/local/_backup/deep-llms_th2','/mnt/local/_outputs/deep-llms_th2']
+result={'host':socket.gethostname(),'free_bytes':shutil.disk_usage('/mnt/local').free,'cpus':len(os.sched_getaffinity(0)),'roots':{},'raw':{}}
+for name in roots:
+ p=Path(name);result['roots'][name]={'exists':p.exists(),'children':[{'name':x.name,'dir':x.is_dir(),'symlink':x.is_symlink()} for x in sorted(p.iterdir())][:100] if p.is_dir() else []}
+plan=json.loads(Path('resources/a2_corpora_30b_20261029.json').read_text())
+for name,limit in [('dclm',216),('fineweb_edu',44)]:
+ files=plan['corpora'][name]['files'][:limit];found=[]
+ for r in files:
+  p=Path(r['local']);p=p/Path(r['path']).name if p.is_dir() else p
+  if p.exists():found.append({'index':r['index'],'bytes':p.stat().st_size,'size_matches':p.stat().st_size==r['bytes']})
+ result['raw'][name]=found
+for name in ['tokenizer.json','tokenizer_config.json','special_tokens_map.json']:
+ p=Path(plan['tokenizer_path'])/name;result[name]={'exists':p.exists(),'bytes':p.stat().st_size if p.exists() else None}
+print('A2_DOT_DATA_INVENTORY '+json.dumps(result),flush=True)
+PYINV
+printf 'DATA_INVENTORY_COMPLETE\n'
