@@ -1,0 +1,26 @@
+{
+  "files": {
+    "docs/A2_stage1_spec.md": "9ebe0d0a377f0107f7058bf5e4899b5380cbe5f4f518b09091ac533d2c9f254e",
+    "docs/A2_stage1b_fwe_spec.md": "b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483",
+    "docs/results/a2_corpora_20261029/fwe_final/fwe_manifest.json": "0685a790f3c60bf0c02f2e0679910ada71d9c3fefd95a99c53578b201b87f3dd",
+    "docs/results/a2_stage1b_fwe_20261030/data_final/manifest.json": "28362487768d9ceb285a06788f4d9589f1f692be8185d3091abc7ffc6ed50a3f",
+    "efficient_llm/__init__.py": "7415b751b9addb2c7b9d2863b40f42f9557cb2768ce9508398086119b44c5611",
+    "efficient_llm/a2/__init__.py": "8b149cf0b80942849908b458135ac7767ebe13b41d66ec5dec2d72499501c6d9",
+    "efficient_llm/a2/data.py": "f3ad8127643cef87c83818d72b7356ddbcc9963e035bfc072a3b2513e2f687dd",
+    "efficient_llm/diagnostic_data.py": "da080488a893ad4b71048a69298b867c89285ce4bb7f7ee94261e61ad1616d19",
+    "efficient_llm/dot_pool/__init__.py": "11ca392b825f1da2b4366266cf278cfe54ef01516e1914ecd85745f81f453bb7",
+    "efficient_llm/dot_pool/data.py": "7a0c531f4164f683139b3f4d4f7c54038e72b351dbb4c4b7d12f4a74c3cfa90c",
+    "efficient_llm/dot_pool/model.py": "367abbf9827d806debcc19318736ca9833b948db778e3d0d652875c7a79bf7bb",
+    "efficient_llm/dot_pool/rl.py": "4cf880f2c65e0d6d999ebb6c937e1a6c4a5994a74f639b14f6d26de1cbdc1d62",
+    "efficient_llm/dot_pool/rl_run.py": "dd895c6d63a38ec1ae24c3b2c53cb9a8b0bdeedbd5cab6c534a5c5cae93a2ffe",
+    "efficient_llm/dot_pool/train.py": "07c078917c0002b43e18a463b71446100f857a7b62c3c847105661c57cbead69",
+    "resources/a2_corpora_30b_20261029.json": "26b086fc1550cc646fad73252f506aa7629cfd52b32dfd915fa6cdd3055d044e",
+    "resources/a2_data_rebuild_wc69_20261103.json": "14981417d7b44b3ace9bf7c2e56c0ccfb03b43e0e8dd1ea021c6264b331b9fe4",
+    "resources/a2_dot_data_ohmv_20261118.json": "94effcd635248b9180541ab4155652f5bcf989782a00a67e50db46ca22a566b2",
+    "resources/dot_rl_data_expected.json": "e489592376d031b33fe58a32bc2a054e31d607aa3cdd7caaef54a90655776c42",
+    "scripts/a2_dot_rebuild_data.py": "b846bd20c4a7cf2ba3a994dfd89592a04df7235a01e62f300000f34df8687336",
+    "scripts/a2_prepare_corpora.py": "c8bc298dcd71e136ef4f4838f25b3c25b0bdff474b9e15c142fd18419b933d68",
+    "scripts/a2_stage1_data.py": "cac4e434319b847b0e96422b46d5a59516b6516bf9f736db2745a2c2aa549aa7",
+    "tests/a2/test_data_rebuild.py": "0e60394195d62a480dbf6f1e4a91f8f473be235afaf39119a9a7f33fa3926db0"
+  }
+}
