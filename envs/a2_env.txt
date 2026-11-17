@@ -12,3 +12,8 @@ datasets==4.8.5
 safetensors==0.8.0
 numpy==2.4.6
 matplotlib==3.10.7
+
+# Direct data/replay dependencies from the standalone A2 reconstruction recipes.
+# Unpinned additions have no recovered historical version evidence.
+pyarrow==26.0.0
+zstandard

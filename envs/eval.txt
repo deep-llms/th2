@@ -8,3 +8,10 @@ transformers==5.9.0
 tokenizers==0.22.2
 datasets==4.8.5
 torch==2.14.1
+
+# Direct data/replay dependencies from the standalone A2 reconstruction recipes.
+# Unpinned additions have no recovered historical version evidence.
+numpy
+safetensors
+pyarrow
+zstandard
