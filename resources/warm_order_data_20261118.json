@@ -1,0 +1,16 @@
+{
+  "stems": {
+    "fit": "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/dot/e2/train",
+    "dev": "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/dclm/packed/dclm/tuning",
+    "test": "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/dclm/packed/dclm/final"
+  },
+  "files": {
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/dot/e2/train.bin": "90d971d9203c9ab6c1498165dd35a2c6887ee8d5f886cd1242cc07ddc08368d6",
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/dot/e2/train.starts": "8302b82ca68fa93c62ca378b60e7f57bd20090ad3490bdb2ce5eaa7e32b898ed",
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/dclm/packed/dclm/tuning.bin": "b7a1c1b057d44c804a151891bd0e415d5c034ee6ac8371b2b59c0ba77303cd6a",
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/dclm/packed/dclm/tuning.starts": "ff6359d0c14d574175b37657588176785945116673fae695ed4986c0ffd43bb3",
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/dclm/packed/dclm/final.bin": "810e5e5da9be5e4a0a972461841a21216d621d8e05e5337838ff09945c2071f8",
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/dclm/packed/dclm/final.starts": "17a6086380a1319fe3ee80d3f8d99d7990b0f1133ce5dbf95425cef92efe3804"
+  },
+  "ready_receipt_sha256": "1b670e4333fefc4cacb23116084a6821c2beeb85df194e3d921cfd11fbbfc430"
+}
