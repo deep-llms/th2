@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-ohmv-window-order-health-20261119-a02
+#th2-ohmv-window-order-health-20261119-a03
 set -euo pipefail
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 OMP_NUM_THREADS=2 PYTHONPATH="$PWD"
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PY'
@@ -59,5 +59,14 @@ if r['state'].get('terminal.json',{}).get('success'):
  assert all(sha(base/p)==v for p,v in b['files'].items())
  assert all(r['source_actual'].values()) and all(r['input_actual'].values())
  r['terminal_actual_proof']=dict(native_ownership=True,guard_released=True,all_source_inputs_members_backups=True,backup_sha256=sha(base/'backup.json'))
+import numpy as np
+r['interim_metrics']={}
+for name in NAMES:
+ for domain in ('dclm','fwe'):
+  p=base/'runs'/name/domain/'summary.npz'
+  if p.exists() and (base/'runs'/name/'complete.json').exists():
+   a=np.load(p);v=dict(nll=float(a['nll'].mean(dtype=np.float64)),sequences=len(a['nll']))
+   if 'routes' in a:v['window_route_histogram']=np.bincount(a['routes'].flatten(),minlength=4).tolist()
+   r['interim_metrics'][name+'/'+domain]=v
 print('WINDOW_ORDER_HEALTH',json.dumps(r),flush=True)
 PY
