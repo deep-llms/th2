@@ -15,3 +15,5 @@ python3 scripts/restore_research_archive.py
 The helper verifies both compressed and restored hashes, restores missing files,
 and refuses to overwrite an existing changed file. Do not add the restored plain
 payloads back to an execution commit without rechecking the source-size cap.
+
+Sixth payload: `docs/results/kv_mlp_20261027/training/summary.json` now has a hash-verified gzip copy; original development bytes remain local. All six payloads were restored into an empty temporary root and verified before removing the original from the Git index. No node checkpoint/data deletion.

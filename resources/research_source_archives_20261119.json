@@ -40,6 +40,14 @@
       "sha256": "a11096c62f12ba9f35586ae301cab8c5e51d906519a30b357437948f18d41c3f",
       "compressed_bytes": 17585,
       "archive_sha256": "0b6873a774ee027063e879b369cd2ea7b17313906b0afdab6094d4dfcf55c6a0"
+    },
+    {
+      "path": "docs/results/kv_mlp_20261027/training/summary.json",
+      "archive": "docs/results/kv_mlp_20261027/training/summary.json.gz",
+      "bytes": 161304,
+      "sha256": "5bcfac458f0902c94f96de870f6a188bae414ba298dc7b9d66538a13c07c9eac",
+      "compressed_bytes": 46888,
+      "archive_sha256": "989b20084c3c201a3ca27b7dfe5365b62e2eef99259f0232f22efd3770a4615c"
     }
   ]
 }
