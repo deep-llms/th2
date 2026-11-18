@@ -22,7 +22,7 @@ base=Path('/mnt/local/_outputs/deep-llms_th2/recursive_depth_20261119')
 assert not base.exists(),'Existing output; reconcile, never overwrite'
 print('CPU_ADMISSION_PRECHECK',json.dumps(dict(source_files=len(pin['files']),ownership=state)),flush=True)
 PY
-"$TASK_PYTHON" -m unittest tests.warm_order.test_recursive_depth -v
+"$TASK_PYTHON" -m unittest tests.warm_order.test_recursion_model tests.warm_order.test_recursion_pipeline -v
 "$TASK_PYTHON" -m efficient_llm.warm_order.recursion_prepare --out /mnt/local/_outputs/deep-llms_th2/recursive_depth_20261119/inputs --plan resources/recursive_depth_plan_20261119.json
 "$TASK_PYTHON" - <<'PY'
 import json
