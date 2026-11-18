@@ -12,7 +12,7 @@ from pathlib import Path
 import hashlib,json,shutil
 root=Path.cwd();base=Path('/mnt/local/_outputs/deep-llms_th2/warm_order_20261118');base.mkdir()
 files=[*root.glob('efficient_llm/warm_order/*.py'),*root.glob('tests/warm_order/*.py')]
-files += [root/p for p in ['efficient_llm/__init__.py','efficient_llm/dot_pool/__init__.py','efficient_llm/dot_pool/model.py','tests/__init__.py','scripts/__init__.py','scripts/gpu_process.py','scripts/gpu_status.py','resources/warm_order_data_20261118.json','docs/WARM_ORDER_PROTOCOL_20261118.md']]
+files += [root/p for p in ['efficient_llm/__init__.py','efficient_llm/dot_pool/__init__.py','efficient_llm/dot_pool/model.py','scripts/gpu_process.py','scripts/gpu_status.py','resources/warm_order_data_20261118.json','docs/WARM_ORDER_PROTOCOL_20261118.md']]
 hashes={}
 for p in files:
  rel=p.relative_to(root);out=base/'cpu-source'/rel;out.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,out);hashes[str(rel)]=hashlib.sha256(out.read_bytes()).hexdigest()
