@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-ohmv-causal-cost-health-20261119-a01
+#th2-ohmv-causal-cost-health-20261119-a02
 set -euo pipefail
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 OMP_NUM_THREADS=2 PYTHONPATH="$PWD"
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PY'
@@ -19,6 +19,9 @@ if (base/'execution/source.json').exists():
 plan=json.loads(Path('resources/causal_cost_plan_20261119.json').read_text());hashes=dict(plan['hashes'])
 r['input_actual']={p:sha(p)==v for p,v in hashes.items()}
 guard=Path('/mnt/local/_gpu_guard/DISABLED');r['guard_owner']=json.loads(guard.read_text()) if guard.exists() else None
+if r['guard_owner']:
+ try:r['guard_process']=process(r['guard_owner']['owner_pid'])
+ except FileNotFoundError:r['guard_process_exited']=True
 r['active_identity']=[]
 for job in r['state'].get('status.json',{}).get('active',[]):
  pid=job['pid'];record={'name':job['name'],'pid':pid}
