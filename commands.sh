@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-ohmv-a2-dot-data-health-20261118-a05
+#th2-ohmv-a2-dot-data-health-20261118-a06
 set -euo pipefail
 date -u
 export PYTHONDONTWRITEBYTECODE=1 CUDA_VISIBLE_DEVICES="" HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -35,12 +35,12 @@ PYSTAGE
 import json,time
 from pathlib import Path
 root=Path('/mnt/local/_data/deep-llms_th2/a2_dot_20261118')
-for corpus in ('dclm','fineweb_edu'):
+for corpus in ('fineweb_edu',):
  rows=[]
  for p in sorted((root/'corpora'/corpus/'parts'/corpus).glob('*')):
   if not p.is_dir():continue
   files=[x for x in p.iterdir() if x.is_file()]
   rows.append(dict(shard=p.name,complete=(p/'complete.json').is_file(),bytes=sum(x.stat().st_size for x in files),mtime=max([x.stat().st_mtime for x in files],default=0)))
  print('PART_WRITE_PROGRESS',corpus,json.dumps(rows),flush=True)
-print('HEALTH_A05_DONE',time.time(),flush=True)
+print('HEALTH_A06_DONE',time.time(),flush=True)
 PYPROGRESS
