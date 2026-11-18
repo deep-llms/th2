@@ -1,12 +1,12 @@
-#d +a # ohmv-a2-dot-data-batch24-20261118
+#d +a # ohmv-a2-dot-data-batch25-20261118
 #datasets
---url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/013_00008.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00014.parquet
---url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/005_00002.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00015.parquet
---url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/011_00002.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00016.parquet
---url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/013_00001.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00017.parquet
---url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/003_00004.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00018.parquet
---url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/003_00001.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00019.parquet
---url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/007_00001.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00020.parquet
---url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/008_00002.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00021.parquet
---url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/006_00004.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00022.parquet
---url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/005_00005.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00023.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/006_00002.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00024.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/008_00005.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00025.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/009_00004.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00026.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/002_00001.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00027.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/008_00000.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00028.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/001_00006.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00029.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/009_00009.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00030.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/010_00006.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00031.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/009_00003.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00032.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/011_00001.parquet /mnt/local/_data/deep-llms_th2/a2_dot_20261118/raw/fineweb_edu/00033.parquet
