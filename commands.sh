@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-ohmv-window-order-health-20261119-a04
+#th2-ohmv-window-order-health-20261119-a05
 set -euo pipefail
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 OMP_NUM_THREADS=2 PYTHONPATH="$PWD"
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PY'
@@ -59,6 +59,16 @@ if r['state'].get('terminal.json',{}).get('success'):
  assert all(sha(base/p)==v for p,v in b['files'].items())
  assert all(r['source_actual'].values()) and all(r['input_actual'].values())
  r['terminal_actual_proof']=dict(native_ownership=True,guard_released=True,all_source_inputs_members_backups=True,backup_sha256=sha(base/'backup.json'))
+if r['state'].get('terminal.json',{}).get('native_verified') and not r['state']['terminal.json']['success']:
+ from scripts.gpu_process import ownership
+ from scripts.train_then_burn import approved_launcher,GUARD_HASH
+ state=r['ownership'];prior=r['native']['samples'][-1];native='/tmp/llm_pretrain_burn.py'
+ assert not guard.exists() and sha(guard.parent/'gpu_guard.sh')==GUARD_HASH
+ assert ownership(state['gpus'])==ownership(prior['gpus'])
+ assert all(process(int(pid))==p for pid,p in prior['processes'].items())
+ assert sha(native)==r['native']['script_sha256'] and len(state['workers'])==8
+ assert all(approved_launcher(process(pid)['ppid'],{native:r['native']['script_sha256']}) for pid in state['workers'])
+ r['failure_handoff_proof']=dict(native_ownership=True,guard_released=True)
 import numpy as np
 r['interim_metrics']={}
 for name in NAMES:
