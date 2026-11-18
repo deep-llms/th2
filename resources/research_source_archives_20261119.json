@@ -24,6 +24,14 @@
       "sha256": "2fb18018aa95ae30bba370ae0b914c209ccc2926239c1e55fb2d33c6892c0910",
       "compressed_bytes": 63004,
       "archive_sha256": "2e20ee96aa96814c767a48569faeaebde65dac1066836c0e86e8b9d9fd6f345c"
+    },
+    {
+      "path": "docs/results/window_compact_20261027/profile.json",
+      "archive": "docs/results/window_compact_20261027/profile.json.gz",
+      "bytes": 178434,
+      "sha256": "c544595e1c86468bf4edab514ea54f24f764b1c7885ba70d9db762434c7b5db3",
+      "compressed_bytes": 28682,
+      "archive_sha256": "cb41d4fc9b17ad17c7507f9260365e7689c28c12caf8b6560f8bfa54d8b80b4c"
     }
   ]
 }
