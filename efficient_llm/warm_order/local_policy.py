@@ -64,7 +64,8 @@ def full_information_loss(logits, costs, temperature=.02):
     if temperature <= 0 or not torch.isfinite(costs).all() or not torch.isfinite(logits).all():
         raise ValueError('Invalid labels or temperature')
     target = (-(costs.detach() - costs.detach().amin(-1, keepdim=True)) / temperature).softmax(-1)
-    return -(target * logits.log_softmax(-1)).sum(-1).mean()
+    z = logits if logits.dtype == torch.float64 else logits.float()
+    return -(target * z.log_softmax(-1)).sum(-1).mean()
 
 
 def routed_nll(model, inputs, choices):

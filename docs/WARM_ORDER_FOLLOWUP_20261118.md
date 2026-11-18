@@ -1,6 +1,6 @@
 # Follow-up decision after warm-order screening
 
-Status: design registered after pilot node results; loss/router primitives implemented and CPU tested; trainer, data reservation, queue and launch not yet implemented. Existing watcher continues under the user's autonomous experiment authorization. Preserve the six completed pilot runs and their frozen source.
+Status: design registered after pilot node results; trainer/data reservation/evaluation/report and queue implemented;24CPU tests PASS. Node CPU admission55035cf PASS. GPU probe/launch pending. Existing watcher continues under the user's autonomous experiment authorization. Preserve the six completed pilot runs and their frozen source.
 
 ## What failed and what it implies
 
@@ -32,3 +32,5 @@ Primary comparisons: CF/PG versus C on identical held-out examples; versus U to 
 First finish the pilot's result-only export, local replay and human report. Then implement this follow-up, resolve routine scientific choices autonomously, test, benchmark and queue only after fresh ownership and receipt reconciliation. Known native burn is now restored; inspect exact new worker identities before any later authorized reclaim. Preserve infrastructure and all existing outputs. Only small proof/results return locally, all parameter/state files stay on node.
 
 CPU implementation progress: `efficient_llm/warm_order/local_policy.py`, all19 warm-order regression tests PASS, including five focused tests in `tests/warm_order/test_local_policy.py` PASS: analytic enumerated PG expectation including exploration, sampling RNG restore, detached features/costs, grouped backbone gradients and prefix causality, fail-closed arguments/initial prior. No production runtime or trainer/resume validation is implied.
+
+Locked node inputs (20:29SGT18Nov): prepared manifest SHA b50fb87f7399482e441b18cc04e186f8a8cbcb82a180ed825c9ae9b72b99ef81;128000 fresh train rows,2048 disjoint train-domain route-fit rows,3475 DCLM test windows with no pilot-test document overlap,4096 FWE cross-domain windows. All golden data and two initial dense checkpoint hashes PASS. Fullstate restores body/head optimizers, sampler RNG, global RNGs, step/counts and immutable recipe; changed LR/exploration/source/data refused. Final checkpoint only. GPU probe first40 CF-s0/PG-s0 belong to the real4000-step schedule and must resume exactly. Alleight train/eval → array replay/report →40 checkpoint/metadata files verified in node backup → unique native handoff and owned-guard release are queued automatically. Nodeproduction gates remain required.

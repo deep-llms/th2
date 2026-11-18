@@ -12,6 +12,7 @@ BASE=Path('/mnt/local/_outputs/deep-llms_th2/warm_order_20261118')
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--commit',required=True);a=ap.parse_args();root=Path.cwd();execution=BASE/'execution';session='warm_order_20261118_a01'
+    if len(a.commit)!=40 or any(c not in '0123456789abcdef' for c in a.commit):raise ValueError('Explicit development-supplied commit required; runner sync tree has no Git metadata')
     if socket.gethostname()!='thiennh-p6-ohmv-worker-0':raise ValueError('Wrong node')
     if execution.exists() or (BASE/'runs').exists():raise ValueError('Prior admission/work found; retrieve rather than relaunch')
     if torch.__version__!='2.14.1+cu130' or np.__version__!='2.4.6':raise ValueError('Runtime changed')

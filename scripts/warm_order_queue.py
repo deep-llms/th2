@@ -30,10 +30,9 @@ def check_train(run):
         if sha(run/name)!=proof[key]:raise ValueError('Terminal checkpoint changed')
     return proof
 
-def native(base):
+def native(base, session='warm_order_20261118_native_a01'):
     require_free(list(range(8)))
     if sha(NATIVE)!=NATIVE_SHA:raise ValueError('Native script changed')
-    session='warm_order_20261118_native_a01'
     with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
     command='exec '+shlex.join(['env','CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7','MASTER_ADDR=127.0.0.1',f'MASTER_PORT={port}','/usr/bin/python3',NATIVE])+' >'+shlex.quote(str(base/'native.log'))+' 2>&1'
     if subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0:raise ValueError('Native session already exists')
