@@ -28,7 +28,7 @@
     "eval/kv_harness.py": "68521849ae5d94c6eb69f53ffe34df667f59791f3b44227bbc2adbcc1fc4289a",
     "resources/a2_inputs_20261028.json": "3150a15914791bbb59d8972be25d1e46e7f0b34870bdd7df1462a057ba9dd99e",
     "resources/local_order_data_20261118.json": "e6327cadfcb6e3a686185e1d0be527ba6d5fd5d6b3f7c9c27a922c637eb30e32",
-    "resources/warm_downstream_data_20261118.json": "e66924418bb48b63c46257b1bbee32d40875199922846ac9fd64cbd2d22e0118",
+    "resources/warm_downstream_data_20261118.json": "ebd500592bed82f2aa4606bdf435ecde508aafe0a2cabffb84af27f692f049b9",
     "resources/warm_downstream_models_20261118.json": "3b1d44faef2824562670b21402a1fa59b217da4fefe04959d151d98c5feef7e5",
     "resources/warm_order_data_20261118.json": "34ccde5c567fc9a12adc28d81558e88d063d006e105f81a7cd994a5702974451",
     "run_experiments.py": "752c7913adbd4b2b1e58ae21a535b20462f2622be00ce5f48a9e76ec80e3172d",
