@@ -23,11 +23,11 @@ def validate_prepared(prepared, protocol):
         raise ValueError('Prepared requests or fixed evaluation protocol changed')
 
 
-def validate_scored(prepared, scored):
+def validate_scored(prepared, scored, precision="fp32_parameters_bf16_cuda_autocast"):
     if (scored.get('prepared_sha256') != digest(prepared)
             or scored.get('request_sha256') != prepared['request_sha256']
             or scored.get('max_length') != prepared['protocol']['max_length']
-            or scored.get('precision') != 'fp32_parameters_bf16_cuda_autocast'
+            or scored.get('precision') != precision
             or scored.get('likelihood_requests') != len(prepared['requests'])):
         raise ValueError('Native score artifact does not match prepared protocol')
 
@@ -45,6 +45,7 @@ def main():
     p.add_argument('--max-length', type=int, default=4096)
     p.add_argument('--limit', type=int)
     p.add_argument('--prepared');p.add_argument('--scored')
+    p.add_argument('--score-precision', choices=('fp32_parameters_bf16_cuda_autocast','fp32_no_autocast_no_tf32'), default='fp32_parameters_bf16_cuda_autocast')
     p.add_argument('--output', required=True)
     a=p.parse_args();out=Path(a.output)
     if out.exists():p.error('Output exists')
@@ -73,7 +74,7 @@ def main():
     prepared=scored=None
     if a.mode=='replay':
         prepared=json.loads(Path(a.prepared).read_text());scored=json.loads(Path(a.scored).read_text())
-        validate_prepared(prepared,protocol);validate_scored(prepared,scored)
+        validate_prepared(prepared,protocol);validate_scored(prepared,scored,a.score_precision)
     bridge=make_bridge(tok,prepared=prepared,scored=scored,tokenizer_family=a.tokenizer_family)
     try:
         result=evaluator.simple_evaluate(model=bridge,tasks=task_configs(a.tasks,paths),
@@ -94,7 +95,7 @@ def main():
                     or result['n-samples'][task]!=dict(original=COUNTS[task],effective=expected)):
                 raise ValueError('Incomplete benchmark sample coverage')
         result['a2_metadata']=dict(protocol=protocol,prepared_sha256=digest(prepared),
-            scored_file_sha256=file_hash(a.scored),request_sha256=prepared['request_sha256'])
+            scored_file_sha256=file_hash(a.scored),request_sha256=prepared['request_sha256'],score_precision=a.score_precision)
     out.parent.mkdir(parents=True,exist_ok=True)
     # Exclusive write: a failed or concurrent task cannot overwrite existing evidence.
     encoded=json.dumps(result,default=json_default,allow_nan=False)+'\n'

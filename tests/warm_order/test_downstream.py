@@ -59,6 +59,15 @@ class ScorerTests(unittest.TestCase):
   with torch.autocast('cpu',dtype=torch.bfloat16):
    actual,details=score(self.m,self.router,self.req,LOCAL_ORDERS)
   self.assertEqual(reference,actual);self.assertEqual(ref,details)
+ def test_precision_contract_requires_explicit_opt_in(self):
+  from eval.a2_requests import validate_scored
+  from eval.a2_request_bridge import digest
+  prepared=dict(protocol=dict(max_length=16),requests=self.req,request_sha256='fixed')
+  scored=dict(prepared_sha256=digest(prepared),request_sha256='fixed',max_length=16,likelihood_requests=len(self.req),precision='fp32_no_autocast_no_tf32')
+  with self.assertRaises(ValueError):validate_scored(prepared,scored)
+  validate_scored(prepared,scored,'fp32_no_autocast_no_tf32')
+  scored['request_sha256']='wrong'
+  with self.assertRaises(ValueError):validate_scored(prepared,scored,'fp32_no_autocast_no_tf32')
  def test_invalid_and_empty_context(self):
   for target in [[],[1]*17]:
    with self.assertRaises(ValueError):prepare_rows([dict(context=[1],continuation=target)],16)

@@ -78,7 +78,7 @@ def probe():
 
 
 def replay(name):
-    run=BASE/'runs'/name;check_source(BASE);bridge('replay',run/'raw.json','--prepared',str(BASE/'requests.json'),'--scored',str(run/'scores.json'))
+    run=BASE/'runs'/name;check_source(BASE);bridge('replay',run/'raw.json','--prepared',str(BASE/'requests.json'),'--scored',str(run/'scores.json'),'--score-precision','fp32_no_autocast_no_tf32')
     out=compact(json.loads((run/'raw.json').read_text()),json.loads((BASE/'requests.json').read_text()),json.loads((run/'scores.json').read_text()))
     write_json(run/'items.json',out);write_json(run/'replay-complete.json',dict(items_sha256=sha(run/'items.json'),raw_sha256=sha(run/'raw.json'),tasks={t:dict(accuracy=v['accuracy'],items=len(v['items'])) for t,v in out.items()}))
 
