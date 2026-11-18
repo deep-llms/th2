@@ -1,6 +1,6 @@
 # Lossless historical payload archives
 
-To keep the execution source below the runner's 25 MiB limit, two historical
+To keep the execution source below the runner's 25 MiB limit, three historical
 result JSON payloads are stored as gzip with exact original and compressed hashes
 in `resources/research_source_archives_20261119.json`. Scientific values are
 unchanged; original development copies remain locally. This is source packaging,
