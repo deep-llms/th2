@@ -1,8 +1,5 @@
 #1 +60+a
-#th2-ohmv-warm-downstream-probe-trace-20261118-a01
+#th2-ohmv-warm-downstream-launch-20261118-a02
 set -euo pipefail
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PYCODE'
-import pathlib,json
-b=pathlib.Path('/mnt/local/_outputs/deep-llms_th2/warm_downstream_20261118')
-print('PROBE_TRACE',json.dumps({p:(b/p).read_text()[-16000:] if (b/p).exists() else None for p in ['probe-numerical.log','failure.json','terminal.json','requests.json.log']}))
-PYCODE
+export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline TOKENIZERS_PARALLELISM=false
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u -m scripts.warm_downstream_job launch --commit 504a22537d5636d3ab9c3d7368540ba3bfcf448d
