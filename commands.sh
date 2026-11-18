@@ -1,82 +1,35 @@
 #1 +120+a
-#th2-ohmv-window-order-health-20261119-a05
+#th2-ohmv-window-recovery-cpu-admission-20261119-a01
 set -euo pipefail
-export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 OMP_NUM_THREADS=2 PYTHONPATH="$PWD"
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PY'
-import json,time
+export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline OMP_NUM_THREADS=4 PYTHONPATH="$PWD"
+TASK_PYTHON=/mnt/local/conda-py311/envs/a2_env/bin/python3.11
+"$TASK_PYTHON" - <<'PY'
+import json,socket,torch,numpy as np
 from pathlib import Path
 from efficient_llm.warm_order.data import sha
 from scripts.gpu_process import inspect,process
-base=Path('/mnt/local/_outputs/deep-llms_th2/window_order_20261119')
-r=dict(utc=time.time(),ownership=inspect(),state={},runs={})
-for f in ('status.json','terminal.json','scientific-complete.json','failure.json','backup.json','REPORT.json','execution/admission.json','execution/submitted.json'):
- p=base/f
- if p.exists():r['state'][f]=json.loads(p.read_text())
-if (base/'execution/source.json').exists():
- pin=json.loads((base/'execution/source.json').read_text());r['source_actual']={p:sha(base/'execution/source'/p)==v for p,v in pin.items()}
-plan=json.loads(Path('resources/window_order_plan_20261119.json').read_text());hashes=dict(plan['hashes'])
-r['input_actual']={p:sha(p)==v for p,v in hashes.items()}
-guard=Path('/mnt/local/_gpu_guard/DISABLED');r['guard_owner']=json.loads(guard.read_text()) if guard.exists() else None
-r['active_identity']=[]
-for job in r['state'].get('status.json',{}).get('active',[]):
- pid=job['pid'];record={'name':job['name'],'pid':pid}
- try:
-  actual=[x.decode() for x in (Path('/proc')/str(pid)/'cmdline').read_bytes().split(b'\0') if x]
-  record.update(argv=actual,argv_matches=actual==job['argv'],identity=process(pid))
-  parent=record['identity']['ppid'];record['parent']=process(parent) if parent>1 else None
- except FileNotFoundError:record['exited_during_snapshot']=True
- r['active_identity'].append(record)
-from efficient_llm.warm_order.window_order_report import NAMES
-for name in NAMES:
- run=base/'runs'/name;q={}
- for f in ('train/progress.json','train/checkpoint.json','train/complete.json','complete.json'):
-  p=run/f
-  if p.exists():q[f]=json.loads(p.read_text())
- trace=run/'train/trace.jsonl'
- if trace.exists():q['train_trace_tail']=[json.loads(x) for x in trace.read_text().splitlines()[-2:]]
- log=base/f'fit_eval-{name}.log'
- if log.exists():q['log_tail']=log.read_text()[-2000:]
- r['runs'][name]=q
-r['checkpoint_actual']={}
-for name in NAMES:
- run=base/'runs'/name/'train'
- if (run/'complete.json').exists():
-  from efficient_llm.warm_order.recursion_eval import check_train
-  check_train(run);r['checkpoint_actual'][name]=True
-if (base/'native-verified.json').exists():r['native']=json.loads((base/'native-verified.json').read_text())
-if (base/'execution/queue.log').exists():r['queue_tail']=(base/'execution/queue.log').read_text()[-3000:]
-if r['state'].get('terminal.json',{}).get('success'):
- from scripts.gpu_process import ownership
- from scripts.train_then_burn import approved_launcher,GUARD_HASH
- state=r['ownership'];prior=r['native']['samples'][-1]
- assert not guard.exists() and sha(guard.parent/'gpu_guard.sh')==GUARD_HASH
- assert ownership(state['gpus'])==ownership(prior['gpus'])
- assert all(process(int(pid))==p for pid,p in prior['processes'].items())
- native='/tmp/llm_pretrain_burn.py';assert sha(native)==r['native']['script_sha256']
- assert len(state['workers'])==8 and all(approved_launcher(process(pid)['ppid'],{native:r['native']['script_sha256']}) for pid in state['workers'])
- b=r['state']['backup.json'];assert sha(base/'results.tar.gz')==b['archive_sha256'] and (base/'results.tar.gz').stat().st_size==b['bytes']
- assert all(sha(p)==v for p,v in b['node_copies'].items())
- assert all(sha(base/p)==v for p,v in b['files'].items())
- assert all(r['source_actual'].values()) and all(r['input_actual'].values())
- r['terminal_actual_proof']=dict(native_ownership=True,guard_released=True,all_source_inputs_members_backups=True,backup_sha256=sha(base/'backup.json'))
-if r['state'].get('terminal.json',{}).get('native_verified') and not r['state']['terminal.json']['success']:
- from scripts.gpu_process import ownership
- from scripts.train_then_burn import approved_launcher,GUARD_HASH
- state=r['ownership'];prior=r['native']['samples'][-1];native='/tmp/llm_pretrain_burn.py'
- assert not guard.exists() and sha(guard.parent/'gpu_guard.sh')==GUARD_HASH
- assert ownership(state['gpus'])==ownership(prior['gpus'])
- assert all(process(int(pid))==p for pid,p in prior['processes'].items())
- assert sha(native)==r['native']['script_sha256'] and len(state['workers'])==8
- assert all(approved_launcher(process(pid)['ppid'],{native:r['native']['script_sha256']}) for pid in state['workers'])
- r['failure_handoff_proof']=dict(native_ownership=True,guard_released=True)
-import numpy as np
-r['interim_metrics']={}
-for name in NAMES:
- for domain in ('dclm','fwe'):
-  p=base/'runs'/name/domain/'summary.npz'
-  if p.exists() and (base/'runs'/name/'complete.json').exists():
-   a=np.load(p);v=dict(nll=float(a['nll'].mean(dtype=np.float64)),sequences=len(a['nll']))
-   if 'routes' in a:v['window_route_histogram']=np.bincount(a['routes'].flatten(),minlength=4).tolist()
-   r['interim_metrics'][name+'/'+domain]=v
-print('WINDOW_ORDER_HEALTH',json.dumps(r),flush=True)
+from scripts.train_then_burn import approved_launcher,GUARD_HASH
+assert socket.gethostname()=='thiennh-p6-ohmv-worker-0'
+assert torch.__version__=='2.14.1+cu130' and np.__version__=='2.4.6'
+pin=json.loads(Path('resources/window_recovery_source_20261119.json').read_text())
+for p,want in pin['files'].items():assert sha(p)==want,p
+state=inspect();assert len(state['workers'])==8 and not state['guard_disabled']
+native='/tmp/llm_pretrain_burn.py';digest='3cdcc857bd01b096e20a02640fa85f0b8be7607e3c2b22a89a704bbac3650857'
+assert sha(native)==digest
+assert sha('/mnt/local/_gpu_guard/gpu_guard.sh')==GUARD_HASH
+assert all(approved_launcher(process(p)['ppid'],{native:digest}) for p in state['workers'])
+base=Path('/mnt/local/_outputs/deep-llms_th2/window_recovery_20261119')
+assert not base.exists(),'Existing output; reconcile, never overwrite'
+print('CPU_ADMISSION_PRECHECK',json.dumps(dict(source_files=len(pin['files']),ownership=state)),flush=True)
+PY
+"$TASK_PYTHON" -m unittest tests.warm_order.test_window_canonical tests.warm_order.test_window_recovery_pipeline -v
+"$TASK_PYTHON" -m efficient_llm.warm_order.window_recovery_prepare --out /mnt/local/_outputs/deep-llms_th2/window_recovery_20261119/inputs --plan resources/window_recovery_plan_20261119.json
+"$TASK_PYTHON" - <<'PY'
+import json
+from pathlib import Path
+from scripts.gpu_process import inspect
+from efficient_llm.warm_order.train import write_json
+base=Path('/mnt/local/_outputs/deep-llms_th2/window_recovery_20261119');state=inspect()
+write_json(base/'cpu-ownership.json',state)
+print('WINDOW_RECOVERY_CPU_TERMINAL',json.dumps(state),flush=True)
 PY
