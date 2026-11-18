@@ -1,0 +1,21 @@
+{
+  "reason": "Lossless archival of old result payloads to respect runner25MiB source cap; original development files retained locally; prior result semantics unchanged",
+  "files": [
+    {
+      "path": "results/a2_quant_20261031/decision_quant.json",
+      "archive": "results/a2_quant_20261031/decision_quant.json.gz",
+      "bytes": 221697,
+      "sha256": "e9edec8394f66dbaef723782614f9085d732b7eaaed5e6a0eae5b3df390aafd7",
+      "compressed_bytes": 9785,
+      "archive_sha256": "a241ede83e0cb4ae259ff75e86394e5abe7d22e804fe20c8379926670ca00b1e"
+    },
+    {
+      "path": "docs/results/kv_long_20261027/final/supervised/run/A/result.json",
+      "archive": "docs/results/kv_long_20261027/final/supervised/run/A/result.json.gz",
+      "bytes": 186132,
+      "sha256": "725417248004e4949c487b939ea085113e95c10bff4ffd8e13635f75a5f25a92",
+      "compressed_bytes": 63005,
+      "archive_sha256": "c9cb12e812b668284b683d29c11e3fe0f2a088cb6fafdda114e6774be064686b"
+    }
+  ]
+}
