@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "protocol": "Canonical lm-eval0.4.13 tasks, zero-shot512; frozen model-only downstream",
+  "repositories": [
+    {
+      "repo": "Rowan/hellaswag",
+      "revision": "218ec52e09a7e7462a5400043bb9a69a41d06b76",
+      "path": "Rowan--hellaswag",
+      "tasks": [
+        "hellaswag"
+      ],
+      "files": [
+        {
+          "path": "Rowan--hellaswag/data/test-00000-of-00001.parquet",
+          "sha256": "e572fd5579bd1768b1985f47234f8bbe29247aca200a778b635bffc637714a41",
+          "bytes": 6112397,
+          "url": "https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/test-00000-of-00001.parquet"
+        },
+        {
+          "path": "Rowan--hellaswag/data/train-00000-of-00001.parquet",
+          "sha256": "cacb12587faa63d7f723a72d61d12bfa94b140446f5a6a0a2e1c6906ab88bf02",
+          "bytes": 24365524,
+          "url": "https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/train-00000-of-00001.parquet"
+        },
+        {
+          "path": "Rowan--hellaswag/data/validation-00000-of-00001.parquet",
+          "sha256": "899813071e1e95efafec90f856e1987d2150fa4d020fc005df6962c259f660cd",
+          "bytes": 6315951,
+          "url": "https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/validation-00000-of-00001.parquet"
+        }
+      ],
+      "load_configs": {
+        "hellaswag": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "Rowan--hellaswag/data/test-00000-of-00001.parquet"
+            ],
+            "train": [
+              "Rowan--hellaswag/data/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "Rowan--hellaswag/data/validation-00000-of-00001.parquet"
+            ]
+          },
+          "kwargs": {}
+        }
+      }
+    },
+    {
+      "repo": "baber/piqa",
+      "revision": "142f6d7367fd9877f0fb3b5734ea6a545f54cdd1",
+      "path": "baber--piqa",
+      "tasks": [
+        "piqa"
+      ],
+      "files": [
+        {
+          "path": "baber--piqa/piqa_test.parquet",
+          "sha256": "037e4175b967f4082e45a5ccf5c9d31ca3fd73030804aa7d4db0f7ca1fcd9b34",
+          "bytes": 496219,
+          "url": "https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_test.parquet"
+        },
+        {
+          "path": "baber--piqa/piqa_train.parquet",
+          "sha256": "3114602b31fa724309a6c493cc86368c4eab7ab6e79e285056fd5ce3b60ddf02",
+          "bytes": 2638413,
+          "url": "https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_train.parquet"
+        },
+        {
+          "path": "baber--piqa/piqa_validation.parquet",
+          "sha256": "2b17ee1215b1ceb2ddabf4c90a05c5a8b833bef9d207960f57d111c43a2080f3",
+          "bytes": 299694,
+          "url": "https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_validation.parquet"
+        }
+      ],
+      "load_configs": {
+        "piqa": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "baber--piqa/piqa_test.parquet"
+            ],
+            "train": [
+              "baber--piqa/piqa_train.parquet"
+            ],
+            "validation": [
+              "baber--piqa/piqa_validation.parquet"
+            ]
+          },
+          "kwargs": {}
+        }
+      }
+    },
+    {
+      "repo": "allenai/ai2_arc",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "path": "allenai--ai2_arc",
+      "tasks": [
+        "arc_easy"
+      ],
+      "files": [
+        {
+          "path": "allenai--ai2_arc/ARC-Easy/test-00000-of-00001.parquet",
+          "sha256": "4160597d618ae851c7eb04e281574f3f654776216ac6b6641588d64527b47177",
+          "bytes": 346257,
+          "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/test-00000-of-00001.parquet"
+        },
+        {
+          "path": "allenai--ai2_arc/ARC-Easy/train-00000-of-00001.parquet",
+          "sha256": "b315db8a4be597dc7daa50a4e70d48dd7c990c32085629e6ccd8c926beaa80b5",
+          "bytes": 330598,
+          "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/train-00000-of-00001.parquet"
+        },
+        {
+          "path": "allenai--ai2_arc/ARC-Easy/validation-00000-of-00001.parquet",
+          "sha256": "ed890ff1e4cef7a7140d3a30dcea3ed2c9d467c6458f447ad9ef0176d8dcbb74",
+          "bytes": 86080,
+          "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/validation-00000-of-00001.parquet"
+        }
+      ],
+      "load_configs": {
+        "arc_easy": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "allenai--ai2_arc/ARC-Easy/test-00000-of-00001.parquet"
+            ],
+            "train": [
+              "allenai--ai2_arc/ARC-Easy/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "allenai--ai2_arc/ARC-Easy/validation-00000-of-00001.parquet"
+            ]
+          },
+          "kwargs": {}
+        }
+      }
+    },
+    {
+      "repo_id": "EleutherAI/lambada_openai",
+      "revision": "900124bf3b8235c6daf21033af9948b3f07346c4",
+      "path": "EleutherAI--lambada_openai",
+      "tasks": [
+        "lambada_openai"
+      ],
+      "files": [
+        {
+          "path": "EleutherAI--lambada_openai/default/test/default.parquet",
+          "source_path": "default/test/default.parquet",
+          "bytes": 1157764,
+          "sha256": "99d8a9e54cda761c6340ddd4fa6feda7f846ffb0e716afa52968dea75495eea7",
+          "url": "https://huggingface.co/datasets/EleutherAI/lambada_openai/resolve/900124bf3b8235c6daf21033af9948b3f07346c4/default/test/default.parquet"
+        }
+      ],
+      "load_configs": {
+        "lambada_openai": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "EleutherAI--lambada_openai/default/test/default.parquet"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

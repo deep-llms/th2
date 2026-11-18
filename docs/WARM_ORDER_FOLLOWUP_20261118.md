@@ -1,6 +1,6 @@
 # Follow-up decision after warm-order screening
 
-Status: design registered after pilot node results; trainer/data reservation/evaluation/report and queue implemented;24CPU tests PASS. Node CPU admission55035cf PASS. GPU probe/launch pending. Existing watcher continues under the user's autonomous experiment authorization. Preserve the six completed pilot runs and their frozen source.
+Status: COMPLETE. Eight fits and two-domain evaluations, local replay/20 paired intervals,40 node backup hashes and native handoff verified. Report: `results/local_order_20261118/REPORT_FINAL.md`. CF/PG select canonical for every test example and remain slightly worse than C; negative screening. Historical preparation statements below describe pre-launch checkpoints.
 
 ## What failed and what it implies
 
