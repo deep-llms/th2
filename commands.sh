@@ -22,8 +22,8 @@ base=Path('/mnt/local/_outputs/deep-llms_th2/order_diagnostics_20261118')
 assert not base.exists(),'Existing output; reconcile, never overwrite'
 print('CPU_ADMISSION_PRECHECK',json.dumps(dict(source_files=len(pin['files']),ownership=state)),flush=True)
 PY
-"$TASK_PYTHON" -m unittest tests.warm_order.test_token_router -v
-"$TASK_PYTHON" -m efficient_llm.warm_order.token_prepare --base /mnt/local/_outputs/deep-llms_th2/order_diagnostics_20261118 --plan resources/order_diagnostics_plan_20261118.json
+"$TASK_PYTHON" -m unittest tests.warm_order.test_order_diagnostics -v
+"$TASK_PYTHON" -m efficient_llm.warm_order.diagnostic_prepare --base /mnt/local/_outputs/deep-llms_th2/order_diagnostics_20261118 --plan resources/order_diagnostics_plan_20261118.json
 "$TASK_PYTHON" - <<'PY'
 import json
 from pathlib import Path
