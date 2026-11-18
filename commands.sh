@@ -1,35 +1,5 @@
 #1 +60+a
-#th2-ohmv-adaptive-refinement-cpu-admission-20261119-a01
+#th2-ohmv-adaptive-refinement-launch-20261119-a01
 set -euo pipefail
-export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline OMP_NUM_THREADS=4 PYTHONPATH="$PWD"
-TASK_PYTHON=/mnt/local/conda-py311/envs/a2_env/bin/python3.11
-"$TASK_PYTHON" - <<'PY'
-import json,socket,torch,numpy as np
-from pathlib import Path
-from efficient_llm.warm_order.data import sha
-from scripts.gpu_process import inspect,process
-from scripts.train_then_burn import approved_launcher,GUARD_HASH
-assert socket.gethostname()=='thiennh-p6-ohmv-worker-0'
-assert torch.__version__=='2.14.1+cu130' and np.__version__=='2.4.6'
-pin=json.loads(Path('resources/adaptive_refinement_source_20261119.json').read_text())
-for p,want in pin['files'].items():assert sha(p)==want,p
-state=inspect();assert len(state['workers'])==8 and not state['guard_disabled']
-native='/tmp/llm_pretrain_burn.py';digest='3cdcc857bd01b096e20a02640fa85f0b8be7607e3c2b22a89a704bbac3650857'
-assert sha(native)==digest
-assert sha('/mnt/local/_gpu_guard/gpu_guard.sh')==GUARD_HASH
-assert all(approved_launcher(process(p)['ppid'],{native:digest}) for p in state['workers'])
-base=Path('/mnt/local/_outputs/deep-llms_th2/adaptive_refinement_20261119')
-assert not base.exists(),'Existing output; reconcile, never overwrite'
-print('CPU_ADMISSION_PRECHECK',json.dumps(dict(source_files=len(pin['files']),ownership=state)),flush=True)
-PY
-"$TASK_PYTHON" -m unittest tests.warm_order.test_refinement tests.warm_order.test_refinement_train tests.warm_order.test_refinement_pipeline -v
-"$TASK_PYTHON" -m efficient_llm.warm_order.refinement_prepare --out /mnt/local/_outputs/deep-llms_th2/adaptive_refinement_20261119/inputs --plan resources/adaptive_refinement_plan_20261119.json
-"$TASK_PYTHON" - <<'PY'
-import json
-from pathlib import Path
-from scripts.gpu_process import inspect
-from efficient_llm.warm_order.train import write_json
-base=Path('/mnt/local/_outputs/deep-llms_th2/adaptive_refinement_20261119');state=inspect()
-write_json(base/'cpu-ownership.json',state)
-print('ADAPTIVE_REFINEMENT_CPU_TERMINAL',json.dumps(state),flush=True)
-PY
+export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline OMP_NUM_THREADS=4 PYTHONPATH="$PWD"
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u -m scripts.launch_adaptive_refinement --commit 22ebaf732ce72e9f51928d19c2d1b653ef0d6ecc --prepared-sha256 daf94a336046e9f9c2583d45386f59ee3da2cad88834b5f5a7f86a68b0802f1b
