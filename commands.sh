@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-ohmv-window-film-health-20261119-a01
+#th2-ohmv-window-film-health-20261119-a02
 set -euo pipefail
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 OMP_NUM_THREADS=2 PYTHONPATH="$PWD"
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PY'
@@ -9,6 +9,8 @@ from efficient_llm.warm_order.data import sha
 from scripts.gpu_process import inspect,process
 base=Path('/mnt/local/_outputs/deep-llms_th2/window_film_20261119')
 r=dict(utc=time.time(),ownership=inspect(),state={},runs={})
+import shutil
+r['disk_free_bytes']=shutil.disk_usage('/mnt/local').free
 for f in ('status.json','terminal.json','scientific-complete.json','failure.json','backup.json','REPORT.json','execution/admission.json','execution/submitted.json'):
  p=base/f
  if p.exists():r['state'][f]=json.loads(p.read_text())
