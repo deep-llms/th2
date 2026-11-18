@@ -6,9 +6,15 @@ import torch
 from torch.nn import functional as F
 from .model import Config,Model,Router,ORDERS
 from .local_policy import LocalRouter,LOCAL_ORDERS
-from .train import amp,write_json
+from .train import write_json
 from .data import sha
 from eval.a2_request_bridge import digest
+
+
+def exact_precision(device):
+    # Evaluation precision is fixed across router, LM and output projection.
+    # Disable surrounding autocast too; TF32 is disabled in each scoring process.
+    return torch.autocast(torch.device(device).type,enabled=False)
 
 
 def prepare_rows(requests,length=512):
@@ -35,7 +41,7 @@ def select_routes(model,router,contexts,device,batch_size=32):
     for n,group in groups.items():
         for start in range(0,len(group),batch_size):
             part=group[start:start+batch_size];x=torch.tensor([c[:n] for c in part],device=device)
-            with amp(device):choices=router(model.features(x)).argmax(-1).tolist()
+            with exact_precision(device):choices=router(model.features(x)).argmax(-1).tolist()
             result.update(zip(part,choices))
     return result
 
@@ -43,6 +49,7 @@ def select_routes(model,router,contexts,device,batch_size=32):
 @torch.no_grad()
 def score(model,router,requests,orders,device='cpu',batch_size=16):
     if batch_size<1:raise ValueError('Invalid batch size')
+    torch.set_float32_matmul_precision('highest')
     model.eval()
     if router is not None:router.eval()
     rows=prepare_rows(requests,model.c.length);contexts=sorted({tuple(r['context']) for r in rows})
@@ -55,10 +62,10 @@ def score(model,router,requests,orders,device='cpu',batch_size=16):
         for start in range(0,len(group),batch_size):
             part=group[start:start+batch_size];ids=torch.zeros((len(part),len(part[0]['tokens'])),device=device,dtype=torch.long)
             for i,r in enumerate(part):ids[i,:len(r['tokens'])]=torch.tensor(r['tokens'],device=device)
-            with amp(device):h=model.hidden(ids,orders[route])
+            with exact_precision(device):h=model.hidden(ids,orders[route])
             for i,r in enumerate(part):
                 a=len(r['context'])-1;b=a+len(r['target'])
-                with amp(device):logits=F.linear(h[i,a:b],model.embed.weight)
+                with exact_precision(device):logits=F.linear(h[i,a:b],model.embed.weight)
                 logits=logits.float();target=torch.tensor(r['target'],device=device)
                 value=logits.log_softmax(-1).gather(1,target[:,None]).sum()
                 if not torch.isfinite(value):raise ValueError('Nonfinite score')
@@ -88,7 +95,7 @@ def evaluate(plan_path,name,out,device='cuda'):
     if out.exists():raise ValueError('Fresh output required')
     model,router,orders=load(entry,device);torch.set_num_threads(4);start=time.monotonic()
     scores,details=score(model,router,requests,orders,device,plan.get('batch_size',16));out.mkdir(parents=True)
-    write_json(out/'scores.json',dict(scores=scores,likelihood_requests=len(scores),precision='fp32_parameters_bf16_cuda_autocast',max_length=512,prepared_sha256=digest(prepared),request_sha256=prepared['request_sha256']))
+    write_json(out/'scores.json',dict(scores=scores,likelihood_requests=len(scores),precision='fp32_no_autocast_no_tf32',max_length=512,prepared_sha256=digest(prepared),request_sha256=prepared['request_sha256']))
     write_json(out/'details.json',dict(**details,seconds=time.monotonic()-start,name=name,checkpoint_hashes=entry['hashes']))
     write_json(out/'complete.json',dict(name=name,files={p.name:sha(p) for p in out.iterdir()},requests_sha256=plan['requests_sha256']))
 

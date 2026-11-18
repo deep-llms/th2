@@ -85,7 +85,7 @@ def report(base):
         for f in files:tar.add(f,arcname=str(f.relative_to(base)),recursive=False)
     if (base/'results.tar.gz').stat().st_size>25_000_000:raise ValueError('Small export limit')
     proof=dict(archive_sha256=sha(base/'results.tar.gz'),bytes=(base/'results.tar.gz').stat().st_size,files={str(f.relative_to(base)):sha(f) for f in files},weights_exported=False)
-    backup=Path('/mnt/local/_backup/deep-llms_th2/warm_downstream_20261118_a01');backup.mkdir(parents=True,exist_ok=False)
+    backup=Path('/mnt/local/_backup/deep-llms_th2/warm_downstream_20261118_a02');backup.mkdir(parents=True,exist_ok=False)
     shutil.copyfile(base/'results.tar.gz',backup/'results.tar.gz')
     if sha(backup/'results.tar.gz')!=proof['archive_sha256']:raise ValueError('Backup mismatch')
     proof['node_backup']=str(backup/'results.tar.gz');write_json(base/'backup.json',proof);write_json(backup/'backup.json',proof)

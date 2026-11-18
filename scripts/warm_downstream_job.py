@@ -12,7 +12,7 @@ from scripts.gpu_status import require_free
 from scripts.train_then_burn import stop_burns,enable_subreaper,clean_owned_children,approved_launcher,GUARD_HASH
 from scripts.warm_order_queue import check_source,spawn,native,NATIVE,NATIVE_SHA
 
-BASE=Path('/mnt/local/_outputs/deep-llms_th2/warm_downstream_20261118')
+BASE=Path('/mnt/local/_outputs/deep-llms_th2/warm_downstream_20261118_a02')
 TOKENIZER='/mnt/local/_data/deep-llms_th2/a2_dot_20261118/tokenizer'
 DATA='/mnt/local/_data/deep-llms_th2/warm_downstream_20261118'
 EVAL='/mnt/local/conda-py311/envs/eval/bin/python3.11'
@@ -52,7 +52,7 @@ def launch(commit):
     write_json(BASE/'plan.json',dict(models=models,requests=str(BASE/'requests.json'),batch_size=16))
     env=['CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7','HF_HUB_OFFLINE=1','HF_DATASETS_OFFLINE=1','TRANSFORMERS_OFFLINE=1','HF_HUB_DISABLE_TELEMETRY=1','WANDB_MODE=offline','TOKENIZERS_PARALLELISM=false','OMP_NUM_THREADS=4','PYTHONPATH='+str(frozen)]
     cmd='exec '+shlex.join(['env',*env,sys.executable,'-u','-m','scripts.warm_downstream_job','run'])+' >'+shlex.quote(str(execution/'queue.log'))+' 2>&1'
-    session='warm_downstream_20261118_a01'
+    session='warm_downstream_20261118_a02'
     if subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0:raise ValueError('Existing session')
     subprocess.run(['tmux','new-session','-d','-s',session,'-c',str(frozen),cmd],check=True)
     subprocess.run(['tmux','set-option','-w','-t',session,'remain-on-exit','on'],check=True)
@@ -70,8 +70,9 @@ def probe():
         m=m.to('cuda');r=r.to('cuda') if r is not None else None
         one,od=score(m,r,small,o,'cuda',1);batch,bd=score(m,r,small,o,'cuda',16)
         err=max(abs(a[0]-b[0])/len(q['continuation']) for a,b,q in zip(cpu,one,small));berr=max(abs(a[0]-b[0])/len(q['continuation']) for a,b,q in zip(one,batch,small))
+        checks[name]=dict(cpu_gpu_max_nats_per_token=err,batch_max_nats_per_token=berr,cpu_choices=cd['choices'],gpu_choices=od['choices'],batch_choices=bd['choices'],cpu_scores=cpu,gpu_scores=one,batch_scores=batch)
+        write_json(BASE/'gpu-probe-partial.json',dict(checks=checks,indices=ix,requests=len(small),precision='fp32_no_autocast_no_tf32'))
         if err>.03 or berr>.003 or od['choices']!=bd['choices'] or cd['choices']!=od['choices'] or any(a[1]!=b[1] for a,b in zip(one,batch)):raise ValueError('Numerical/batch/route gate failed '+name)
-        checks[name]=dict(cpu_gpu_max_nats_per_token=err,batch_max_nats_per_token=berr,choices=od['choices'])
         del m,r;torch.cuda.empty_cache()
     write_json(BASE/'gpu-probe.json',dict(checks=checks,indices=ix,requests=len(small),passed=True))
 
@@ -135,7 +136,7 @@ def run():
         write_json(BASE/'failure.json',dict(error=repr(e),utc=time.time()));traceback.print_exc()
     finally:
         signal.signal(signal.SIGTERM,signal.SIG_IGN);signal.signal(signal.SIGINT,signal.SIG_IGN);clean_owned_children();time.sleep(30);require_free(list(range(8)))
-        native(BASE,session='warm_downstream_20261118_native_a01')
+        native(BASE,session='warm_downstream_20261118_native_a02')
         if guard.exists() and guard.stat().st_ino==inode and guard.read_text()==marker:guard.unlink()
         else:raise ValueError('Guard owner changed')
         write_json(BASE/'terminal.json',dict(success=(BASE/'scientific-complete.json').exists(),native_verified=True,utc=time.time()))

@@ -54,6 +54,11 @@ class ScorerTests(unittest.TestCase):
    z=F.linear(self.m.hidden(torch.tensor([r['tokens']]),LOCAL_ORDERS[d['choices'][i]])[0,len(r['context'])-1:],self.m.embed.weight).float()
    want=-F.cross_entropy(z,torch.tensor(r['target']),reduction='sum')
    self.assertAlmostEqual(got[i][0],float(want.detach()),places=5)
+ def test_eval_precision_ignores_outer_autocast(self):
+  reference,ref=score(self.m,self.router,self.req,LOCAL_ORDERS)
+  with torch.autocast('cpu',dtype=torch.bfloat16):
+   actual,details=score(self.m,self.router,self.req,LOCAL_ORDERS)
+  self.assertEqual(reference,actual);self.assertEqual(ref,details)
  def test_invalid_and_empty_context(self):
   for target in [[],[1]*17]:
    with self.assertRaises(ValueError):prepare_rows([dict(context=[1],continuation=target)],16)
