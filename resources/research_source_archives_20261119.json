@@ -112,6 +112,22 @@
       "sha256": "ce83824f7d2e403edf912d385ec1e40d6c3a0d80f8e7c9728639c18e8d7e3940",
       "compressed_bytes": 49182,
       "archive_sha256": "2a300f935b19c2803fcb0fe19e34db7cfee0d15e2c979349f550f5999c1fd6de"
+    },
+    {
+      "path": "docs/results/a2_branches_20261028/final_surveys/dclm-S72.json",
+      "archive": "docs/results/a2_branches_20261028/final_surveys/dclm-S72.json.gz",
+      "bytes": 136476,
+      "sha256": "844201b8bbe0db2eed9d3e48c80fe25521a7844618a9379d19e85fbe96509b6e",
+      "compressed_bytes": 49043,
+      "archive_sha256": "2557d7f4d433112ea3eda8b6beefa2118ca4b8e42a0cbaa714632fe0b81317e9"
+    },
+    {
+      "path": "docs/results/a2_fwe_s1_20261028/status_1126/P1T-survey.json",
+      "archive": "docs/results/a2_fwe_s1_20261028/status_1126/P1T-survey.json.gz",
+      "bytes": 136472,
+      "sha256": "05a51732603a8240c7a627f509bf8f369cd0f11d88957ac68e04461b4613d362",
+      "compressed_bytes": 49233,
+      "archive_sha256": "e17dd5649cd0a7e023f12542dbe77e45a185709b8071d4eca23807e8b694c666"
     }
   ]
 }
