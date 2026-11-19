@@ -56,6 +56,14 @@
       "sha256": "e268b25cbee4d097dc54012eb6584f050c08b27010ecd98e4d85fb8e910a7858",
       "compressed_bytes": 57052,
       "archive_sha256": "e6d2d9e93291da51b45914ee389580e5d3e30b42ec1d8cdf3b5d3dd0dc39d4db"
+    },
+    {
+      "path": "docs/results/kv_long_20261027/final/supervised/run/B/validation.json",
+      "archive": "docs/results/kv_long_20261027/final/supervised/run/B/validation.json.gz",
+      "bytes": 160297,
+      "sha256": "aa56a1f9f996a88553484851417db6e096861038b1e926f2e5936d9731082677",
+      "compressed_bytes": 57081,
+      "archive_sha256": "fed614bcc68eaad1ca9b0aec58e19df4c562c3846ee1584cadbfa46c89316f77"
     }
   ]
 }
