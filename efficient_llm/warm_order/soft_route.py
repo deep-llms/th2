@@ -1,5 +1,7 @@
 """Continuous causal whole-block mixtures; dense computation, no sparse-speed claim."""
 import math
+import json
+from pathlib import Path
 import torch
 from torch import nn
 from .model import Model as Dense
@@ -73,9 +75,22 @@ ARMS = {'C': 'dense', 'G': 'global', 'S': 'dynamic'}
 
 def load_initial(config):
     from .model import Config
-    s = torch.load(config['initial_weights'], map_location='cpu', weights_only=False)
-    if s['config'] != config['model'] or s['arm'] != 'D' or s['seed'] != config['seed']:
+    from .data import sha
+    weights = Path(config['initial_weights'])
+    metadata = config['parent_metadata']
+    required = {str(weights.parent/'complete.json'), str(weights.parent/'recipe.json')}
+    if set(metadata) != required or any(sha(p) != h for p,h in metadata.items()):
+        raise ValueError('Parent metadata identity mismatch')
+    done = json.loads((weights.parent/'complete.json').read_text())
+    recipe = json.loads((weights.parent/'recipe.json').read_text())['config']
+    if (done['arm'] != 'D' or recipe['arm'] != 'D' or
+        done['seed'] != config['seed'] or recipe['seed'] != config['seed'] or
+        done['step'] != config['parent_steps'] or recipe['steps'] != config['parent_steps'] or
+        recipe['model'] != config['model'] or sha(weights) != done['weights_sha256']):
         raise ValueError('Dense parent metadata mismatch')
+    s = torch.load(weights, map_location='cpu', weights_only=False)
+    if set(s) != {'config','model'} or s['config'] != config['model']:
+        raise ValueError('Unexpected Horizon weights schema')
     m = Model(Config(**config['model']), ARMS[config['arm']], config['canonical_probability'])
     m.load_dense(s['model'])
     return m

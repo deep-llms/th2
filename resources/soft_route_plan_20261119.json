@@ -20,7 +20,11 @@
     "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/REPORT.json": "667755d443d8171ed26c61e52721ba25be1387ffa58ce460b182f186eb2b9186",
     "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/inputs/complete.json": "215157dab4033a4e19273010f2e0262be94c97037a915233c0bc954019f7eafa",
     "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s0/train/weights.pt": "63e1ea6dd3926bc9d5bd837add7f4f9eff68dea24d7a0ddb7f8f83eb17ca25e5",
-    "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s1/train/weights.pt": "c90d56447ae857083cc59228ae2bda9784d3155af63986ee258cfaa21fc1b3de"
+    "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s1/train/weights.pt": "c90d56447ae857083cc59228ae2bda9784d3155af63986ee258cfaa21fc1b3de",
+    "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s0/train/complete.json": "78dc0833010db6551e18eaa0fa9d1bf9753cc842bcc6b6ac1ac6c457611b29a8",
+    "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s0/train/recipe.json": "b792b87152320c80a8bf68c9f30f4d8938a43d93cd0c116796e16eb1d5f97881",
+    "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s1/train/complete.json": "98fe22c3c0bdbd00d1141bd3910ada7b33405a60d3896a3c1a1281f290f99661",
+    "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s1/train/recipe.json": "ebafe6b72c4494b8dbed1d2e49dd6960f5afc262a0760eaf7665e3941146a072"
   },
   "weights": {
     "0": "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s0/train/weights.pt",
@@ -48,7 +52,8 @@
       "threads": 4,
       "warmup": 100,
       "router_lr": 0.001,
-      "canonical_probability": 0.999
+      "canonical_probability": 0.999,
+      "parent_steps": 80000
     },
     "1": {
       "batch": 32,
@@ -71,7 +76,18 @@
       "threads": 4,
       "warmup": 100,
       "router_lr": 0.001,
-      "canonical_probability": 0.999
+      "canonical_probability": 0.999,
+      "parent_steps": 80000
+    }
+  },
+  "parent_metadata": {
+    "0": {
+      "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s0/train/complete.json": "78dc0833010db6551e18eaa0fa9d1bf9753cc842bcc6b6ac1ac6c457611b29a8",
+      "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s0/train/recipe.json": "b792b87152320c80a8bf68c9f30f4d8938a43d93cd0c116796e16eb1d5f97881"
+    },
+    "1": {
+      "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s1/train/complete.json": "98fe22c3c0bdbd00d1141bd3910ada7b33405a60d3896a3c1a1281f290f99661",
+      "/mnt/local/_outputs/deep-llms_th2/horizon_20261119/runs/D-s1/train/recipe.json": "ebafe6b72c4494b8dbed1d2e49dd6960f5afc262a0760eaf7665e3941146a072"
     }
   }
 }

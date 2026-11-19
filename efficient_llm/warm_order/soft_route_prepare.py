@@ -6,6 +6,7 @@ from .data import Rows,sha
 from .evaluate import cluster_ids
 from .strength_refinement import check
 from .train import write_json
+from .soft_route import load_initial
 
 NAMES=[f'{a}-s{s}' for a in ('C','G','S') for s in (0,1)]
 
@@ -36,8 +37,11 @@ def prepare(plan,out):
         record[str(seed)]=dict(available=len(allowed),selected=needed,parent_row_overlap=int(np.intersect1d(old,chosen).size),reserved_doc_overlap=int(np.intersect1d(clusters[chosen],forbidden).size))
     for name in NAMES:
         arm,s=name.split('-');seed=int(s[1:])
-        t=dict(plan['training'][str(seed)],arm=arm,seed=seed,indices=str(out/f'train-s{seed}.npy'),initial_weights=plan['weights'][str(seed)])
+        t=dict(plan['training'][str(seed)],arm=arm,seed=seed,indices=str(out/f'train-s{seed}.npy'),initial_weights=plan['weights'][str(seed)],parent_metadata=plan['parent_metadata'][str(seed)])
         t['expected_inputs']={p:sha(p) for p in (t['data']+'.bin',t['data']+'.starts',t['indices'],t['initial_weights'])}
+        if arm=='C':
+            model=load_initial(t);del model
+            print('SOFT_ROUTE_PARENT_LOAD_PASS',seed,flush=True)
         write_json(out/f'{name}.json',dict(name=name,train=t,eval=plan['eval'],hashes={**plan['hashes'],**t['expected_inputs']}))
     write_json(out/'complete.json',dict(status='ready',hashes=plan['hashes'],reservation=record,files={p.name:sha(p) for p in out.iterdir() if p.is_file()}))
     print('SOFT_ROUTE_INPUTS_READY',sha(out/'complete.json'),flush=True)

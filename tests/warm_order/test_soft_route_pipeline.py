@@ -29,11 +29,16 @@ class PipelineTests(unittest.TestCase):
             hashes[str(r/'eval.npz')]=sha(r/'eval.npz')
             pp=r/'parent.json';pp.write_text(json.dumps(dict(curriculum_all_seeds_domains=False,continuation_all_seeds_domains=False)));hashes[str(pp)]=sha(pp)
             ev=dict(stems=stems,indices=str(r/'eval.npz'))
-            plan=dict(parent_report=str(pp),parent_inputs=str(old/'complete.json'),hashes=hashes,training={},weights={},eval=ev)
+            plan=dict(parent_report=str(pp),parent_inputs=str(old/'complete.json'),hashes=hashes,training={},weights={},parent_metadata={},eval=ev)
             for s in (0,1):
-                p=r/f'parent-s{s}.pt';torch.save(dict(config=asdict(c),arm='D',seed=s,model=Model(c).state_dict()),p)
+                parent_dir=r/f'parent-s{s}';parent_dir.mkdir();p=parent_dir/'weights.pt'
+                torch.save(dict(config=asdict(c),model=Model(c).state_dict()),p)
+                (parent_dir/'complete.json').write_text(json.dumps(dict(arm='D',seed=s,step=80,weights_sha256=sha(p))))
+                (parent_dir/'recipe.json').write_text(json.dumps(dict(config=dict(arm='D',seed=s,steps=80,model=asdict(c)))))
+                plan['parent_metadata'][str(s)]={str(parent_dir/f):sha(parent_dir/f) for f in ('complete.json','recipe.json')}
+                hashes.update(plan['parent_metadata'][str(s)])
                 hashes[str(p)]=sha(p);plan['weights'][str(s)]=str(p)
-                plan['training'][str(s)]=dict(model=asdict(c),batch=2,steps=4,lr=.0001,router_lr=.001,warmup=1,save_every=2,log_every=2,threads=1,data=stems['fit'],canonical_probability=.999)
+                plan['training'][str(s)]=dict(model=asdict(c),batch=2,steps=4,lr=.0001,router_lr=.001,warmup=1,save_every=2,log_every=2,threads=1,data=stems['fit'],canonical_probability=.999,parent_steps=80)
             base=r/'study';prepare(plan,base/'inputs');(base/'execution').mkdir()
             for p in ('source.json','admission.json'):(base/'execution'/p).write_text('{}')
             reservation=json.loads((base/'inputs/complete.json').read_text())['reservation']
