@@ -14,6 +14,12 @@ from scripts.verify_exposure_recovery_export import verify
 
 class PipelineTests(unittest.TestCase):
     def test_ten_fits_disjoint_rows_parent_identity_replay_21backups_tamper(self):
+        self.exercise(False)
+
+    def test_extension_ten_fit_pipeline(self):
+        self.exercise(True)
+
+    def exercise(self, extension):
         torch.set_num_threads(1)
         model=Config(d=8,heads=1,kv_heads=1,head_dim=8,ff=16,vocab=19,length=8,prefix=2)
         with tempfile.TemporaryDirectory() as tmp:
@@ -25,7 +31,7 @@ class PipelineTests(unittest.TestCase):
                 hashes.update({stem+s:sha(stem+s) for s in ('.bin','.starts')})
             for name in NAMES:
                 p=root/'parents'/name;p.mkdir(parents=True)
-                _,_,pins,_=fixtures.RecoveryTests().fixture(p,name[0],name.split('-')[0].endswith('F'),int(name[-1]))
+                _,_,pins,_=fixtures.RecoveryTests().fixture(p,name[0],name.split('-')[0].endswith('F'),int(name[-1]),stems['fit'])
                 parents[name]=dict(directory=str(p),hashes=pins)
                 hashes.update({str(p/k):v for k,v in pins.items()})
             np.savez(root/'eval.npz',fit=np.arange(12,16),valid=np.arange(16,20),dclm=np.arange(4),fwe=np.arange(4))
@@ -36,11 +42,27 @@ class PipelineTests(unittest.TestCase):
                 excluded_orders={str(s):[str(root/'old.npy')] for s in (0,1)},
                 training=dict(data=stems['fit'],model=asdict(model),batch=2,steps=4,log_every=1,save_every=2,threads=1),
                 eval=dict(stems=stems,indices=str(root/'eval.npz')))
+            if extension:
+                manifest=dict(tokenizer_sha256='fixture',partition='fixture-heal-vs-final')
+                (root/'manifest.json').write_text(json.dumps(manifest))
+                prefix=dict(tokenizer_sha256='fixture',partition=manifest['partition'],
+                    source_manifest_sha256=sha(root/'manifest.json'),streams={'train':{'tokens':20*8}})
+                (root/'prefix.json').write_text(json.dumps(prefix))
+                for p in (root/'manifest.json',root/'prefix.json'):hashes[str(p)]=sha(p)
+                plan['extension']=dict(source_stem=stems['fit'],manifest=str(root/'manifest.json'),
+                    prefix_manifest=str(root/'prefix.json'),prefix_expected=prefix,prefix_stem=stems['fit'],
+                    first_token=20*8,stop_token=80*8)
             base=root/'study';prepare(plan,base/'inputs');(base/'execution').mkdir()
             for p in ('source.json','admission.json'):(base/'execution'/p).write_text('{}')
             before={p:sha(p) for p in hashes}
             prepared=json.loads((base/'inputs/complete.json').read_text())
             self.assertTrue(all(v['prior_row_overlap']==v['reserved_doc_overlap']==0 for v in prepared['reservation'].values()))
+            if extension:
+                selected=np.load(base/'inputs/source_rows.npy')
+                self.assertTrue((selected>=20).all());self.assertEqual(len(np.unique(selected)),16)
+                x=np.fromfile(base/'inputs/recovery_train.bin',dtype='<u4').reshape(-1,8)
+                original=np.fromfile(stems['fit']+'.bin',dtype='<u4').reshape(-1,8)
+                np.testing.assert_array_equal(x,original[selected])
             for name in NAMES:run(json.loads((base/f'inputs/{name}.json').read_text()),base/'runs'/name,'cpu')
             result=report(base,root/'backup')
             self.assertEqual(before,{p:sha(p) for p in hashes})

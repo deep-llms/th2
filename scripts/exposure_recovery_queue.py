@@ -46,14 +46,14 @@ def main():
             if failures:pending=[]
             if active or pending:time.sleep(10)
         if failures:raise ValueError('Project jobs failed: '+repr(failures))
-        report(base,Path('/mnt/local/_backup/deep-llms_th2/exposure_recovery_20261119_a01'))
+        report(base,Path('/mnt/local/_backup/deep-llms_th2/exposure_recovery_20261119_a02'))
         write_json(base/'scientific-complete.json',dict(ready=True,utc=time.time(),backup_sha256=sha(base/'backup.json')))
     except BaseException as e:
         write_json(base/'failure.json',dict(error=repr(e),utc=time.time()));traceback.print_exc()
     finally:
         signal.signal(signal.SIGTERM,signal.SIG_IGN);signal.signal(signal.SIGINT,signal.SIG_IGN)
         clean_owned_children();time.sleep(30);require_free(list(range(8)))
-        native(base,session='exposure_recovery_20261119_native_a01')
+        native(base,session='exposure_recovery_20261119_native_a02')
         if guard.exists() and guard.stat().st_ino==inode and guard.read_text()==marker:guard.unlink()
         else:raise ValueError('Guard owner changed; refuse removal')
         success=(base/'scientific-complete.json').exists()

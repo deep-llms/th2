@@ -8,10 +8,10 @@ from efficient_llm.warm_order.train import write_json
 from scripts.gpu_process import inspect,process,ownership
 from scripts.train_then_burn import approved_launcher,GUARD_HASH
 
-BASE=Path('/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a01')
+BASE=Path('/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02')
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--commit',required=True);ap.add_argument('--prepared-sha256',required=True);a=ap.parse_args();root=Path.cwd();execution=BASE/'execution';session='exposure_recovery_20261119_a01'
+    ap=argparse.ArgumentParser();ap.add_argument('--commit',required=True);ap.add_argument('--prepared-sha256',required=True);a=ap.parse_args();root=Path.cwd();execution=BASE/'execution';session='exposure_recovery_20261119_a02'
     if len(a.commit)!=40 or any(c not in '0123456789abcdef' for c in a.commit):raise ValueError('Explicit development-supplied commit required; runner sync tree has no Git metadata')
     if socket.gethostname()!='thiennh-p6-ohmv-worker-0':raise ValueError('Wrong node')
     if execution.exists() or (BASE/'runs').exists():raise ValueError('Prior admission/work found; retrieve rather than relaunch')

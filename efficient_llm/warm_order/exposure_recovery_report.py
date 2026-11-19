@@ -11,7 +11,7 @@ from .data import sha
 
 FLAGS=['reused_final_exploratory','two_seeds','multiple_comparisons','conditional_suffix480',
        'C6_GS18_candidate_blocks_not_equal_compute','soft_mixture_not_discrete_order','hard_projection_all_candidates_not_sparse',
-       'inherited_Adam_RNG_constant_terminal_LR','weights_node_only']
+       'inherited_Adam_RNG_constant_terminal_LR','weights_node_only','shared_chronological_source_slice','source_instance_disjoint_not_text_dedup']
 
 def calculate(arrays):
     rows=[];ci={};quality=[];hard_quality=[];dynamic=[]

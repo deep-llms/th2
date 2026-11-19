@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-ohmv-exposure-recovery-cpu-admission-20261119-a01
+#th2-ohmv-exposure-recovery-cpu-admission-20261119-a02
 set -euo pipefail
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline OMP_NUM_THREADS=4 PYTHONPATH="$PWD"
 TASK_PYTHON=/mnt/local/conda-py311/envs/a2_env/bin/python3.11
@@ -18,18 +18,18 @@ native='/tmp/llm_pretrain_burn.py';digest='3cdcc857bd01b096e20a02640fa85f0b8be76
 assert sha(native)==digest
 assert sha('/mnt/local/_gpu_guard/gpu_guard.sh')==GUARD_HASH
 assert all(approved_launcher(process(p)['ppid'],{native:digest}) for p in state['workers'])
-base=Path('/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a01')
+base=Path('/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02')
 assert not base.exists(),'Existing output; reconcile, never overwrite'
 print('CPU_ADMISSION_PRECHECK',json.dumps(dict(source_files=len(pin['files']),ownership=state)),flush=True)
 PY
-"$TASK_PYTHON" -m unittest tests.warm_order.test_exposure_recovery tests.warm_order.test_exposure_recovery_pipeline -v
-"$TASK_PYTHON" -m efficient_llm.warm_order.exposure_recovery_prepare --out /mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a01/inputs --plan resources/exposure_recovery_plan_20261119.json
+"$TASK_PYTHON" -m unittest tests.warm_order.test_exposure_recovery tests.warm_order.test_exposure_recovery_data tests.warm_order.test_exposure_recovery_pipeline -v
+"$TASK_PYTHON" -m efficient_llm.warm_order.exposure_recovery_prepare --out /mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/inputs --plan resources/exposure_recovery_plan_20261119.json
 "$TASK_PYTHON" - <<'PY'
 import json
 from pathlib import Path
 from scripts.gpu_process import inspect
 from efficient_llm.warm_order.train import write_json
-base=Path('/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a01');state=inspect()
+base=Path('/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02');state=inspect()
 from efficient_llm.warm_order.data import sha
 write_json(base/'cpu-ownership.json',state)
 print('EXPOSURE_RECOVERY_CPU_TERMINAL',json.dumps(state),flush=True)

@@ -16,14 +16,14 @@ from efficient_llm.warm_order.exposure_recovery import load_parent, optimizer_fo
 
 
 class RecoveryTests(unittest.TestCase):
-    def fixture(self, root, arm, exposure, seed=0):
+    def fixture(self, root, arm, exposure, seed=0, data='unit-fixture'):
         torch.set_num_threads(1)
         torch.manual_seed(13+seed)
         np.random.seed(13+seed)
         random.seed(13+seed)
         cfg = Config(d=8, heads=1, kv_heads=1, head_dim=8, ff=16, vocab=19, length=8, prefix=2)
         c = dict(model=asdict(cfg), arm=arm, seed=seed, steps=3,
-                 batch=2, lr=.0001, router_lr=.001, canonical_probability=.999)
+                 batch=2, lr=.0001, router_lr=.001, canonical_probability=.999,data=data)
         if exposure:
             c['exploration_schedule'] = 'floor0.4-ramp500-hold500-decay500-zero500'
         model = (ExposureModel if exposure else SoftModel)(cfg, ARMS[arm], .999)

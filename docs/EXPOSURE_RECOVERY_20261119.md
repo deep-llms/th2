@@ -1,6 +1,6 @@
 # Exposure recovery: retain optimizer state after mixture exposure
 
-Status: authenticated parent loader and constant-LR phase trainer implemented; five CPU tests PASS across all five checkpoint schemas, next-update Adam/RNG identity, exact phase resume and tamper rejection. Reservation/evaluation/report/export/queue implemented; ten-fit CPU pipeline passed, frozen-entrypoint and production admission tests pending. No GPU launch. Predecessor: `results/soft_exploration_20261119/REPORT_FINAL.md`, verified compact export (116 members, 84 replay checks). Original objective: `docs/warmup_DOT_idea_sketch.md`; user authorizes continued controlled experiments after negative screens.
+Status: a01 CPU rejected insufficient unused rows before any GPU work. Recovery a02 implements a shared authenticated post-2B heal slice; local and frozen tests must pass before fresh CPU admission. Predecessor: `results/soft_exploration_20261119/REPORT_FINAL.md`, verified compact export (116 members, 84 replay checks). Original objective: `docs/warmup_DOT_idea_sketch.md`; user authorizes continued controlled experiments after negative screens.
 
 ## Evidence and question
 
@@ -23,3 +23,11 @@ Reuse existing model, data and independent-reference evaluation code. A new auth
 Before GPU launch require local and frozen-entrypoint CPU tests for both schemas, exact interrupted/uninterrupted optimizer/RNG continuation, row disjointness, ten-fit queue/report contracts, and export tamper rejection. Node CPU admission must load all ten actual parents. Keep production numerical, same-shape causality, first-40-step resume, fullset independent NLL/route parity, source/data/weight hash, ownership and native-handoff checks. Source-pack cap and fresh ownership must pass. Do not relax failed gates.
 
 Weights/full states remain on node. Export only compact results and proof. Expected backup is twenty new weights/full states plus one report archive; verify actual hashes. Keep predecessor outputs unchanged and watcher 9736 alive through report/replay/backup and reassessment. No old DOT-RL resume.
+
+## a02 data-capacity amendment (before any recovery GPU launch)
+
+CPU a01 passed six node tests but failed reservation with `Insufficient new rows`; the original output is retained. Verified Horizon pool has 2,645,376 eligible rows, of which each parent used 2,560,000, and the matched continuation consumed another 64,000. This leaves at most 21,376, before additional reservations, below 64,000 required. This is a project data-capacity failure, not infrastructure.
+
+Use fresh output `exposure_recovery_20261119_a02`. All ten recovery fits instead share a newly extracted DCLM heal input from original source tokens [2,000,000,000, 2,199,999,488). The restored 30B source already exists; fully verify its original token/boundary hashes and manifest on CPU. The old DOT E2 corpus is a permutation of exactly the first 2B source tokens. Authenticate that provenance and all prior reservation indices. Skip the document crossing the 2B cut; reject every 512-token row with an internal document start. Select 128,000 unique eligible source windows using fixed seed 19220 and split into two disjoint 64,000-row seed orders. Set row-start boundary flags as in original E2 packing. Save exact source offsets and hashes; never overwrite old data.
+
+This preserves source-document-instance and token disjointness from all previous 2B training/router windows, and the heal/final text-hash partition. It is not a claim of corpus-wide text deduplication. The chronological source slice is a data change shared by every control and must remain a reported limitation. Optimizer, LR, steps, objective, gates and quality criteria are unchanged. Derived data stays on node; small provenance reports only. CPU a02 must pass boundary-straddling/selection and full ten-fit extension-pipeline tests before GPU admission.
