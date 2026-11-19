@@ -88,6 +88,14 @@
       "sha256": "735584ef9764421a6bbd8a7833db876e5899918acd17f397eab8b364f919a12a",
       "compressed_bytes": 49339,
       "archive_sha256": "623253cffd78ebaa212b451ddf7872c6517fe69494787c8873d53399b49dd25f"
+    },
+    {
+      "path": "docs/results/a2_branches_20261028/final_surveys/nem-S188.json",
+      "archive": "docs/results/a2_branches_20261028/final_surveys/nem-S188.json.gz",
+      "bytes": 136550,
+      "sha256": "abb73594506a789a060bbc27b7c2a27a13ad7047bc0adddcd8d71a34bea28afb",
+      "compressed_bytes": 49203,
+      "archive_sha256": "1c2684f0d12678d2380df1422c7cd872867555b81c7375a2ce2c43e41645e12e"
     }
   ]
 }
