@@ -1,0 +1,130 @@
+{
+  "controls": {
+    "FH-s0": {
+      "arrays": {
+        "dclm": "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s0/dclm/summary.npz",
+        "fwe": "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s0/fwe/summary.npz"
+      },
+      "complete": "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s0/complete.json",
+      "fullstate_sha256": "a9ff0edfc8827b74f8dbd8965442d1211b8d625f0b685f2ba79117842855c048",
+      "recipe": "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s0/train/recipe.json"
+    },
+    "FH-s1": {
+      "arrays": {
+        "dclm": "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s1/dclm/summary.npz",
+        "fwe": "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s1/fwe/summary.npz"
+      },
+      "complete": "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s1/complete.json",
+      "fullstate_sha256": "5947432f9bc6acabae916b376de8895531c893c649a88a4337d50020b3f64d62",
+      "recipe": "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s1/train/recipe.json"
+    },
+    "P-s0": {
+      "arrays": {
+        "dclm": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/dclm/summary.npz",
+        "fwe": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/fwe/summary.npz"
+      },
+      "complete": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/complete.json"
+    },
+    "P-s1": {
+      "arrays": {
+        "dclm": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/dclm/summary.npz",
+        "fwe": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/fwe/summary.npz"
+      },
+      "complete": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/complete.json"
+    }
+  },
+  "eval": {
+    "indices": "/mnt/local/_outputs/deep-llms_th2/adaptive_refinement_20261119/inputs/eval.npz",
+    "stems": {
+      "dclm": "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/dclm/packed/dclm/final",
+      "fit": "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/dot/e2/train",
+      "fwe": "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/fineweb_edu/packed/fineweb_edu/final"
+    }
+  },
+  "hashes": {
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/dclm/packed/dclm/final.bin": "810e5e5da9be5e4a0a972461841a21216d621d8e05e5337838ff09945c2071f8",
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/dclm/packed/dclm/final.starts": "17a6086380a1319fe3ee80d3f8d99d7990b0f1133ce5dbf95425cef92efe3804",
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/fineweb_edu/packed/fineweb_edu/final.bin": "c18613146bcdc63a65686b548cf3c2c742b8db429d8e3e5c285d0150fa83fba9",
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/corpora/fineweb_edu/packed/fineweb_edu/final.starts": "b6504f2adacebe3d101a7f531ace61290bff5cf85e24ffa53d12c48a02cd5ea5",
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/dot/e2/train.bin": "90d971d9203c9ab6c1498165dd35a2c6887ee8d5f886cd1242cc07ddc08368d6",
+    "/mnt/local/_data/deep-llms_th2/a2_dot_20261118/dot/e2/train.starts": "8302b82ca68fa93c62ca378b60e7f57bd20090ad3490bdb2ce5eaa7e32b898ed",
+    "/mnt/local/_outputs/deep-llms_th2/adaptive_refinement_20261119/inputs/eval.npz": "8b49785b33d4bdf5fa9fcf888f68cf6d272583e0170ff3dcd09d5e3c9ff133b5",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/inputs/complete.json": "89bac222c5804789d5b85d930e1a2f521fcca018708fd8b5aef7aed982790b50",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/inputs/recovery_train.bin": "6ebc642f5998c48b09653c577822cb8be69ee34c9253706a875c4367b516a65c",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/inputs/recovery_train.starts": "59c51861d3f176d732ae52ed37841a4694041e9757c534c4ea27b485cc167e5e",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/inputs/train-s0.npy": "8c1229323908665c553f2a67cf4d08e8d1728bd83e45798710fd21c96e4ecb09",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/inputs/train-s1.npy": "58a210b4cd24de0d48ebbdd641bc7abcd295a47f1b48b498d8062b7b63aaab49",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/complete.json": "542a43ee3a22fa10d3593d0de51590341e3b3d0581a5c40ee913aa12efee70ee",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/dclm/summary.npz": "7a2ff28278d3869e448e0a4e287a4f2e558b9139c49bb22f1df1a2a62508695e",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/fwe/summary.npz": "2e19a4761a61b6515e381a954ff4ac9c00658e38aede2d87d66ff7a2d24f7dc7",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/train/complete.json": "f0a5b67e2dbb93ef1089e0f86a9d2f0826d76bc4e3b0e0ae895cfc1ce2a66938",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/train/fullstate.pt": "d03ecbbc54db0db8061f3a8b2211db7dc8cf9a05fe0d4c080bd7dd55e19bccac",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/train/recipe.json": "16a4119b71c4c86fa66f40c83c923c87f3b1053776a3875726914a585589cefd",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/train/weights.pt": "eff232b7c2850cd84f074fd5959364edcb874c66e15c433ce1c8967a1070ad63",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/complete.json": "fa9c7116bf540d055970ae830dc81fbcbce13cff782d5c377cbfa7c6b0ba3bb4",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/dclm/summary.npz": "1b2aafe6ddca5347e86f1d4a3ba0c2fcd333c8602e9c79ba1b49eefd02b510ae",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/fwe/summary.npz": "aef7fde158874204e50b0546f7cef455b00e2ed9578535a730efd413a036ef80",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/train/complete.json": "a295a4ec272ddfc1e54e6ae15104f07023818c405eaff3c0d7dd879e9f242b62",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/train/fullstate.pt": "72f25cb8c6c55fd9ed97696d0b61f914ed7cf7ed910f420596a8d28ca73163e6",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/train/recipe.json": "5a3c5f1bca98e3ed468519eedd6fafb5ed5bb84daa2be8aed99f59c4a152ea73",
+    "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/train/weights.pt": "5dc4fb1d2b79c628aedf03da217dd246ee43f469a573d9477721e3b07e8e1755",
+    "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s0/complete.json": "f891fa964a588b6ccd35201ec8b4f82fffff59c8c68e40afbd1aa21476ae415a",
+    "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s0/dclm/summary.npz": "430606fa6ca6e3beb7208bb3f39822ea4986db628da90a62c66e9432e23d4f18",
+    "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s0/fwe/summary.npz": "96ccdc57c474104197f41605d946daa6dfc895bc1486f348a37c2f7010257d4f",
+    "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s0/train/recipe.json": "5ca763cc974e2c6eccd1b8db9759c4a7249000f2835320a5b39c457948d78355",
+    "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s1/complete.json": "89ba70b57ad3ab201051230a341841893b20e10aed01d950a4a809fb5d2d968b",
+    "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s1/dclm/summary.npz": "806e1dd71378e5c0360aa177a3ba1b90b466c25dfa4c5a581421b8b0c62080eb",
+    "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s1/fwe/summary.npz": "f3f06354bd19641c04441d5f4ad3647e9da6e2329bcf1ccd628182e3f42f84e7",
+    "/mnt/local/_outputs/deep-llms_th2/pair_order_20261120_a01/runs/C-s1/train/recipe.json": "6495f5493b089a7ab09a8ed89862688c9e2dafe9286c694a979a0880b3027c31"
+  },
+  "orders": {
+    "0": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/inputs/train-s0.npy",
+    "1": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/inputs/train-s1.npy"
+  },
+  "parent_steps": 2000,
+  "parents": {
+    "0": {
+      "directory": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s0/train",
+      "hashes": {
+        "complete.json": "f0a5b67e2dbb93ef1089e0f86a9d2f0826d76bc4e3b0e0ae895cfc1ce2a66938",
+        "fullstate.pt": "d03ecbbc54db0db8061f3a8b2211db7dc8cf9a05fe0d4c080bd7dd55e19bccac",
+        "recipe.json": "16a4119b71c4c86fa66f40c83c923c87f3b1053776a3875726914a585589cefd",
+        "weights.pt": "eff232b7c2850cd84f074fd5959364edcb874c66e15c433ce1c8967a1070ad63"
+      }
+    },
+    "1": {
+      "directory": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/runs/C-s1/train",
+      "hashes": {
+        "complete.json": "a295a4ec272ddfc1e54e6ae15104f07023818c405eaff3c0d7dd879e9f242b62",
+        "fullstate.pt": "72f25cb8c6c55fd9ed97696d0b61f914ed7cf7ed910f420596a8d28ca73163e6",
+        "recipe.json": "5a3c5f1bca98e3ed468519eedd6fafb5ed5bb84daa2be8aed99f59c4a152ea73",
+        "weights.pt": "5dc4fb1d2b79c628aedf03da217dd246ee43f469a573d9477721e3b07e8e1755"
+      }
+    }
+  },
+  "training": {
+    "batch": 32,
+    "canonical_probability": 0.99,
+    "data": "/mnt/local/_outputs/deep-llms_th2/exposure_recovery_20261119_a02/inputs/recovery_train",
+    "log_every": 50,
+    "lr": 0.0003,
+    "model": {
+      "d": 768,
+      "ff": 2048,
+      "head_dim": 64,
+      "heads": 12,
+      "kv_heads": 4,
+      "length": 512,
+      "prefix": 32,
+      "vocab": 50304
+    },
+    "router_lr": 0.001,
+    "router_width": 128,
+    "save_every": 1000,
+    "schedule": "dense-restart-factorial",
+    "steps": 2000,
+    "terminal_lr": 1e-05,
+    "threads": 4,
+    "warmup": 100
+  }
+}
