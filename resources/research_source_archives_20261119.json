@@ -80,6 +80,14 @@
       "sha256": "b4cfc82fd8474414d4dad565a57ca26aec04adbce2e7b5ebb3f089b21b08fd5a",
       "compressed_bytes": 49129,
       "archive_sha256": "0bc156fc2a788b62244d7a8ca464574f38630069cacfaa4b36c35dae87f784f7"
+    },
+    {
+      "path": "docs/results/a2_branches_20261028/final_surveys/fwe-S72.json",
+      "archive": "docs/results/a2_branches_20261028/final_surveys/fwe-S72.json.gz",
+      "bytes": 136566,
+      "sha256": "735584ef9764421a6bbd8a7833db876e5899918acd17f397eab8b364f919a12a",
+      "compressed_bytes": 49339,
+      "archive_sha256": "623253cffd78ebaa212b451ddf7872c6517fe69494787c8873d53399b49dd25f"
     }
   ]
 }
