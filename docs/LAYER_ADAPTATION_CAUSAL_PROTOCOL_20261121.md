@@ -1,6 +1,6 @@
 # Why does changing layer order fail, and what repairs it?
 
-Status (21 November, node snapshot16:22UTC): all four paired2000-update continuations completed; actual28snapshot and4terminal fullstate hashes verified. Two seed studies are running. No terminal mechanism result yet. GPU admission passed before launch; current evidence and receipt details are in CURRENT_TASK.md. DCLM-only/context512; historical diary entries below retain their original status.
+Status (21 November, completed and locally replayed): all four paired2000-update continuations and both seed studies COMPLETE, plus the frozen path-background pilot. Small exports13affe6f resolved and both archive/member/backup hashes verified. Loss scores replayed locally; raw geometry moments and weights/bases remain node-only. The [results and interpretation](LAYER_ADAPTATION_RESULTS_20261121.md) distinguish adaptation/rollback evidence from descriptive geometry. B recovers about0.30nat but retains0.082/0.084nat gap; the null-input SVD removal harms both seeds. DCLM-only/context512, exploratory/historical overlap unknown. Historical diary entries below retain their original status.
 
 ## The question and the correction
 
@@ -488,3 +488,60 @@ known-rank/degenerate examples and a complete synthetic checkpoint/input/replay
 chain. Actual parent CPU reference plus new CUDA boundary/score parity is required
 before GPU pilot. Local basis and model states stay on node. No new optimizer
 updates, no modification/restart of the existing adaptation study.
+
+### Follow-up: fixed-context input/block/reader factorial (21 November)
+
+Motivation is the actual pair/rest rollback result, not a new generic sweep.
+Adapted pair and adapted rest each help, but rest conflates upstream recruitment
+and downstream consumption. The failed null-anchor removal does not resolve
+this ambiguity. The following freezes existing checkpoints; no further training
+or fitted alignment is required.
+
+The first target is **middle.2**, identity fixed in the swap path `(0,2,1,3)`,
+matching the previous computational intervention target. Compare parent P with
+B2000, and separately parent P with A2000 as the ordinary-training control.
+Both panels execute the same swap path; A2000 is deliberately tested away from
+its training order. Do not silently compare different inventories or depths.
+
+For each panel let H_i be embedding→stem→middle.0 from weights source i, F_b
+be middle.2 from source b, and R_r be middle.1→middle.3→coda→final norm→readout
+from source r, with bits0=parent and1=that panel's adapted model. On identical
+tokens/masks compute all eight cells `L_ibr = NLL(R_r(F_b(H_i(x))))`.
+There are four matched skips `L_iSr = NLL(R_r(H_i(x)))`. Twelve cells per
+panel,24 across A/B per seed; no outcome-based target selection.
+
+- Input effect at fixed block and reader: `L_0br − L_1br`.
+- Block-weight effect at fixed input and reader: `L_i0r − L_i1r`.
+- Reader effect at fixed input and block output: `L_ib0 − L_ib1`.
+- Useful block contribution: `L_iSr − L_ibr` in that exact context.
+- Input/block interaction for reader r:
+  `(L_10r − L_11r) − (L_00r − L_01r)`.
+
+All signs use lower loss as improvement. Report each reader panel and sequence
+effects; a change in marginal block benefit is not total-model improvement.
+The telescoping total from000 to111 depends on the chosen traversal, so its
+terms are not unique percentages of cause. Source models all remain frozen.
+
+**Readout caveat:** R includes its own embedding-tied output matrix. When input
+source differs from reader source, the forward uses different embedding and
+readout values. This is an explicit hybrid intervention, not a deployable tied
+model or proof of a downstream-layer-only effect. It also changes logit
+calibration; same-reader native references alone are used for KL. If reader
+effects warrant finer localization, separate suffix weights from output-head
+weights in a later bounded control. No such inference is made from this stage.
+
+New `adaptation_context.py` implements native000/111 parity, shared input reuse,
+fixed block identity, controlled suffix/readout and matched skips.
+`adaptation_context_pipeline.py` adds exact-schema parent/A/B snapshot loading,
+row-hash binding, streaming24cells, paired effect distributions and small raw
+replay, with config/checkpoint/row/runtime joins. Six CPU fixture tests cover
+independent hybrid/NLL reconstruction, actual head source, causality, weight/RNG
+immutability, identity-block skips, a joint-only interaction counterexample,
+streaming parity, and data/config/output tamper rejection. **Not actual-model
+evidence or production admission.** Concrete terminal2000 parent/phase/row pins
+come from the verified previous export and are registered in
+`resources/layer_adaptation_context_20261121.json`; no new row reserve or train.
+Remaining: frozen-source node package and actual-parent CPU references,
+CPU/GPU parity and fresh owned node admission before the24-cell measurement.
+Existing scientific results stay unchanged. The local CPU fixture's driver
+discovery warning is retained in its log, not evidence of a B200 fault.
