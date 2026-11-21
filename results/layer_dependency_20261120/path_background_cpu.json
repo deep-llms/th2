@@ -1,0 +1,20 @@
+{
+  "utc": "2026-11-21T17:07:53.781018+00:00",
+  "scope": "Synthetic CPU only, not actual model evidence",
+  "tests": 5,
+  "result": "PASS",
+  "source": {
+    "efficient_llm/warm_order/path_background.py": "626eb5639f027172db4e0a532f044e5f827bb4506f6e123809868d871325f639",
+    "efficient_llm/warm_order/path_background_study.py": "18a5f800ca08da0c49eb9fb34e16c3bd1ab64b0b85707a53ab89ca1d03139325",
+    "tests/warm_order/test_path_background.py": "f259c5ef4f0c5febad940d3e0906cc67378f98e579ccbff1abc9c73de9ec57b9",
+    "tests/warm_order/test_path_background_study.py": "dea1e4f0b646b48ff0c50075b27979b1fa3c831db36b953fc35e0af33b2e9f66"
+  },
+  "log_sha256": "e92611038b998192167ba7b2e993867aadb63916c955e89d59bda69b30832956",
+  "checks": [
+    "native forward/NLL parity",
+    "causality and immutable weights/RNG",
+    "known low-rank recovery and degeneracy",
+    "projection/norm/energy matched controls",
+    "actual schema fixture preparation+study+replay tamper rejection"
+  ]
+}
