@@ -45,3 +45,35 @@ def measurement_runtime(device='cpu'):
                 torch.backends.cuda.matmul.allow_tf32, torch.backends.cudnn.allow_tf32 = previous
     finally:
         _DEVICE.reset(token)
+
+
+def training_policy(device):
+    return dict(device=device, precision='bf16' if device=='cuda' else 'fp32',
+                attention_backend='math' if device=='cuda' else 'cpu_native',
+                deterministic=device=='cuda', tf32=False if device=='cuda' else None,
+                cublas_workspace=':4096:8' if device=='cuda' else None)
+
+
+@contextmanager
+def training_runtime(device):
+    """Fixed arithmetic for exact paired continuation/resume, restored on exit."""
+    if device == 'cpu':
+        yield training_policy(device)
+        return
+    if device != 'cuda':raise ValueError('Explicit cpu/cuda training device required')
+    import os
+    if os.environ.get('CUBLAS_WORKSPACE_CONFIG') != ':4096:8':
+        raise ValueError('Set CUBLAS_WORKSPACE_CONFIG=:4096:8 before CUDA initialization')
+    from torch.nn.attention import sdpa_kernel, SDPBackend
+    previous=(torch.are_deterministic_algorithms_enabled(),
+              torch.is_deterministic_algorithms_warn_only_enabled(),
+              torch.backends.cuda.matmul.allow_tf32,torch.backends.cudnn.allow_tf32)
+    try:
+        torch.use_deterministic_algorithms(True, warn_only=False)
+        torch.backends.cuda.matmul.allow_tf32=False
+        torch.backends.cudnn.allow_tf32=False
+        with sdpa_kernel(SDPBackend.MATH):
+            yield training_policy(device)
+    finally:
+        torch.use_deterministic_algorithms(previous[0],warn_only=previous[1])
+        torch.backends.cuda.matmul.allow_tf32,torch.backends.cudnn.allow_tf32=previous[2:]

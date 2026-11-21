@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 import numpy as np
 import torch
-from efficient_llm.warm_order.adaptation_runtime import measurement_runtime, measurement_policy, measurement_device
+from efficient_llm.warm_order.adaptation_runtime import measurement_runtime, measurement_policy, measurement_device, training_runtime
 from efficient_llm.warm_order.adaptation_gpu_probe import exact
 from efficient_llm.warm_order.adaptation_components import component_crossovers
 from efficient_llm.warm_order.model import Model,Config
@@ -24,6 +24,26 @@ class AdaptationRuntime(unittest.TestCase):
         self.assertEqual(measurement_policy()['device'],'cpu')
         with self.assertRaises(ValueError):
             with measurement_runtime('cuda:0'):pass
+
+    def test_training_determinism_policy_and_failure_restore(self):
+        import os
+        before=(torch.are_deterministic_algorithms_enabled(),torch.is_deterministic_algorithms_warn_only_enabled(),
+                torch.backends.cuda.matmul.allow_tf32,torch.backends.cudnn.allow_tf32)
+        with patch.dict(os.environ,{'CUBLAS_WORKSPACE_CONFIG':''}):
+            with self.assertRaisesRegex(ValueError,'CUBLAS_WORKSPACE_CONFIG'):
+                with training_runtime('cuda'):pass
+        with patch.dict(os.environ,{'CUBLAS_WORKSPACE_CONFIG':':4096:8'}):
+            with self.assertRaisesRegex(RuntimeError,'injected'):
+                with training_runtime('cuda') as policy:
+                    self.assertTrue(torch.are_deterministic_algorithms_enabled())
+                    self.assertFalse(torch.is_deterministic_algorithms_warn_only_enabled())
+                    self.assertFalse(torch.backends.cuda.flash_sdp_enabled())
+                    self.assertTrue(torch.backends.cuda.math_sdp_enabled())
+                    self.assertFalse(torch.backends.cuda.matmul.allow_tf32)
+                    self.assertEqual(policy['attention_backend'],'math')
+                    raise RuntimeError('injected')
+        self.assertEqual(before,(torch.are_deterministic_algorithms_enabled(),torch.is_deterministic_algorithms_warn_only_enabled(),
+                         torch.backends.cuda.matmul.allow_tf32,torch.backends.cudnn.allow_tf32))
 
     def test_semantic_fullstate_comparison_checks_rng_dtype_and_nonfinite(self):
         a=dict(model=torch.tensor([1.]),rng=np.array([1,2],dtype=np.uint32),cuda_rng=[torch.tensor([2],dtype=torch.uint8)],step=40)

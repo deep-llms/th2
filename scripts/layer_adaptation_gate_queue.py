@@ -4,6 +4,7 @@ from pathlib import Path
 from efficient_llm.warm_order.data import sha
 from efficient_llm.warm_order.horizon_train import write_json
 from efficient_llm.warm_order.adaptation_train import source_hashes
+from efficient_llm.warm_order.adaptation_runtime import training_policy
 from scripts.gpu_process import inspect,process,ownership
 from scripts.gpu_status import require_free
 from scripts.train_then_burn import stop_burns,enable_subreaper,clean_owned_children,GUARD_HASH
@@ -16,7 +17,7 @@ def aggregate(base,admission):
     for name in NAMES:
         c=json.loads((prepared/(name+'.json')).read_text());r=json.loads((base/'runs'/name/'complete.json').read_text())
         if (r['branch']!=c['branch'] or r['seed']!=c['row_reservation']['seed'] or r['parent_hashes']!=c['parent_hashes'] or
-            r['source']!=source_hashes() or r['prepared_sha256']!=admission['prepared_sha256'] or
+            r['source']!=source_hashes() or r.get('training_policy')!=training_policy('cuda') or r['prepared_sha256']!=admission['prepared_sha256'] or
             r['step']!=40 or not all(r[k] is True for k in ('exact_resume','finite','parent_step0_exact','native_component_parity_pass'))):raise ValueError('Invalid gate '+name)
         for sub,key in [('whole','whole_fullstate_sha256'),('split','split_fullstate_sha256')]:
             if sha(base/'runs'/name/sub/'fullstate.pt')!=r[key]:raise ValueError('Gate checkpoint changed')
@@ -25,7 +26,7 @@ def aggregate(base,admission):
         if runtime is None:runtime=sig
         elif sig!=runtime:raise ValueError('Mixed gate runtime/reservation')
         branches[name]=r
-    report=dict(source=source_hashes(),torch=runtime[0],precision=runtime[1],tf32=runtime[2],reservation_sha256=runtime[3],
+    report=dict(source=source_hashes(),training_policy=training_policy('cuda'),torch=runtime[0],precision=runtime[1],tf32=runtime[2],reservation_sha256=runtime[3],
                 native_component_parity_pass=True,branches=branches,qualification_updates_executed=320,
                 production_updates_executed=0,scope='Numerical/fullstate qualification only; no causal mechanism conclusion')
     write_json(base/'gpu-admission.json',report)
@@ -71,7 +72,7 @@ def main():
     finally:
         signal.signal(signal.SIGTERM,signal.SIG_IGN);signal.signal(signal.SIGINT,signal.SIG_IGN)
         clean_owned_children();time.sleep(30);require_free(list(range(8)))
-        native(base,session='layer_adaptation_gate_20261121_native_a01')
+        native(base,session='layer_adaptation_gate_20261121_native_a02')
         if guard.exists() and guard.stat().st_ino==inode and guard.read_text()==marker:guard.unlink()
         else:raise ValueError('Guard owner changed; refuse removal')
         success=(base/'qualification-complete.json').exists()

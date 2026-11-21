@@ -15,27 +15,27 @@ from .adaptation_train import train, load_parent, source_hashes
 from .adaptation_reservation import validate_binding
 from .adaptation_analysis import CANONICAL, SWAPPED, native_trace
 from .adaptation_components import component_crossovers, score_crossovers
-from .adaptation_runtime import measurement_runtime, measurement_policy
+from .adaptation_runtime import measurement_runtime, measurement_policy, training_policy
 from .adaptation_geometry import aligned_observations, GeometryMoments
 from .adaptation_eval import evaluate, replay
 from .data import Rows, sha
 from .horizon_train import write_json
 
 
-def exact(a,b):
+def exact(a,b, path="root"):
     """Semantic equality includes RNG/counters/moments, not serialization bytes."""
     if isinstance(a,torch.Tensor):
         if not isinstance(b,torch.Tensor) or a.dtype!=b.dtype or a.shape!=b.shape or not torch.equal(a.cpu(),b.cpu()):
-            raise ValueError('Fullstate tensor equality failed')
+            raise ValueError('Fullstate tensor equality failed at '+path)
         if a.is_floating_point() and not torch.isfinite(a).all():raise ValueError('Nonfinite fullstate')
     elif isinstance(a,np.ndarray):
         if not isinstance(b,np.ndarray) or a.dtype!=b.dtype or not np.array_equal(a,b):raise ValueError('RNG array mismatch')
     elif isinstance(a,dict):
         if not isinstance(b,dict) or a.keys()!=b.keys():raise ValueError('Fullstate keys differ')
-        for k in a:exact(a[k],b[k])
+        for k in a:exact(a[k],b[k],path+'/'+str(k))
     elif isinstance(a,(list,tuple)):
         if type(a)!=type(b) or len(a)!=len(b):raise ValueError('Fullstate sequence mismatch')
-        for x,y in zip(a,b):exact(x,y)
+        for i,(x,y) in enumerate(zip(a,b)):exact(x,y,path+'/'+str(i))
     elif a!=b:raise ValueError('Fullstate scalar mismatch')
 
 
@@ -106,6 +106,11 @@ def qualify(config, prepared_path, prepared_sha256, out):
     zero=state(out/'whole/snapshots/000000')
     for key in ('model','optimizer','torch_rng','cuda_rng','numpy_rng','python_rng'):exact(zero[key],parent[key])
     del zero,parent
+    traces={sub:[json.loads(l) for l in (out/sub/'trace.jsonl').read_text().splitlines()] for sub in ('whole','split')}
+    mismatch=next((i+1 for i,(a,b) in enumerate(zip(traces['whole'],traces['split'])) if a!=b),None)
+    write_json(out/'resume-diagnostic.json',dict(first_trace_mismatch=mismatch,
+        trace_lengths={k:len(v) for k,v in traces.items()},
+        training_policy=training_policy('cuda')))
     whole=state(out/'whole');split=state(out/'split');exact(whole,split)
     if whole['step']!=40:raise ValueError('Qualification not at40')
     for p in (out/'whole/trace.jsonl',out/'split/trace.jsonl'):
@@ -114,7 +119,7 @@ def qualify(config, prepared_path, prepared_sha256, out):
     if (out/'whole/trace.jsonl').read_bytes()!=(out/'split/trace.jsonl').read_bytes():raise ValueError('First40 traces differ')
     result=dict(step=40,exact_resume=True,finite=True,parent_step0_exact=True,
         parent_hashes=config['parent_hashes'],source=source_hashes(),torch=torch.__version__,
-        branch=config['branch'],seed=config['row_reservation']['seed'],precision='bf16',tf32=False,
+        training_policy=training_policy('cuda'),branch=config['branch'],seed=config['row_reservation']['seed'],precision='bf16',tf32=False,
         reservation_sha256=config['row_reservation']['manifest_sha256'],native_component_parity_pass=True,
         numerical_sha256=sha(out/'numerical.json'),prepared_sha256=prepared_sha256,
         whole_fullstate_sha256=sha(out/'whole/fullstate.pt'),split_fullstate_sha256=sha(out/'split/fullstate.pt'),

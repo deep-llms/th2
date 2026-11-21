@@ -131,7 +131,8 @@ class AdaptationTrain(unittest.TestCase):
         with patch('efficient_llm.warm_order.adaptation_train.validate_binding',return_value={}) as binding:
             self.assertEqual(check_runtime(c,'cuda',40,True),'gpu-qualification')
             binding.assert_called_once_with(c)
-        gate=dict(source=source_hashes(),torch=torch.__version__,precision='bf16',tf32=False,
+        from efficient_llm.warm_order.adaptation_runtime import training_policy
+        gate=dict(source=source_hashes(),torch=torch.__version__,precision='bf16',tf32=False,training_policy=training_policy('cuda'),
                   reservation_sha256='reserved',native_component_parity_pass=True,
                   branches={f'{b}-s{s}':dict(step=40,exact_resume=True,finite=True,parent_step0_exact=True,
                                             parent_hashes=c['parent_hashes']) for s in (0,1) for b in ('A','B')})
@@ -142,6 +143,8 @@ class AdaptationTrain(unittest.TestCase):
         self.assertEqual(check_runtime(c,'cuda',None,False),'gpu-admitted')
         bad=copy.deepcopy(gate);bad['branches']['B-s1']['exact_resume']=False;pin(bad)
         with self.assertRaisesRegex(ValueError,'fullstate'):check_runtime(c,'cuda',None,False)
+        bad=copy.deepcopy(gate);bad['training_policy']['deterministic']=False;pin(bad)
+        with self.assertRaisesRegex(ValueError,'runtime'):check_runtime(c,'cuda',None,False)
         bad=copy.deepcopy(gate);bad['source']={};pin(bad)
         with self.assertRaisesRegex(ValueError,'source'):check_runtime(c,'cuda',None,False)
         pin(gate);p.write_text('{}')

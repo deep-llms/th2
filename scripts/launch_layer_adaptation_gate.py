@@ -9,7 +9,7 @@ from efficient_llm.warm_order.adaptation_reservation import verify
 from scripts.gpu_process import inspect,process,ownership
 from scripts.train_then_burn import approved_launcher,GUARD_HASH
 
-BASE=Path('/mnt/local/_outputs/deep-llms_th2/layer_adaptation_20261121_gpu_gate_a01')
+BASE=Path('/mnt/local/_outputs/deep-llms_th2/layer_adaptation_20261121_gpu_gate_a02')
 PREPARED=Path('/mnt/local/_outputs/deep-llms_th2/layer_adaptation_20261121_a01/prepared')
 
 def main():
@@ -35,12 +35,15 @@ def main():
     guard=Path('/mnt/local/_gpu_guard')
     if sha(guard/'gpu_guard.sh')!=GUARD_HASH or (guard/'DISABLED').exists():raise ValueError('Guard changed/owned')
     if (guard/'burn.pids').exists() and (guard/'burn.pids').read_text().strip():raise ValueError('Unexpected guard workers')
-    prior=json.loads((PREPARED.parent/'cpu-terminal.json').read_text())['ownership'];current=inspect()
+    previous=BASE.with_name('layer_adaptation_20261121_gpu_gate_a01')
+    terminal=json.loads((previous/'terminal.json').read_text())
+    if terminal.get('native_verified') is not True:raise ValueError('Previous handoff incomplete')
+    prior=json.loads((previous/'native-verified.json').read_text())['samples'][-1];current=inspect()
     if ownership(prior['gpus'])!=ownership(current['gpus']):raise ValueError('Reinspect changed ownership')
     if any(process(int(pid))!=r for pid,r in prior['processes'].items()):raise ValueError('Native PID identity changed')
     native='/tmp/llm_pretrain_burn.py';digest='3cdcc857bd01b096e20a02640fa85f0b8be7607e3c2b22a89a704bbac3650857'
     if sha(native)!=digest or len(current['workers'])!=8 or any(not approved_launcher(process(pid)['ppid'],{native:digest}) for pid in current['workers']):raise ValueError('Unverified native workers')
-    session='layer_adaptation_gate_20261121_a01'
+    session='layer_adaptation_gate_20261121_a02'
     if subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0:raise ValueError('Session exists')
     if shutil.disk_usage(BASE.parent).free<40*1024**3:raise ValueError('Require40GiB free for gate/fullstate evidence')
     execution=BASE/'execution';execution.mkdir(parents=True);frozen=execution/'source'
@@ -49,7 +52,7 @@ def main():
         if sha(dest)!=h:raise ValueError('Freeze mismatch')
     write_json(execution/'source.json',pins)
     write_json(execution/'admission.json',dict(commit=a.commit,ownership=current,utc=time.time(),prepared=str(PREPARED/'manifest.json'),prepared_sha256=a.prepared_sha256))
-    env=['CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7','HF_HUB_OFFLINE=1','TRANSFORMERS_OFFLINE=1','HF_DATASETS_OFFLINE=1','HF_HUB_DISABLE_TELEMETRY=1','WANDB_MODE=offline','OMP_NUM_THREADS=4','PYTHONDONTWRITEBYTECODE=1','PYTHONPATH='+str(frozen)]
+    env=['CUBLAS_WORKSPACE_CONFIG=:4096:8','CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7','HF_HUB_OFFLINE=1','TRANSFORMERS_OFFLINE=1','HF_DATASETS_OFFLINE=1','HF_HUB_DISABLE_TELEMETRY=1','WANDB_MODE=offline','OMP_NUM_THREADS=4','PYTHONDONTWRITEBYTECODE=1','PYTHONPATH='+str(frozen)]
     command='exec '+shlex.join(['env',*env,sys.executable,'-u','-m','scripts.layer_adaptation_gate_queue','--base',str(BASE)])+' >'+shlex.quote(str(execution/'queue.log'))+' 2>&1'
     subprocess.run(['tmux','new-session','-d','-s',session,'-c',str(frozen),command],check=True)
     subprocess.run(['tmux','set-option','-w','-t',session,'remain-on-exit','on'],check=True)

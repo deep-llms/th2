@@ -19,6 +19,7 @@ from .horizon_train import (amp, lr_at, save_state, write_json,
                             source_hashes as horizon_source_hashes)
 from .model import Model, Config
 from .adaptation_reservation import validate_binding
+from .adaptation_runtime import training_runtime, training_policy
 
 PARENT_FILES = ('fullstate.pt', 'weights.pt', 'recipe.json', 'complete.json', 'checkpoint.json')
 POLICY = 'inherit-terminal-lr-constant'
@@ -122,6 +123,7 @@ def check_runtime(config, device, stop_after, gpu_qualification):
     gate = json.loads(Path(pin['path']).read_text())
     if (gate.get('source') != source_hashes() or gate.get('torch') != torch.__version__ or
             gate.get('precision') != 'bf16' or gate.get('tf32') is not False or
+            gate.get('training_policy') != training_policy('cuda') or
             gate.get('reservation_sha256') != config['row_reservation']['manifest_sha256'] or
             gate.get('native_component_parity_pass') is not True):
         raise ValueError('GPU admission source/runtime/reservation/parity mismatch')
@@ -139,6 +141,13 @@ def check_runtime(config, device, stop_after, gpu_qualification):
 
 
 def train(config, out, *, stop_after=None, resume=False, device='cpu', gpu_qualification=False):
+    # Validate admission before changing arithmetic globals or initializing CUDA.
+    check_runtime(config, device, stop_after, gpu_qualification)
+    with training_runtime(device):
+        return _train(config,out,stop_after=stop_after,resume=resume,device=device,gpu_qualification=gpu_qualification)
+
+
+def _train(config, out, *, stop_after=None, resume=False, device='cpu', gpu_qualification=False):
     scope = check_runtime(config, device, stop_after, gpu_qualification)
     c = copy.deepcopy(config)
     if c['branch'] not in ('A', 'B') or c['lr_policy'] != POLICY or c['domain'] != 'dclm':
@@ -193,6 +202,7 @@ def train(config, out, *, stop_after=None, resume=False, device='cpu', gpu_quali
                   parent_recipe=parent['recipe'], parameter_names=names,
                   torch=torch.__version__, numpy=np.__version__,
                   precision='bf16' if device=='cuda' else 'fp32', runtime_scope=scope,
+                  training_policy=training_policy(device),
                   tf32=False if device=='cuda' else None)
     lr = optimizer.param_groups[0]['lr']
     step, counts, block_tokens = 0, {}, 0
