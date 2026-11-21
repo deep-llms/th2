@@ -1,0 +1,21 @@
+{
+  "reason": "Lossless historical result archival for25MiB runner cap; originals retained locally.",
+  "files": [
+    {
+      "path": "docs/results/a2_corpora_20261029/dclm_final/manifest.json",
+      "archive": "docs/results/a2_corpora_20261029/dclm_final/manifest.json.gz",
+      "bytes": 98708,
+      "sha256": "9f6ba331da25a6b9763d99f365f613f12e362ea840d4cbfb1ae6027dfb38c7e0",
+      "compressed_bytes": 21679,
+      "archive_sha256": "f1f3f494043f30d9a4732267fdd7742a54bede1a2b046fe2f64abfaf9c0b0710"
+    },
+    {
+      "path": "docs/results/selective_decode_20261026/research/supervised/run/profile.json",
+      "archive": "docs/results/selective_decode_20261026/research/supervised/run/profile.json.gz",
+      "bytes": 93409,
+      "sha256": "124c69656c8c64c67aa6756e006a81a697918f4e0e41832b581c3383922d04a6",
+      "compressed_bytes": 17168,
+      "archive_sha256": "5d144ff6ef2dcbaa0577c36081c1e7b6a244329d1d2ed27d881e2f9a972a4bec"
+    }
+  ]
+}
