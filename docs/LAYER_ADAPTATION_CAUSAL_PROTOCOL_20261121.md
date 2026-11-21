@@ -595,3 +595,46 @@ hidden/NLL/count CPU references on excluded calibration row, unchanged GPU
 parity, source/runtime/ownership, score replay and native handoff remain
 required. Raw activations and model state stay node-only. All conclusions
 remain conditional/two-seed/reused exploratory, not additive causal shares.
+
+Actual attention/FFN follow-up complete21Nov20:03UTC local verification.
+Ten cells×512rows perseed;306source pins/CPU-GPUparity/19member replay and
+12priorcontext endpoints passed. Results/limitations are in resultsdoc section9.
+This stage contains no new training. Both groups help independently and
+conditionally, with negative gain interaction. Norm/pattern/value/feature
+localization remains a separate design task, not an implemented next run.
+
+
+### Follow-up: separate norm parameters from attention and FFN factors
+
+Registered before measurement,21November. Frozen parent/A2000/B2000, same
+middle.2/swap path/H0/R0 and512 reused DCLM rows/two seeds. No new training,
+fitted alignment, basis/rank selection or outcome-based component selection.
+Two separate panels inside each A/B comparison:
+
+* Attention8cells with bits N/P/V. N contains input RMSNorm AND Q/K RMSNorm
+  weights; P contains Q/K projection weights; V contains V/O projection weights.
+  Input H0 is fixed. Q/K receive input norm N and Q/K norms N; V receives the
+  same normalized H0. Causal attention pattern is formed by these Q/K values.
+  Attention update is added to H0, followed by the complete PARENT FFN and R0.
+  Thus P is Q/K-projection change conditional on norms, not an independent
+  transfer of a cached attention pattern. V includes output projection, not
+  just value content. N explicitly groups three norms; does not isolate them.
+* FFN16cells with bits N/G/U/D. Complete parent attention gives fixed z0.
+  N is post-attention RMSNorm, G gate projection followed by SiLU, U up
+  projection, D down projection. Compute D_D(SiLU(G_G(N_N(z0)))*U_U(N_N(z0)))
+  and add z0 before the same R0. All four disjoint parameter groups included.
+
+Also retain one whole-block skip per A/B panel:25cells/panel,50cells/seed.
+All-zero attention/FFN must agree with prior sublayer00; all-one attention
+with prior10, all-one FFN with prior01; skip with priorS. For every factor,
+report L(bit0,otherbits)-L(bit1,otherbits) in EACH matched context, plus
+all-one gain and joint-minus-sum-of-singletons (combined nonadditivity, not
+individual interaction attribution). A control repeats every cell.
+
+Use native graft reconstructions, endpoint parity, causal prefix tests,
+parameter partition exhaustion and no-mutation tests; actual CPU references
+and unchanged CPU/GPU gates before measurement. Raw activations/patterns stay
+node-only. Effect size is functional for these interventions, not a causal
+percentage, knowledge extraction, or evidence that training only that factor
+would reproduce the result. Norm/value conventions and high-order interactions
+can matter. This stage localizes weighted computations before direction tests.

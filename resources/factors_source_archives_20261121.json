@@ -1,0 +1,13 @@
+{
+  "reason": "Lossless historical result archival for25MiB runner cap; originals retained locally.",
+  "files": [
+    {
+      "path": "docs/results/context_budget_20261026/evaluation.json",
+      "archive": "docs/results/context_budget_20261026/evaluation.json.gz",
+      "bytes": 99537,
+      "sha256": "fd62357102ef628b3ac8b5fa7c7e3694881c3a6426898b094f892f565408caa2",
+      "compressed_bytes": 26312,
+      "archive_sha256": "656f8f8845a0b3f9477e92afac7d739a81a77e1624d9cd29c550a1f0822ce969"
+    }
+  ]
+}
