@@ -144,6 +144,14 @@
       "sha256": "364ea014398144b19d2507b7f0773e8b2c3e8576cf7602bbe57fb39c205cf749",
       "compressed_bytes": 49350,
       "archive_sha256": "80edbe9e24d0dbbf5f341c309b11bc8847cf1a8a6731f947ee718eb746ce271a"
+    },
+    {
+      "path": "resources/a2_family_f9_plan_20261110.json",
+      "archive": "resources/a2_family_f9_plan_20261110.json.gz",
+      "bytes": 1001877,
+      "sha256": "ae1b8964cb1547cb79a143cd0b519ca30ed90222f8840ad510338681b8286400",
+      "compressed_bytes": 43295,
+      "archive_sha256": "10eb2abc97a3963fde2059dbb48cc26cb581453a607e2ed785dd7c0cbb4a407e"
     }
   ]
 }
