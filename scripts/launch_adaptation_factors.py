@@ -7,7 +7,7 @@ from efficient_llm.warm_order.horizon_train import write_json
 from scripts.gpu_process import inspect,process,ownership
 from scripts.train_then_burn import approved_launcher,GUARD_HASH
 
-BASE=Path('/mnt/local/_outputs/deep-llms_th2/adaptation_factors_20261121_a01')
+BASE=Path('/mnt/local/_outputs/deep-llms_th2/adaptation_factors_20261121_a02')
 PREVIOUS=BASE.with_name('adaptation_sublayer_20261121_a01')
 
 def main():
@@ -38,7 +38,7 @@ def main():
     if ownership(previous['gpus'])!=ownership(current['gpus']) or any(process(int(pid))!=v for pid,v in previous['processes'].items()):raise ValueError('Ownership changed')
     native='/tmp/llm_pretrain_burn.py';digest='3cdcc857bd01b096e20a02640fa85f0b8be7607e3c2b22a89a704bbac3650857'
     if sha(native)!=digest or len(current['workers'])!=8 or any(not approved_launcher(process(pid)['ppid'],{native:digest}) for pid in current['workers']):raise ValueError('Unverified native workers')
-    session='adaptation_factors_20261121_a01'
+    session='adaptation_factors_20261121_a02'
     if subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0:raise ValueError('Existing session')
     execution=BASE/'execution';execution.mkdir();frozen=execution/'source'
     for name,h in pins.items():

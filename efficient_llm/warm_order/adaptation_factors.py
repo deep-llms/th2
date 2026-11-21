@@ -6,7 +6,7 @@ import torch
 from torch.nn import functional as F
 from .adaptation_analysis import _frozen_cpu, SWAPPED
 from .adaptation_runtime import measurement_policy
-from .adaptation_components import _attention_parts,_attention_output
+from .adaptation_components import _attention_parts
 from .layer_dependence import _validate,paired_scores
 
 GROUPS={'attn':{
@@ -48,7 +48,11 @@ def factors_crossovers(parent,adapted,tokens,target=2,path=SWAPPED):
         mixed=SimpleNamespace(c=pattern.c,inv=pattern.inv,q_proj=pattern.q_proj,k_proj=pattern.k_proj,
             v_proj=value.v_proj,q_norm=norm.self_attn.q_norm,k_norm=norm.self_attn.k_norm)
         parts=_attention_parts(mixed,norm.input_layernorm(h))
-        z=h+_attention_output(value,parts['pattern'],parts['value'])
+        # Preserve the original model's SDPA arithmetic, including mask shape.
+        mask=(seg[:,:,None]==seg[:,None,:]) & torch.ones(h.shape[1],h.shape[1],dtype=torch.bool,device=h.device).tril()
+        mixed_value=F.scaled_dot_product_attention(parts['q'],parts['k'],parts['value'],attn_mask=mask[:,None])
+        update=value.o_proj(mixed_value.transpose(1,2).reshape(h.shape[0],h.shape[1],-1))
+        z=h+update
         y=z+blocks[0].mlp(blocks[0].post_attention_layernorm(z))
         key=f'attn/{n}{p}{v}';cells[key]=finish(y)
     for n,g,u,d in product(range(2),repeat=4):

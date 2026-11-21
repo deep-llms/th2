@@ -45,7 +45,7 @@ def main():
         write_json(base/'failure.json',dict(error=repr(error),utc=time.time()));traceback.print_exc()
     finally:
         signal.signal(signal.SIGTERM,signal.SIG_IGN);signal.signal(signal.SIGINT,signal.SIG_IGN)
-        clean_owned_children();time.sleep(30);require_free(list(range(8)));native(base,session='adaptation_factors_20261121_native_a01')
+        clean_owned_children();time.sleep(30);require_free(list(range(8)));native(base,session='adaptation_factors_20261121_native_a02')
         if guard.exists() and guard.stat().st_ino==inode and guard.read_text()==marker:guard.unlink()
         else:raise ValueError('Guard ownership changed')
         success=(base/'scientific-complete.json').exists();write_json(base/'terminal.json',dict(success=success,native_verified=True,utc=time.time()));write_json(base/'status.json',dict(stage='terminal',active=[],success=success,utc=time.time()))
