@@ -1,0 +1,13 @@
+{
+  "reason": "Lossless historical result archival for runner25MiB cap. Originals retained locally; no study data removed.",
+  "files": [
+    {
+      "path": "docs/results/kv_long_20261027/status_2244/supervised/run/A/validation.json",
+      "archive": "docs/results/kv_long_20261027/status_2244/supervised/run/A/validation.json.gz",
+      "bytes": 100318,
+      "sha256": "de8b65698bd1cf8cef6797793164ff5443f0739f77a28fe5e8903fa5db24d554",
+      "compressed_bytes": 36168,
+      "archive_sha256": "dc4ef6e94f34a55fa205a96d22eb51002c4e608ed913f0dec7fd82011a9004f6"
+    }
+  ]
+}

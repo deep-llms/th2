@@ -545,3 +545,53 @@ Remaining: frozen-source node package and actual-parent CPU references,
 CPU/GPU parity and fresh owned node admission before the24-cell measurement.
 Existing scientific results stay unchanged. The local CPU fixture's driver
 discovery warning is retained in its log, not evidence of a B200 fault.
+
+
+### Actual CPU qualification,21Nov18:44UTC
+
+Node CPU receipt2bb543f8 verifies two real parent/A2000/B2000 panels and
+24 full hidden/NLL/count reference cells per seed on a calibration row excluded
+from confirmation. Prepared SHA6d45f830 and297 frozen source pins bind the
+subsequent inference run. Seven actual-node CPU tests passed. GPU worker must
+compare every reference tensor under unchanged abs/rel1e-4 policy, then evaluate
+the registered512 rows. This CPU qualification alone is not a crossover result.
+
+Local export verifier replays all score-derived effects and joins prepared,
+config, gate, checkpoint, row and runtime hashes. It also compares native000/111
+endpoints with the previous study's parent/swap, A/swap and B/swap scores on the
+same row IDs and token counts. These endpoints test cross-study consistency;
+they do not establish model-independent generalization.
+
+Actual follow-up complete21Nov19:05UTC local verification: see results document
+section8. Two24-cell panels/seed,512rows, CPU/GPU parity and19member replay
+passed;8 native endpoint comparisons agree with the prior study. The stage
+above is now measured, not merely proposed. Future attention/FFN localization
+is a separate unimplemented stage and must retain fixedH0/R0 and A controls.
+
+
+### Follow-up: attention/FFN weight localization at fixed H0/R0
+
+Registered before measurement,21November. Use the same parent/A2000/B2000,
+512 DCLM rows, two seeds and target middle.2 in path[0,2,1,3]. H0 and R0
+including output head are ALWAYS parent. For each A/B panel compute four
+cells L_af and whole-block skip LS. The attention group includes input RMSNorm
+and all attention parameters (Q/K/V/O and Q/K norms); FFN group includes
+post-attention RMSNorm and SwiGLU gate/up/down. These two disjoint groups
+exhaust the target block's state. No weights are fit or altered.
+
+Let z_a=H0+Attn_a(Norm_a(H0)), y_af=z_a+MLP_f(Norm_f(z_a)).
+L_af=NLL(R0(y_af)). Attention-only gain=L00-L10; FFN-only=L00-L01;
+joint=L00-L11; interaction=joint-attention_only-ffn_only. Report conditional
+FFN gain L10-L11 versus L00-L01, and matched usefulness LS-Laf. Each FFN
+weight comparison uses the SAME z_a; changing attention changes the FFN input,
+so the attention effect includes downstream FFN response, not attention-only
+information. Group norms are part of each intervention; this does not isolate
+attention patterns/values or FFN gates/up directions. A controls ordinary
+training changes, not equal-norm or random-update effects.
+
+Five cases per panel/ten perseed; parent and joint endpoints must reproduce
+prior context000/context010 and skip0S0 respectively on exact rows. Full
+hidden/NLL/count CPU references on excluded calibration row, unchanged GPU
+parity, source/runtime/ownership, score replay and native handoff remain
+required. Raw activations and model state stay node-only. All conclusions
+remain conditional/two-seed/reused exploratory, not additive causal shares.
