@@ -10,6 +10,7 @@ import torch
 
 from .layer_dependence import _validate
 from .model import Model
+from .adaptation_runtime import measurement_device
 
 CANONICAL = (0, 1, 2, 3)
 SWAPPED = (0, 2, 1, 3)
@@ -21,8 +22,10 @@ def _frozen_cpu(model):
         raise ValueError('Expected original warm-order Model')
     if any(m.training for m in model.modules()) or any(p.requires_grad for p in model.parameters()):
         raise ValueError('Explicit frozen eval model required')
-    if any(t.device.type != 'cpu' for t in model.state_dict().values()):
-        raise ValueError('CPU qualification only; GPU admission not implemented')
+    if any(t.device.type != measurement_device() for t in model.state_dict().values()):
+        raise ValueError('Model device differs from explicit measurement runtime')
+    if any(p.dtype != torch.float32 for p in model.parameters()):
+        raise ValueError('Measurement requires FP32 model parameters')
 
 
 @torch.no_grad()

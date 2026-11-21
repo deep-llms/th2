@@ -13,6 +13,7 @@ from .adaptation_analysis import CANONICAL, SWAPPED, _frozen_cpu
 from .adaptation_geometry import GeometryMoments, aligned_observations
 from .data import Rows, sha
 from .horizon_train import write_json
+from .adaptation_runtime import measurement_device, measurement_policy
 
 
 COMPARISONS = {
@@ -55,12 +56,13 @@ def evaluate_geometry(models, comparison, data_stem, indices_path, expected_inpu
     left, path_left, right, path_right = COMPARISONS[comparison]
     moments = {key: GeometryMoments(width) for key in keys}; labels = None
     for start in range(0, len(ids), batch_size):
-        samples = aligned_observations(models[left], models[right], rows.batch(ids[start:start+batch_size], 'cpu'),
+        samples = aligned_observations(models[left], models[right], rows.batch(ids[start:start+batch_size], measurement_device()),
                                        positions, path_x=path_left, path_y=path_right)
         current = {key: {k: v for k, v in samples[key].items() if k not in ('x', 'y')} for key in keys}
         if labels is None: labels = current
         elif current != labels: raise ValueError('Geometry alignment changed across batches')
-        for key, moment in moments.items(): moment.update(samples[key]['x'], samples[key]['y'])
+        # Transfer only registered observations; all full traces remain on the device.
+        for key, moment in moments.items(): moment.update(samples[key]['x'].cpu(), samples[key]['y'].cpu())
         del samples
     out.mkdir(parents=True, exist_ok=True)
     files = {}; reports = {}
@@ -75,7 +77,8 @@ def evaluate_geometry(models, comparison, data_stem, indices_path, expected_inpu
         verified_input_file_hashes=inputs, batch_size=batch_size, moment_buffer_bytes=moment_bytes,
         memory_scope='Moment tensors only; model/native traces/temporary copies/eigensolver excluded',
         observations_per_key=len(ids)*len(positions), raw_moments_exportable=False,
-        production_ready=False, document_freshness_verified=False))
+        production_ready=False, document_freshness_verified=False,
+        measurement_runtime=measurement_policy()))
     replay_geometry(out)
     return reports
 

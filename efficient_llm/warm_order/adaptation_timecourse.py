@@ -27,7 +27,8 @@ def summarize(directories):
             raise ValueError('Verified paired checkpoint provenance required')
         current = dict(parent=ckpt['parent_file_pins'], recipe=ckpt['paired_recipe_sha256'],
                        inputs=provenance['verified_input_file_hashes'],
-                       config=manifest['config'], cases=manifest['cases'], batch=provenance['batch_size'])
+                       config=manifest['config'], cases=manifest['cases'], batch=provenance['batch_size'],
+                       measurement_runtime=manifest.get('measurement_runtime'))
         if signature is None: signature = current
         elif current != signature: raise ValueError('Unmatched parent/recipe/data/config/cases/batch')
         step = ckpt['phase_step']

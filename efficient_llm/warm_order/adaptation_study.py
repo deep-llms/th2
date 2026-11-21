@@ -13,6 +13,7 @@ from .adaptation_timecourse import summarize
 from .adaptation_geometry_pipeline import COMPARISONS, evaluate_geometry, replay_geometry
 from .data import sha
 from .horizon_train import write_json
+from .adaptation_runtime import measurement_runtime, measurement_device
 
 
 def _read(path):
@@ -40,9 +41,10 @@ def join(snapshot_directories):
                     manifest['provenance'] != loss_provenance['checkpoints'] or
                     manifest['verified_input_file_hashes'] != loss_provenance['verified_input_file_hashes'] or
                     manifest['config'] != loss_manifest['config'] or
+                    manifest.get('measurement_runtime') != loss_manifest.get('measurement_runtime') or
                     not np.array_equal(np.load(root/'row_ids.npy', allow_pickle=False), loss_ids)):
                 raise ValueError('Geometry and loss checkpoint/data/row pairing mismatch')
-            signature = {key: manifest[key] for key in ('keys', 'positions', 'labels', 'batch_size')}
+            signature = {key: manifest[key] for key in ('keys', 'positions', 'labels', 'batch_size', 'measurement_runtime')}
             if comparison not in signatures: signatures[comparison] = signature
             elif signatures[comparison] != signature:
                 raise ValueError('Geometry selection/alignment changed across snapshots')
@@ -73,6 +75,11 @@ def _validate(config):
 
 
 def run(config, out):
+    with measurement_runtime(config.get('measurement_device','cpu')):
+        return _run(config,out)
+
+
+def _run(config, out):
     """Fresh output only; interrupted studies retain partial evidence, no relaunch."""
     out = Path(out)
     if out.exists() and any(out.iterdir()): raise ValueError('Fresh study output required')
@@ -83,6 +90,7 @@ def run(config, out):
     for snapshot in config['snapshots']:
         models, proof = load_snapshot_panel(config['parent'], config['parent_hashes'], snapshot['phase_files'])
         if proof['phase_step'] != snapshot['step']: raise ValueError('Declared snapshot step mismatch')
+        for model in models.values(): model.to(measurement_device())
         directory = out/f"step_{snapshot['step']:06d}"; directories.append(directory)
         evaluate_stream(models, config['data'], config['indices'], config['expected_inputs'],
                         config['batch_size'], directory/'loss', proof)
@@ -98,7 +106,7 @@ def run(config, out):
     write_json(out/'REPORT.json', report); files['REPORT.json'] = sha(out/'REPORT.json')
     write_json(out/'manifest.json', dict(schema=1, snapshots=[d.name for d in directories], files=files,
         production_ready=False, weights_exported=False, raw_moments_exportable=False,
-        scope='CPU study assembly only; no actual node/GPU admission'))
+        scope='Paired study assembly; no implicit node/GPU admission'))
     replay(out)
     return report
 

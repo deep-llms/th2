@@ -1,7 +1,8 @@
-"""CPU-qualified paired continuation of authenticated dense Horizon parents.
+"""Paired continuation of authenticated dense Horizon parents.
 
 Separate experiment, constant inherited terminal LR, original parameter order.
-No CLI or CUDA admission. Production reservation/evaluation/queue remain external.
+CPU qualified; bounded CUDA qualification and pinned production admission path.
+Ownership and actual GPU numerical/fullstate gates remain external requirements.
 """
 import copy
 import json
@@ -14,7 +15,7 @@ import torch
 from .adaptation_analysis import CANONICAL, SWAPPED
 from .data import Rows, sha
 from .exposure_recovery import restore_rng
-from .horizon_train import (lr_at, save_state, write_json,
+from .horizon_train import (amp, lr_at, save_state, write_json,
                             source_hashes as horizon_source_hashes)
 from .model import Model, Config
 from .adaptation_reservation import validate_binding
@@ -93,14 +94,52 @@ def load_parent(directory, pins):
 def source_hashes():
     root = Path(__file__).resolve().parents[2]
     names = ['model', 'data', 'adaptation_analysis', 'adaptation_train',
-             'horizon_train', 'exposure_recovery', 'adaptation_reservation']
+             'horizon_train', 'exposure_recovery', 'adaptation_reservation',
+             'adaptation_runtime','adaptation_components','adaptation_eval',
+             'adaptation_pipeline','adaptation_geometry','adaptation_geometry_pipeline',
+             'adaptation_study','adaptation_timecourse','adaptation_gpu_probe','layer_dependence']
     return {p: sha(root/p) for p in ['efficient_llm/warm_order/'+n+'.py' for n in names]
             + ['efficient_llm/dot_pool/model.py']}
 
 
-def train(config, out, *, stop_after=None, resume=False, device='cpu'):
-    if device != 'cpu':
-        raise ValueError('CPU qualification only; production GPU admission pending')
+def check_runtime(config, device, stop_after, gpu_qualification):
+    """GPU qualification is bounded; full training requires a pinned gate receipt."""
+    if device == 'cpu':
+        if gpu_qualification: raise ValueError('GPU qualification requires CUDA')
+        return 'cpu-qualification'
+    if device != 'cuda': raise ValueError('Explicit cpu or single visible cuda required')
+    if gpu_qualification:
+        if type(stop_after) is not int or not 0 < stop_after <= 40:
+            raise ValueError('GPU qualification is limited to phase step40')
+        if 'row_reservation' not in config:
+            raise ValueError('Bound actual reservation required for GPU qualification')
+        validate_binding(config)
+        return 'gpu-qualification'
+    pin = config.get('gpu_admission')
+    if not isinstance(pin, dict) or set(pin) != {'path', 'sha256'}:
+        raise ValueError('Production GPU admission pending')
+    if sha(pin['path']) != pin['sha256']: raise ValueError('GPU admission hash mismatch')
+    gate = json.loads(Path(pin['path']).read_text())
+    if (gate.get('source') != source_hashes() or gate.get('torch') != torch.__version__ or
+            gate.get('precision') != 'bf16' or gate.get('tf32') is not False or
+            gate.get('reservation_sha256') != config['row_reservation']['manifest_sha256'] or
+            gate.get('native_component_parity_pass') is not True):
+        raise ValueError('GPU admission source/runtime/reservation/parity mismatch')
+    checks=gate.get('branches', {})
+    if set(checks) != {'A-s0','B-s0','A-s1','B-s1'}:
+        raise ValueError('All four GPU branch gates required')
+    for record in checks.values():
+        if (record.get('step') != 40 or record.get('exact_resume') is not True or
+                record.get('finite') is not True or record.get('parent_step0_exact') is not True):
+            raise ValueError('Incomplete GPU fullstate qualification')
+    key=f"{config['branch']}-s{config['row_reservation']['seed']}"
+    if checks[key].get('parent_hashes') != config['parent_hashes']:
+        raise ValueError('GPU admission parent mismatch')
+    return 'gpu-admitted'
+
+
+def train(config, out, *, stop_after=None, resume=False, device='cpu', gpu_qualification=False):
+    scope = check_runtime(config, device, stop_after, gpu_qualification)
     c = copy.deepcopy(config)
     if c['branch'] not in ('A', 'B') or c['lr_policy'] != POLICY or c['domain'] != 'dclm':
         raise ValueError('Unregistered branch/LR/domain')
@@ -152,7 +191,9 @@ def train(config, out, *, stop_after=None, resume=False, device='cpu'):
     common = {k: v for k, v in c.items() if k != 'branch'}
     recipe = dict(config=c, paired_common=common, source=source_hashes(), inputs=inputs,
                   parent_recipe=parent['recipe'], parameter_names=names,
-                  torch=torch.__version__, numpy=np.__version__, precision='fp32')
+                  torch=torch.__version__, numpy=np.__version__,
+                  precision='bf16' if device=='cuda' else 'fp32', runtime_scope=scope,
+                  tf32=False if device=='cuda' else None)
     lr = optimizer.param_groups[0]['lr']
     step, counts, block_tokens = 0, {}, 0
     state = parent
@@ -174,11 +215,23 @@ def train(config, out, *, stop_after=None, resume=False, device='cpu'):
     end = c['steps'] if stop_after is None else stop_after
     if type(end) is not int or not step < end <= c['steps']:
         raise ValueError('Stop must follow current step within phase')
+    if device == 'cuda':
+        if torch.cuda.device_count() != 1:
+            raise ValueError('Exactly one visible GPU per paired fit')
+        if len(state['cuda_rng']) != 1:
+            raise ValueError('Exactly one inherited CUDA RNG stream required')
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+        saved_optimizer = optimizer.state_dict()
+        model.to(device)
+        # Construct after movement; preserve parameter identity/name order and Adam moments.
+        optimizer = torch.optim.AdamW(model.parameters(), lr=lr, betas=(.9,.95), weight_decay=.1)
+        optimizer.load_state_dict(saved_optimizer)
     if not resume:
         out.mkdir(parents=True, exist_ok=True)
         write_json(out/'recipe.json', recipe)
     # Allocation completed: resume exact parent/phase streams immediately before work.
-    restore_rng(state, 'cpu')
+    restore_rng(state, device)
     model.train()
 
     def save(snapshot):
@@ -197,9 +250,10 @@ def train(config, out, *, stop_after=None, resume=False, device='cpu'):
         save(True)
     for s in range(step, end):
         ix = ids[s*c['batch']:(s+1)*c['batch']]
-        x = rows.batch(ix, 'cpu')
+        x = rows.batch(ix, device)
         optimizer.zero_grad(set_to_none=True)
-        loss = model.nll(x, path).mean()
+        with amp(device):
+            loss = model.nll(x, path).mean()
         if not torch.isfinite(loss):
             raise ValueError('Nonfinite continuation loss')
         loss.backward()
@@ -217,5 +271,5 @@ def train(config, out, *, stop_after=None, resume=False, device='cpu'):
             branch=c['branch'], fullstate_sha256=sha(out/'fullstate.pt'),
             input_tokens=len(ids)*model.c.length, scored_tokens=len(ids)*(model.c.length-model.c.prefix),
             block_tokens=block_tokens, path=path, inherited_lr=lr,
-            qualification='CPU only; not production admission'))
+            qualification=scope))
     return model, optimizer

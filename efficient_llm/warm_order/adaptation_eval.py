@@ -15,6 +15,7 @@ from .adaptation_components import component_crossovers, score_crossovers
 from .data import sha
 from .horizon_train import write_json
 from .layer_dependence import paired_scores
+from .adaptation_runtime import measurement_policy
 
 
 def _summary(raw, labels):
@@ -53,7 +54,7 @@ def _summary(raw, labels):
         for name, value in effects.items(): contrasts[family+'/'+name] = float(value.sum()/den)
     return dict(cases=rows, contrasts_nat_per_token=contrasts,
                 sequences=n, tokens_per_case=den, production_ready=False,
-                scope='CPU paired evaluation; no document-independence or causal percentage claim',
+                scope='Paired evaluation; no document-independence or causal percentage claim',
                 kl_scope='Each case uses its own weights/readout reference; not cross-model KL')
 
 
@@ -110,7 +111,7 @@ def write_results(raw, labels, parity, config, out, provenance=None):
         parity_max_abs=parity, files={f: sha(out/f) for f in ('scores.npz', 'REPORT.json')},
         weights_exported=False, activations_exported=False, production_ready=False,
         checkpoint_provenance_verified=False, row_provenance_verified=False,
-        provenance=provenance))
+        provenance=provenance, measurement_runtime=measurement_policy()))
     return report
 
 

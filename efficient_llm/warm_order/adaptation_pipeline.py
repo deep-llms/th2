@@ -12,7 +12,8 @@ import numpy as np
 import torch
 
 from .adaptation_analysis import CANONICAL, SWAPPED
-from .adaptation_train import load_parent, validate_adam, source_hashes
+from .adaptation_train import load_parent, validate_adam, source_hashes, check_runtime
+from .adaptation_runtime import measurement_device, measurement_policy
 from .adaptation_eval import collect, write_results, replay
 from .data import Rows, sha
 from .model import Config, Model
@@ -38,8 +39,15 @@ def load_snapshot_panel(parent_directory, parent_pins, phase_files):
             recipe = state['recipe']; c = recipe['config']; step = state['step']
             if (c['branch'] != branch or recipe['parent_recipe'] != parent['recipe'] or
                     c['parent_hashes'] != parent_pins or recipe['parameter_names'] != names or
-                    recipe['source'] != source_hashes() or recipe['precision'] != 'fp32'):
+                    recipe['source'] != source_hashes() or recipe['precision'] not in ('fp32','bf16')):
                 raise ValueError('Phase source/parent/branch/name identity mismatch')
+            if recipe['precision']=='bf16':
+                if recipe.get('runtime_scope')=='gpu-admitted':
+                    check_runtime(c,'cuda',None,False)
+                elif recipe.get('runtime_scope')=='gpu-qualification' and step<=40:
+                    check_runtime(c,'cuda',max(1,step),True)
+                else: raise ValueError('Unqualified CUDA phase snapshot')
+                if recipe.get('tf32') is not False:raise ValueError('Unregistered CUDA arithmetic')
             if recipe['paired_common'] != {k: v for k, v in c.items() if k != 'branch'}:
                 raise ValueError('Phase common recipe inconsistent')
             if type(step) is not int or not 0 <= step <= c['steps']:
@@ -88,7 +96,7 @@ def evaluate_stream(models, data_stem, indices_path, expected_inputs, batch_size
     pieces, labels, maxima = {}, None, {}
     for start in range(0, len(ids), batch_size):
         ix = ids[start:start+batch_size]
-        raw, current, parity = collect(models, rows.batch(ix, 'cpu'), ix)
+        raw, current, parity = collect(models, rows.batch(ix, measurement_device()), ix)
         if labels is None: labels = current
         elif labels != current: raise ValueError('Case order changed across batches')
         for key, values in raw.items(): pieces.setdefault(key, []).append(values)
@@ -99,7 +107,7 @@ def evaluate_stream(models, data_stem, indices_path, expected_inputs, batch_size
     if not np.array_equal(raw['row_ids'], ids): raise ValueError('Evaluation row order changed')
     provenance = dict(checkpoints=checkpoint_provenance, verified_input_file_hashes=inputs,
                       batch_size=batch_size, whole_document_freshness_verified=False,
-                      production_ready=False)
+                      production_ready=False, measurement_runtime=measurement_policy())
     result = write_results(raw, labels, maxima, asdict(models['parent'].c), out, provenance)
     replay(out)
     return result

@@ -14,6 +14,7 @@ from efficient_llm.warm_order.horizon_train import train as horizon_train
 from efficient_llm.warm_order.exposure_recovery import restore_rng
 from efficient_llm.warm_order.adaptation_train import (
     train, load_parent, validate_adam, PARENT_FILES, POLICY, CANONICAL,
+    check_runtime, source_hashes,
 )
 
 
@@ -120,6 +121,31 @@ class AdaptationTrain(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'counter'): validate_adam(m, bad, 80, .00003)
         bad = copy.deepcopy(s['optimizer']); bad['state'][0]['exp_avg_sq'].fill_(-1)
         with self.assertRaisesRegex(ValueError, 'Negative'): validate_adam(m, bad, 80, .00003)
+
+    def test_gpu_entry_requires_bounded_qualification_or_pinned_all_branch_receipt(self):
+        from unittest.mock import patch
+        c=copy.deepcopy(self.config)
+        with self.assertRaisesRegex(ValueError,'step40'):check_runtime(c,'cuda',41,True)
+        with self.assertRaisesRegex(ValueError,'reservation'):check_runtime(c,'cuda',40,True)
+        c['row_reservation']={'manifest_sha256':'reserved','seed':0}
+        with patch('efficient_llm.warm_order.adaptation_train.validate_binding',return_value={}) as binding:
+            self.assertEqual(check_runtime(c,'cuda',40,True),'gpu-qualification')
+            binding.assert_called_once_with(c)
+        gate=dict(source=source_hashes(),torch=torch.__version__,precision='bf16',tf32=False,
+                  reservation_sha256='reserved',native_component_parity_pass=True,
+                  branches={f'{b}-s{s}':dict(step=40,exact_resume=True,finite=True,parent_step0_exact=True,
+                                            parent_hashes=c['parent_hashes']) for s in (0,1) for b in ('A','B')})
+        p=self.root/'gpu-gate.json'
+        def pin(value):
+            p.write_text(json.dumps(value));c['gpu_admission']={'path':str(p),'sha256':sha(p)}
+        pin(gate)
+        self.assertEqual(check_runtime(c,'cuda',None,False),'gpu-admitted')
+        bad=copy.deepcopy(gate);bad['branches']['B-s1']['exact_resume']=False;pin(bad)
+        with self.assertRaisesRegex(ValueError,'fullstate'):check_runtime(c,'cuda',None,False)
+        bad=copy.deepcopy(gate);bad['source']={};pin(bad)
+        with self.assertRaisesRegex(ValueError,'source'):check_runtime(c,'cuda',None,False)
+        pin(gate);p.write_text('{}')
+        with self.assertRaisesRegex(ValueError,'hash'):check_runtime(c,'cuda',None,False)
 
 
 if __name__ == '__main__': unittest.main()

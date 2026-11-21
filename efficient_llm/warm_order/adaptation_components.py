@@ -11,6 +11,7 @@ from torch.nn import functional as F
 
 from .adaptation_analysis import CANONICAL, SWAPPED, native_trace, _frozen_cpu
 from .layer_dependence import paired_scores
+from .adaptation_runtime import measurement_policy
 
 # Fixed before qualification; GPU/BF16 needs its own admission and tolerances.
 ATOL = 2e-6
@@ -50,8 +51,10 @@ def _ffn_parts(mlp, x):
 
 
 def _parity(candidate, reference, label):
-    if not torch.isfinite(candidate).all() or not torch.allclose(candidate, reference, atol=ATOL, rtol=RTOL):
-        raise ValueError('CPU component parity failed: '+label)
+    policy=measurement_policy()
+    if not torch.isfinite(candidate).all() or not torch.allclose(candidate, reference,
+            atol=policy['component_atol'], rtol=policy['component_rtol']):
+        raise ValueError('Component parity failed: '+label)
     return float((candidate-reference).abs().max())
 
 
@@ -66,7 +69,7 @@ def component_crossovers(model, tokens, target, kind, *, donor_path=CANONICAL, r
     """
     _frozen_cpu(model)
     if any(p.dtype != torch.float32 for p in model.parameters()):
-        raise ValueError('CPU FP32 qualification only')
+        raise ValueError('FP32 component measurement required')
     if type(target) is not int or target not in range(4) or kind not in ('attention', 'ffn'):
         raise ValueError('Invalid target/component')
     recipient_hidden, recipient_trace = native_trace(model, tokens, recipient_path)
@@ -114,7 +117,9 @@ def component_crossovers(model, tokens, target, kind, *, donor_path=CANONICAL, r
                               zero='recipient', one='donor', recipient_path=list(recipient_path),
                               donor_path=list(donor_path), fixed_weights=True,
                               fixed_recipient_residual=True, fixed_recipient_suffix_weights=True,
-                              cpu_only=True, atol=ATOL, rtol=RTOL))
+                              runtime=measurement_policy(),
+                              atol=measurement_policy()['component_atol'],
+                              rtol=measurement_policy()['component_rtol']))
 
 
 @torch.no_grad()
