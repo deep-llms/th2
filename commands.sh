@@ -1,2 +1,11 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/report.json,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/backup.json,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/terminal.json,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/native-verified.json,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s0/shared/calibration.jsonl,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s0/direct/scores.npz,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s0/direct/summary.json,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s0/direct/calibration.jsonl,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s0/additive/scores.npz,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s0/additive/summary.json,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s0/additive/calibration.jsonl,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s0/reader/scores.npz,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s0/reader/summary.json,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s0/reader/calibration.jsonl,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s1/shared/calibration.jsonl,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s1/direct/scores.npz,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s1/direct/summary.json,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s1/direct/calibration.jsonl,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s1/additive/scores.npz,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s1/additive/summary.json,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s1/additive/calibration.jsonl,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s1/reader/scores.npz,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s1/reader/summary.json,/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/s1/reader/calibration.jsonl
-#th2-ohmv-anchor-long-export-20261122-a01
+#1 +60+a
+#th2-ohmv-anchor-loop-20261123-a01
+set -euo pipefail
+export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+pkg="$PWD/resources/anchor_loop_20261123.tar.xz"
+echo "48ee21df6cedcfd29dbe20fae284ba03aba7a175b774a476f35454538467d4ce  $pkg" | sha256sum -c -
+extra=$(mktemp -d /mnt/local/_outputs/deep-llms_th2/anchor_loop_source.XXXXXXXX)
+tar -xJf "$pkg" -C "$extra"
+export PYTHONPATH=/mnt/local/_outputs/deep-llms_th2/anchor_long_20261122_a01/execution/source
+cd "$PYTHONPATH"
+exec /mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_anchor_long.py" "$extra" --loop
