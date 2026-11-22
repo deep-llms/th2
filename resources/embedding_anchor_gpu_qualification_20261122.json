@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "mode": "qualification_only",
+  "prepared_root": "/mnt/local/_outputs/deep-llms_th2/embedding_anchor_20261122_a02/prepared",
+  "prepared_sha256": "86d3d40de3bc38b03f97ab74b9722282e7a61cd4ff2f9202190fb7571206f2c1",
+  "cpu_source_sha256": "9fc6f624da4a2cc1086f8f5ac49b322c21df6b23a07f52f81c26850af8daf190",
+  "seed_configs": {
+    "0": "2bf642b62b6c6d70c9494dc907790b0e54e56ccd7cd00021f598e93e58892398",
+    "1": "dc9188c59cb50f7782a39e8981f6dd6b92eb33936e46272e5243780e77889efa"
+  },
+  "segments": [
+    "single",
+    "donor-A",
+    "donor-C",
+    "stack-A",
+    "stack-C"
+  ],
+  "steps": 40,
+  "split": 20,
+  "qualification_updates_per_seed": 440,
+  "production_updates": 0,
+  "full_fit_admitted": false,
+  "weights_node_only": true,
+  "domain": "dclm",
+  "existing_training_plan_sha256": "d8fe493abf07508df5c3f922b92887516c14c26b07198e05d8385972463297d8"
+}

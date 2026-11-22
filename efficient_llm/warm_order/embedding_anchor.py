@@ -71,8 +71,9 @@ class EmbeddingAnchor(nn.Module):
                 nn.init.normal_(module.weight, std=.02)
 
     def hidden(self, x, path, *, alpha=1., donor=None, skip=None):
-        if x.device.type != 'cpu' or self.embed.weight.device.type != 'cpu':
-            raise RuntimeError('Prototype is CPU-only; production admission absent')
+        from .embedding_anchor_runtime import anchor_device
+        if x.device.type != anchor_device() or self.embed.weight.device.type != anchor_device():
+            raise RuntimeError('Explicit matching anchor device scope required')
         path = tuple(path)
         if (not path or len(set(path)) != len(path)
                 or any(type(i) is not int or i not in range(4) for i in path)):
