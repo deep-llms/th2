@@ -1,44 +1,45 @@
-#1 +120+a
-#th2-ohmv-attention-shift-cpu-20261122-a01
+#1 +60+a
+#th2-ohmv-attention-shift-cpu-diagnose-20261122-a01
 set -euo pipefail
-export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 OMP_NUM_THREADS=4 PYTHONPATH="$PWD:$PWD/tests/warm_order"
-TASK_PYTHON=/mnt/local/conda-py311/envs/a2_env/bin/python3.11
-"$TASK_PYTHON" - <<'PY'
-import json,shutil,socket
-from pathlib import Path
-from efficient_llm.warm_order.data import sha
-from scripts.gpu_process import inspect
-import torch,numpy
-assert socket.gethostname()=='thiennh-p6-ohmv-worker-0'
-assert torch.__version__=='2.14.1+cu130' and numpy.__version__=='2.4.6'
-p=Path('resources/attention_shift_source_20261121.json');assert sha(p)=='8cdc2d7e3fba3aaf8c4dc3825d1ed8da8b56eedaa5218baf833df59dc7b9941b'
-pins=json.loads(p.read_text())['files'];base=Path('/mnt/local/_outputs/deep-llms_th2/attention_shift_20261121_a01')
-assert not base.exists(),'Existing output; reconcile before any retry'
-for name,h in pins.items():assert sha(name)==h,name
-base.mkdir(parents=True)
-for name,h in pins.items():
- dest=base/'source'/name;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(name,dest);assert sha(dest)==h
-(base/'source.json').write_text(json.dumps(pins,indent=2)+'\n')
-(base/'cpu-preownership.json').write_text(json.dumps(inspect(),indent=2)+'\n')
-print('ATTENTION_SHIFT_CPU_START',json.dumps(dict(source_pins=len(pins))),flush=True)
-PY
+export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=4
 cd /mnt/local/_outputs/deep-llms_th2/attention_shift_20261121_a01/source
-export PYTHONPATH="$PWD:$PWD/tests/warm_order"
-"$TASK_PYTHON" -m unittest test_attention_shift.AttentionShift test_attention_shift_eval.ShiftEvaluation test_attention_shift_node.ShiftNode -v
-"$TASK_PYTHON" -m efficient_llm.warm_order.attention_shift_node prepare --path resources/attention_shift_trial_20261121.json --sha f56424abf74ee3755ea6a69cf526b9afa994a6d2aab1b3df882da8d6e5ea24f0 --out /mnt/local/_outputs/deep-llms_th2/attention_shift_20261121_a01/prepared
-"$TASK_PYTHON" - <<'PY'
-import json
+export PYTHONPATH="$PWD"
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PY'
+import json,socket
 from pathlib import Path
-from efficient_llm.warm_order.data import sha
-from scripts.gpu_process import inspect
-base=Path('/mnt/local/_outputs/deep-llms_th2/attention_shift_20261121_a01');old=base.with_name('layer_adaptation_20261121_continuation_a01')
-r=dict(prepared_sha256=sha(base/'prepared/prepared.json'),prepared=json.loads((base/'prepared/prepared.json').read_text()),current_ownership=inspect(),old_study={})
-for name in ('status.json','failure.json','terminal.json','scientific-complete.json'):
- p=old/name
- if p.exists():r['old_study'][name]=json.loads(p.read_text())
-p=old/'backup.json'
-if p.exists():
- b=json.loads(p.read_text());r['old_backup']=dict(archive_sha256=b['archive_sha256'],archive_bytes=b['archive_bytes'],copies=len(b['node_fullstate_copies']),node_replay=b['node_replay'])
-(base/'cpu-terminal.json').write_text(json.dumps(r,indent=2)+'\n')
-print('ATTENTION_SHIFT_CPU_COMPLETE',json.dumps(r),flush=True)
+import torch,numpy as np
+from efficient_llm.warm_order.attention_shift_train import read
+from efficient_llm.warm_order.adaptation_train import load_parent
+from efficient_llm.warm_order.attention_shift import freeze,shifted,PATHS
+from efficient_llm.warm_order.adaptation_runtime import measurement_runtime
+from efficient_llm.warm_order.data import Rows,sha
+assert socket.gethostname()=='thiennh-p6-ohmv-worker-0'
+base=Path('/mnt/local/_outputs/deep-llms_th2/attention_shift_20261121_a01')
+assert not (base/'prepared/prepared.json').exists()
+pins=read(base/'source.json')
+for p,h in pins.items():assert sha(p)==h,p
+c=read('resources/attention_shift_trial_20261121.json')['seed_panels']['0']
+torch.set_num_threads(4);m,o,s,_=load_parent(c['parent'],c['parent_hashes']);del o,s
+freeze(m);m.eval();rows=Rows(c['data'],m.c.length);ids=np.load(c['calibration_indices'])[:1];x=rows.batch(ids,'cpu')
+zero=torch.zeros(m.c.d,requires_grad=True)
+modules={'stem':m.stem,**{'middle.'+str(i):b for i,b in enumerate(m.middle)},'coda':m.coda,'norm':m.norm}
+def trace(bias):
+ captured={};handles=[]
+ for name,module in modules.items():
+  def save(mod,args,out,name=name):captured[name]=out.detach().clone()
+  handles.append(module.register_forward_hook(save))
+ try:
+  with torch.no_grad(),measurement_runtime('cpu'):
+   if bias is None:h=m.hidden(x,PATHS['C'])
+   else:h=shifted(m,x,bias,'C',hidden=True)
+  return h,captured
+ finally:
+  for handle in handles:handle.remove()
+report={'row':int(ids[0]),'torch':torch.__version__,'trials':{}}
+for threads in (4,1):
+ torch.set_num_threads(threads)
+ a,ta=trace(None);b,tb=trace(None);z,tz=trace(zero)
+ report['trials'][str(threads)]={'native_repeat':float((a-b).abs().max()),'zero_delta':float((z-b).abs().max()),
+  'layers':{k:{'repeat':float((ta[k]-tb[k]).abs().max()),'zero':float((tz[k]-tb[k]).abs().max()),'dtype':str(tb[k].dtype)} for k in tb}}
+print('ATTENTION_SHIFT_CPU_DIAGNOSE',json.dumps(report),flush=True)
 PY
