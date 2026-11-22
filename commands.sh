@@ -1,27 +1,2 @@
-#1 +620+a
-#th2-ohmv-anchor-loop-health-20261123-a02
-set -euo pipefail
-/usr/bin/python3 - <<'PY'
-from pathlib import Path
-import json,time
-root=Path('/mnt/local/_outputs/deep-llms_th2')
-base=root/'anchor_loop_20261123_a01'
-for _ in range(120):
- if (base/'terminal.json').is_file() or (base/'failure.json').is_file():break
- time.sleep(5)
-r={'sample_epoch':time.time(),'long':{},'workers':{},'cpu':{}}
-for n in ('status.json','failure.json','terminal.json','prepared.json'):
- p=base/n
- if p.is_file():r['long'][n]=json.loads(p.read_text())
-for seed in (0,1):
- for arm in ('serial','memory'):
-  for n in ('progress.json','summary.json','passed.json'):
-   p=base/f's{seed}'/(('qualification-'+arm) if n=='passed.json' else arm)/n
-   if p.is_file():r['workers'][str(p.relative_to(base))]=json.loads(p.read_text())
-  for stage in ('fit','qualify'):
-   p=base/f'{stage}-s{seed}-{arm}.log'
-   if p.is_file() and (base/'failure.json').exists():r['workers'][p.name]=p.read_text()[-1500:]
-for p in (base/'execution/queue.log',):
- if p.exists():r['long'][p.name]=p.read_text()[-900:]
-print('ANCHOR_LOOP_HEALTH',json.dumps(r,allow_nan=False))
-PY
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/report.json,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/backup.json,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/terminal.json,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/native-verified.json,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s0/serial/scores.npz,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s0/serial/summary.json,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s0/serial/calibration.jsonl,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s0/memory/scores.npz,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s0/memory/summary.json,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s0/memory/calibration.jsonl,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s1/serial/scores.npz,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s1/serial/summary.json,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s1/serial/calibration.jsonl,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s1/memory/scores.npz,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s1/memory/summary.json,/mnt/local/_outputs/deep-llms_th2/anchor_loop_20261123_a01/s1/memory/calibration.jsonl
+#th2-ohmv-anchor-loop-export-20261123-a01
