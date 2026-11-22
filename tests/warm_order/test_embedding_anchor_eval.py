@@ -64,6 +64,17 @@ class AnchorDataEvaluationTests(unittest.TestCase):
         np.save(self.cfg['calibration_indices'], cal); self.repin()
         with self.assertRaisesRegex(ValueError, 'overlap'): self.load()
 
+    def test_historical_nested_seed_binding(self):
+        del self.cfg['seed']
+        self.cfg['row_reservation'] = dict(seed=0)
+        self.repin()
+        assert self.load().binding['seed'] == 0
+        self.cfg['row_reservation']['seed'] = 1; self.repin()
+        with self.assertRaisesRegex(ValueError, 'recipe'): self.load()
+        self.cfg['row_reservation']['seed'] = 0
+        self.cfg['seed'] = 1; self.repin()
+        with self.assertRaisesRegex(ValueError, 'recipe'): self.load()
+
     def test_streaming_replay_and_no_mutation(self):
         torch.manual_seed(4)
         a = EmbeddingAnchor(self.c); c = copy.deepcopy(a); c.eval()

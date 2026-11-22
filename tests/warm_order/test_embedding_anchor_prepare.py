@@ -26,7 +26,7 @@ class AnchorPreparationTests(unittest.TestCase):
         self.plan['model'] = asdict(self.c)
         panels = {}
         for seed in (0, 1):
-            cfg = dict(seed=seed, domain='dclm', steps=2000, batch=32, data=stem)
+            cfg = dict(row_reservation=dict(seed=seed), domain='dclm', steps=2000, batch=32, data=stem)
             for key, lo, hi in [('indices', seed * 64000, (seed + 1) * 64000),
                                 ('calibration_indices', 128000, 128256),
                                 ('confirmation_indices', 128256, 128768)]:

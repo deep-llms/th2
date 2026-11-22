@@ -20,7 +20,10 @@ class BoundRows:
         if sha(recipe_pin['path']) != recipe_pin['sha256']:
             raise ValueError('Prior recipe hash mismatch')
         previous = json.loads(Path(recipe_pin['path']).read_text())['config']
-        if (previous['domain'] != 'dclm' or previous['seed'] != seed
+        # Production continuation recipes bind seed inside row_reservation, not at top level.
+        bound_seed = previous.get('row_reservation', {}).get('seed', previous.get('seed'))
+        if (previous['domain'] != 'dclm' or bound_seed != seed
+                or ('seed' in previous and previous['seed'] != seed)
                 or previous['steps'] * previous['batch'] != 64000):
             raise ValueError('Expected existing DCLM64000-row recipe for this seed')
         if not fixture_only:
