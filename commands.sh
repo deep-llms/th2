@@ -1,42 +1,33 @@
-#1 +25+a
-#th2-ohmv-loop-screen2-health-20261123-a02
-set -u
-date -u
-/usr/bin/python3 - <<'PY'
-# Read-only progress/terminal check of round 2 a02; packs results only after verified terminal + handoff.
+#1 +240+a
+#th2-ohmv-loop-stop-20261123-a01
+set -euo pipefail
+export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+pkg="$PWD/resources/loop_stop_20261123.tar.xz"
+echo "53307489f576112731948aa284517d7eb47656411fd9f43d142a0f381447d07a  $pkg" | sha256sum -c -
+extra=$(mktemp -d /mnt/local/_outputs/deep-llms_th2/loop_stop_source.XXXXXXXX)
+tar -xJf "$pkg" -C "$extra"
+out=/mnt/local/_outputs/deep-llms_th2
+export PYTHONPATH=$out/loop_screen2_20261123_a02/execution/source
+cd "$PYTHONPATH"
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
+  --base $out/loop_stop_20261123_a01 \
+  --old $out/loop_screen2_20261123_a02/execution --prior-sha256 b4f1569e47ea47e45e4ec254bb87457739388a13adb464a2f5e34f16b4183344 \
+  --added efficient_llm/warm_order/loop_stop.py scripts/loop_stop_study.py \
+  --module scripts.loop_stop_study \
+  --handoff $out/loop_screen2_20261123_a02/native-verified.json \
+  --handoff-sha256 c9069c1464411c09ec5638f74bf37277bb1e3e48efdf021bd1b1da17c0b378c5
+
+/usr/bin/python3 - <<'PROGRESS'
 from pathlib import Path
-import hashlib, json, tarfile
-base = Path('/mnt/local/_outputs/deep-llms_th2/loop_screen2_20261123_a02')
-jobs = [(1,'memory'),(1,'dense8'),(0,'memory_var'),(0,'loop_attnres'),(0,'loop_attnres_var'),(0,'attnres8'),(0,'attnres_2x'),(0,'memory_2x')]
-def j(p):
-    return json.loads(p.read_text()) if p.is_file() else None
-r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
-r['report_present'] = (base/'report.json').is_file()
-r['jobs'] = {}
-for s, a in jobs:
-    d = base/f's{s}'/a
-    sm = j(d/'summary.json') or {}
-    r['jobs'][f's{s}/{a}'] = dict(progress=j(d/'progress.json'), nll=sm.get('nll'))
-nv = base/'native-verified.json'
-r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
-r['native_workers'] = j(nv)['samples'][-1]['workers'] if nv.is_file() else None
-print('LOOP_SCREEN2_HEALTH', json.dumps(r), flush=True)
-term = r['terminal.json']
-if term and term.get('success') and term.get('native_verified') and r['report_present']:
-    out = base/'export'
-    out.mkdir(exist_ok=True)
-    names = ['report.json', 'backup.json', 'terminal.json', 'native-verified.json', 'prepared.json', 'execution/source.json']
-    for s, a in jobs:
-        names += [f's{s}/{a}/{n}' for n in ('summary.json', 'scores.npz', 'calibration.jsonl', 'terminal.json')]
-        names.append(f's{s}/qualification-{a}/passed.json')
-    archive = out/'loop_screen2_results.tar.gz'
-    if not archive.exists():
-        with tarfile.open(archive, 'w:gz') as t:
-            for n in names:
-                t.add(base/n, arcname=n)
-    members = {n: hashlib.sha256((base/n).read_bytes()).hexdigest() for n in names}
-    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
-    (out/'manifest.json').write_text(json.dumps(dict(archive_sha256=digest, bytes=archive.stat().st_size, members=members), indent=1))
-    print('LOOP_SCREEN2_ARCHIVE', digest, archive.stat().st_size, len(names), flush=True)
-PY
-nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+import json, time
+base = Path('/mnt/local/_outputs/deep-llms_th2/loop_stop_20261123_a01')
+for _ in range(40):
+    if (base/'failure.json').is_file():
+        print('LOOP_STOP_FAILURE', (base/'failure.json').read_text()[-2000:], flush=True)
+        break
+    st = base/'status.json'
+    if st.is_file() and json.loads(st.read_text()).get('stage') == 'stop':
+        break
+    time.sleep(5)
+print('LOOP_STOP_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
+PROGRESS
