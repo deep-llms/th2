@@ -1,11 +1,14 @@
-#1 +10+a
-#th2-ohmv-anchor-long-health-20261122-a02
+#1 +255+a
+#th2-ohmv-anchor-long-health-20261122-a03
 set -euo pipefail
 /usr/bin/python3 - <<'PY'
 from pathlib import Path
 import json,time
 root=Path('/mnt/local/_outputs/deep-llms_th2')
 base=root/'anchor_long_20261122_a01'
+for _ in range(48):
+ if (base/'terminal.json').is_file() or (base/'failure.json').is_file():break
+ time.sleep(5)
 r={'sample_epoch':time.time(),'long':{},'workers':{},'cpu':{}}
 for n in ('status.json','failure.json','terminal.json','rows/manifest.json'):
  p=base/n
