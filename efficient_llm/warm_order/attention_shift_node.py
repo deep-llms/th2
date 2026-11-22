@@ -28,7 +28,10 @@ def references(model,x,means):
             b=value.detach().clone().requires_grad_(name in ('zero','test'))
             with torch.no_grad():
                 h=shifted(model,x,b,branch,hidden=True)
-                if name=='zero':torch.testing.assert_close(h,model.hidden(x,path),atol=0,rtol=0)
+                if name=='zero':
+                    try:torch.testing.assert_close(h,model.hidden(x,path),atol=0,rtol=0)
+                    except AssertionError as error:
+                        raise AssertionError(f'{branch}/zero native identity: {error}') from error
             loss=shifted(model,x,b,branch)
             result[branch+'/'+name]=dict(hidden=h.detach().cpu(),nll=loss.detach().cpu())
             if b.requires_grad:
@@ -51,12 +54,20 @@ def prepare_seed(configs,reference,out):
     del parent
     freeze(model);digest=fingerprint(model);rows,used,cal,confirm,binding=selections(c,model.c.length)
     means=load_means(reference,c,model.c.d)
-    with measurement_runtime('cpu'):ref=references(model,rows.batch(cal[:1],'cpu'),means)
+    with measurement_runtime('cpu') as policy:
+        ref=references(model,rows.batch(cal[:1],'cpu'),means)
+        repeated=references(model,rows.batch(cal[:1],'cpu'),means);repeat_max={}
+        for key,fields in ref.items():
+            repeat_max[key]={}
+            for name,value in fields.items():
+                torch.testing.assert_close(value,repeated[key][name],atol=policy['component_atol'],rtol=policy['component_rtol'])
+                repeat_max[key][name]=float((value-repeated[key][name]).abs().max())
+        del repeated
     if fingerprint(model)!=digest:raise ValueError('CPU reference changed parent')
     out.mkdir(parents=True);torch.save(ref,out/'cpu-reference.pt')
     config=dict(fits=configs,mean_reference=reference,reference_row=int(cal[0]),
                 reference_sha256=sha(out/'cpu-reference.pt'),source=source_hashes(),row_binding=binding,
-                parent_fingerprint=digest,fixture_only=c['fixture_only'])
+                parent_fingerprint=digest,fixture_only=c['fixture_only'],cpu_repeat_max_abs=repeat_max)
     write_json(out/'config.json',config)
     return dict(config_sha256=sha(out/'config.json'),cpu_reference_sha256=config['reference_sha256'],
                 parent_fingerprint=digest,training_rows=len(used),calibration_rows=len(cal),confirmation_rows=len(confirm),
