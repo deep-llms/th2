@@ -1,11 +1,26 @@
-#1 +60+a
-#th2-ohmv-anchor-long-20261122-a01
+#1 +10+a
+#th2-ohmv-anchor-long-health-20261122-a01
 set -euo pipefail
-export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
-pkg="$PWD/resources/anchor_long_20261122.tar.xz"
-echo "8135a551dd8d819b8864487cfa50d2750e8a58e67491e9b898ffb737f7fed89f  $pkg" | sha256sum -c -
-extra=$(mktemp -d /mnt/local/_outputs/deep-llms_th2/anchor_long_source.XXXXXXXX)
-tar -xJf "$pkg" -C "$extra"
-export PYTHONPATH=/mnt/local/_outputs/deep-llms_th2/embedding_anchor_fit_20261122_a01/execution/source
-cd "$PYTHONPATH"
-exec /mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_anchor_long.py" "$extra"
+/usr/bin/python3 - <<'PY'
+from pathlib import Path
+import json,time
+root=Path('/mnt/local/_outputs/deep-llms_th2')
+base=root/'anchor_long_20261122_a01'
+r={'sample_epoch':time.time(),'long':{},'workers':{},'cpu':{}}
+for n in ('status.json','failure.json','terminal.json','rows/manifest.json'):
+ p=base/n
+ if p.is_file():r['long'][n]=json.loads(p.read_text())
+for seed in (0,1):
+ for arm in ('shared','direct','additive','reader'):
+  for n in ('progress.json','complete.json','passed.json'):
+   p=base/f's{seed}'/(('qualification-'+arm) if n=='passed.json' else arm)/n
+   if p.is_file():r['workers'][str(p.relative_to(base))]=json.loads(p.read_text())
+  for stage in ('fit','qualify'):
+   p=base/f'{stage}-s{seed}-{arm}.log'
+   if p.is_file() and (base/'failure.json').exists():r['workers'][p.name]=p.read_text()[-1500:]
+for p in (base/'execution/queue.log',):
+ if p.exists():r['long'][p.name]=p.read_text()[-900:]
+p=root/'anchor_boundary_cpu_20261122_a01/report.json'
+if p.is_file():r['cpu']=json.loads(p.read_text())
+print('ANCHOR_LONG_HEALTH',json.dumps(r,allow_nan=False))
+PY
