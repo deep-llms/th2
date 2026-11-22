@@ -1,18 +1,10 @@
-#1 +10+a
-#th2-ohmv-b200-current-status-20261122-a02
-set -eu
-/usr/bin/python3 - <<'PY'
-import json,datetime,subprocess
-from pathlib import Path
-def query(kind,fields):
-    output=subprocess.check_output(['nvidia-smi','--query-'+kind+'='+fields,'--format=csv,noheader,nounits'],text=True)
-    return [[v.strip() for v in line.split(',')] for line in output.splitlines() if line.strip()]
-gpus=query('gpu','index,uuid,name')
-workers=[]
-for uuid,pid in query('compute-apps','gpu_uuid,pid'):
-    root=Path('/proc')/str(int(pid))
-    parent=int((root/'stat').read_text().rsplit(')',1)[1].split()[1])
-    argv=(Path('/proc')/str(parent)/'cmdline').read_bytes().split(b'\0')
-    workers.append([uuid,int(pid),parent,argv[1:2]==[b'/tmp/llm_pretrain_burn.py']])
-print('B200_CURRENT_STATUS',json.dumps(dict(time=datetime.datetime.now(datetime.timezone.utc).isoformat(),gpus=gpus,workers=workers)))
-PY
+#1
+#th2-ohmv-anchor-boundary-cpu-20261122-a01
+set -euo pipefail
+export CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=12 MKL_NUM_THREADS=12 PYTHONDONTWRITEBYTECODE=1
+prior=/mnt/local/_outputs/deep-llms_th2/embedding_anchor_fit_20261122_a01
+test "$(hostname)" = thiennh-p6-ohmv-worker-0
+study="$PWD/scripts/anchor_boundary_study.py"
+cd "$prior/execution/source"
+export PYTHONPATH="$PWD"
+exec /mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$study" --out /mnt/local/_outputs/deep-llms_th2/anchor_boundary_cpu_20261122_a01
