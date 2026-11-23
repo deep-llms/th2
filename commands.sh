@@ -1,35 +1,28 @@
-#1 +240+a
-#th2-ohmv-translator-screen-20261123-a01
-set -euo pipefail
-export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
-pkg="$PWD/resources/translator_20261123.tar.xz"
-echo "04fdc08c9e7fc9d8bd4a7822e28d3c0a2ac6fc42530fbfdf9230448cdb1b134f  $pkg" | sha256sum -c -
-extra=$(mktemp -d /mnt/local/_outputs/deep-llms_th2/translator_source.XXXXXXXX)
-tar -xJf "$pkg" -C "$extra"
-out=/mnt/local/_outputs/deep-llms_th2
-export PYTHONPATH=$out/sandwich_20261123_a01/execution/source
-cd "$PYTHONPATH"
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
-  --base $out/translator_screen_20261123_a01 \
-  --old $out/sandwich_20261123_a01/execution --prior-sha256 17159a1d3776b6e5346d06e9bc6c0e067694e75482dffd84860adbf70a6068b7 \
-  --added efficient_llm/warm_order/translator_screen.py scripts/translator_screen_study.py \
-  --module scripts.translator_screen_study \
-  --handoff $out/sandwich_20261123_a01/native-verified.json \
-  --handoff-sha256 e8fe18d528c8ac0bae8e685df502aa833d8fc4d88444c1cd6fae37530e1a1744
-
-/usr/bin/python3 - <<'PROGRESS'
+#1 +20+a
+#th2-ohmv-translator-health-20261123-a01
+set -u
+date -u
+/usr/bin/python3 - <<'PY'
+# Read-only: translator screen progress/summaries, terminal/native receipt, export manifest.
 from pathlib import Path
-import json, time
+import hashlib, json
 base = Path('/mnt/local/_outputs/deep-llms_th2/translator_screen_20261123_a01')
-arms = [f'{t}_{o}_{m}' for t in ('tied', 'slot') for o in ('fixed', 'mix') for m in ('residual', 'attnres')]
-for _ in range(40):
-    if (base/'failure.json').is_file():
-        print('TRANSLATOR_FAILURE', (base/'failure.json').read_text()[-2000:], flush=True)
-        break
-    prog = {a: json.loads(p.read_text()) for a in arms if (p := base/a/'progress.json').is_file()}
-    if len(prog) == len(arms):
-        print('TRANSLATOR_PROGRESS', json.dumps(prog), flush=True)
-        break
-    time.sleep(5)
-print('TRANSLATOR_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
-PROGRESS
+def j(p):
+    return json.loads(p.read_text()) if p.is_file() else None
+r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
+r['export_manifest'] = {k: v for k, v in (j(base/'export/manifest.json') or {}).items() if k != 'members'}
+nv = base/'native-verified.json'
+r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
+r['native_workers'] = j(nv)['samples'][-1]['workers'] if nv.is_file() else None
+r['arms'] = {}
+for t in ('tied', 'slot'):
+    for o in ('fixed', 'mix'):
+        for m in ('residual', 'attnres'):
+            a = f'{t}_{o}_{m}'
+            pr, sm = j(base/a/'progress.json'), j(base/a/'summary.json')
+            r['arms'][a] = dict(step=(pr or {}).get('step'), nll=(sm or {}).get('nll'))
+if r['failure.json']:
+    r['log_tails'] = {p.name: p.read_text()[-1500:] for p in sorted(base.glob('train-*.log')) if p.stat().st_size}
+print('TRANSLATOR_HEALTH', json.dumps(r), flush=True)
+PY
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
