@@ -1,5 +1,5 @@
 #1 +240+a
-#th2-ohmv-wait-a02-then-dot-sandwich-a03-20261124
+#th2-ohmv-wait-a02-then-dot-sandwich-a03-20261124-r2
 set -euo pipefail
 export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
 date -u
@@ -43,6 +43,10 @@ manifest = dict(archive_sha256=hashlib.sha256(archive.read_bytes()).hexdigest(),
 print('SALVAGE', json.dumps({k: v for k, v in manifest.items() if k != 'members'}), len(names), flush=True)
 PY
 out=/mnt/local/_outputs/deep-llms_th2
+if [ -e "$out/dot_sandwich_20261123_a03" ]; then
+  echo "A03_ALREADY_LAUNCHED"; cat "$out/dot_sandwich_20261123_a03/status.json" 2>/dev/null || true
+  exit 0
+fi
 receipt=$(sha256sum $out/dot_sandwich_20261123_a02/native-verified.json | cut -d' ' -f1)
 echo "NATIVE_RECEIPT $receipt"
 # 3) Launch DOT sandwich a03 (bounded recipient ids, train export before downstream).
