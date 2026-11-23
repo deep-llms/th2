@@ -1,24 +1,35 @@
-#1 +20+a
-#th2-ohmv-family-downstream-health-20261123-a01
-set -u
-date -u
-/usr/bin/python3 - <<'PY'
-# Read-only: family downstream terminal, per-unit accuracies, export manifest and native receipt hash.
+#1 +240+a
+#th2-ohmv-router-screen-20261123-a01
+set -euo pipefail
+export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+pkg="$PWD/resources/router_20261123.tar.xz"
+echo "067a44a859be2e4b6a4f7938d170a89f6b1533b219278f8db2971b26ca9feccf  $pkg" | sha256sum -c -
+extra=$(mktemp -d /mnt/local/_outputs/deep-llms_th2/router_source.XXXXXXXX)
+tar -xJf "$pkg" -C "$extra"
+out=/mnt/local/_outputs/deep-llms_th2
+export PYTHONPATH=$out/family_downstream_20261123_a01/execution/source
+cd "$PYTHONPATH"
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
+  --base $out/router_screen_20261123_a01 \
+  --old $out/family_downstream_20261123_a01/execution --prior-sha256 9cbc7e20027ea2cb5e46269ad4d7f4744e2fa47cac41a92ad6bb3689eed0f1a7 \
+  --added efficient_llm/warm_order/router_screen.py scripts/router_screen_study.py \
+  --module scripts.router_screen_study \
+  --handoff $out/family_downstream_20261123_a01/native-verified.json \
+  --handoff-sha256 d98b9da901677f2f8e0f541f646ab0b19587865ac26f35e2567077bcb7222202
+
+/usr/bin/python3 - <<'PROGRESS'
 from pathlib import Path
-import hashlib, json
-base = Path('/mnt/local/_outputs/deep-llms_th2/family_downstream_20261123_a01')
-def j(p):
-    return json.loads(p.read_text()) if p.is_file() else None
-r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
-rep = j(base/'report.json') or {}
-r['report'] = {u: {route: {t: round(v['accuracy'], 4) for t, v in tasks.items()} for route, tasks in routes.items()} for u, routes in rep.items()}
-r['export_manifest'] = {k: v for k, v in (j(base/'export/manifest.json') or {}).items() if k != 'members'}
-nv = base/'native-verified.json'
-r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
-r['native_workers'] = j(nv)['samples'][-1]['workers'] if nv.is_file() else None
-r['units_done'] = len(list(base.glob('*/summary.json')))
-if r['failure.json']:
-    r['log_tails'] = {p.name: p.read_text()[-400:] for p in sorted(base.glob('score-*.log'))}
-print('FAMILY_DS_HEALTH', json.dumps(r), flush=True)
-PY
-nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+import json, time
+base = Path('/mnt/local/_outputs/deep-llms_th2/router_screen_20261123_a01')
+arms = ('single', 'seq_switch2', 'seq_switch3', 'seq_cf2', 'order_cf', 'both_mix', 'tok_moe2', 'tok_moe3')
+for _ in range(44):
+    if (base/'failure.json').is_file():
+        print('ROUTER_FAILURE', (base/'failure.json').read_text()[-2000:], flush=True)
+        break
+    prog = {a: json.loads((base/a/'progress.json').read_text()) for a in arms if (base/a/'progress.json').is_file()}
+    if len(prog) == len(arms):
+        print('ROUTER_PROGRESS', json.dumps(prog), flush=True)
+        break
+    time.sleep(5)
+print('ROUTER_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
+PROGRESS
