@@ -1,2 +1,2 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/loop_screen4_20261123_a02/export/loop_screen4_results.tar.gz,/mnt/local/_outputs/deep-llms_th2/loop_screen4_20261123_a02/export/manifest.json,/mnt/local/_outputs/deep-llms_th2/loop_stop2_20261123_a01/export/stop_results.tar.gz,/mnt/local/_outputs/deep-llms_th2/loop_stop2_20261123_a01/export/manifest.json
-#th2-ohmv-loop-results-export-20261123-a02
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/loop_screen4_downstream_20261123_a01/export/downstream_results.tar.gz,/mnt/local/_outputs/deep-llms_th2/loop_screen4_downstream_20261123_a01/export/manifest.json
+#th2-ohmv-loop-screen4-downstream-export-20261123-a01
