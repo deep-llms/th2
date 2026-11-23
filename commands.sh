@@ -1,30 +1,33 @@
-#1 +20+a
-#th2-ohmv-loop-stop2-health-20261123-a01
-set -u
-date -u
-/usr/bin/python3 - <<'PY'
-# Read-only: STOP round state, compact per-body summary (no per-row arrays), export manifest, native receipt.
+#1 +240+a
+#th2-ohmv-loop-screen4-downstream-20261123-a01
+set -euo pipefail
+export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+pkg="$PWD/resources/loop_downstream4_20261123.tar.xz"
+echo "a3f26c6683a6ab4c996ecfcf46c58a08f0b09b53124f1c6e732ca1f37a8f0e30  $pkg" | sha256sum -c -
+extra=$(mktemp -d /mnt/local/_outputs/deep-llms_th2/loop_downstream4_source.XXXXXXXX)
+tar -xJf "$pkg" -C "$extra"
+out=/mnt/local/_outputs/deep-llms_th2
+export PYTHONPATH=$out/loop_stop2_20261123_a01/execution/source
+cd "$PYTHONPATH"
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
+  --base $out/loop_screen4_downstream_20261123_a01 \
+  --old $out/loop_stop2_20261123_a01/execution --prior-sha256 2dbca58304be81cfeab67ec3da162de5e6b2b058e1450fe93e6af0e0678e5c42 \
+  --added efficient_llm/warm_order/loop_screen_downstream.py scripts/loop_screen_downstream_study.py \
+  --module scripts.loop_screen_downstream_study \
+  --handoff $out/loop_stop2_20261123_a01/native-verified.json \
+  --handoff-sha256 ff346552c60b1f029cfb3ca6d3268f5b620f6e598a864ec3a8b96b5c2278714e
+
+/usr/bin/python3 - <<'PROGRESS'
 from pathlib import Path
-import hashlib, json
-base = Path('/mnt/local/_outputs/deep-llms_th2/loop_stop2_20261123_a01')
-def j(p):
-    return json.loads(p.read_text()) if p.is_file() else None
-r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
-r['export_manifest'] = {k: v for k, v in (j(base/'export/manifest.json') or {}).items() if k != 'members'}
-nv = base/'native-verified.json'
-r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
-r['native_workers'] = j(nv)['samples'][-1]['workers'] if nv.is_file() else None
-bodies = {}
-for p in sorted(base.glob('*/summary.json')):
-    s = j(p)
-    bodies[p.parent.name] = dict(fixed={k: [round(v['nll'], 5), round(v['passes'], 3)] for k, v in s['fixed'].items()},
-                                 learned={k: [round(v['nll'], 5), round(v['passes'], 3), v['histogram']] for k, v in s['learned'].items()},
-                                 random={k: [round(v['nll'], 5), round(v['passes'], 3)] for k, v in s['random_matched'].items()},
-                                 oracle={k: [round(v['nll'], 5), round(v['passes'], 3)] for k, v in s['oracle_uniform_context'].items()},
-                                 seconds=round(s['seconds']))
-r['bodies'] = bodies
-if r['failure.json']:
-    r['log_tails'] = {p.name: p.read_text()[-1500:] for p in sorted(base.glob('stop-*.log'))}
-print('LOOP_STOP_HEALTH', json.dumps(r), flush=True)
-PY
-nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+import json, time
+base = Path('/mnt/local/_outputs/deep-llms_th2/loop_screen4_downstream_20261123_a01')
+for _ in range(40):
+    if (base/'failure.json').is_file():
+        print('DOWNSTREAM2_FAILURE', (base/'failure.json').read_text()[-2000:], flush=True)
+        break
+    st = base/'status.json'
+    if st.is_file() and json.loads(st.read_text()).get('stage') == 'score':
+        break
+    time.sleep(5)
+print('DOWNSTREAM2_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
+PROGRESS
