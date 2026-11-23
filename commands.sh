@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-ohmv-scale-health-20261123-a02
+#th2-ohmv-scale-health-20261123-a03
 set -u
 date -u
 /usr/bin/python3 - <<'PY'
