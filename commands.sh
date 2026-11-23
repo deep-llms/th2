@@ -1,22 +1,34 @@
-#1 +20+a
-#th2-ohmv-loop-screen4-downstream-health-20261123-a01
-set -u
-date -u
-/usr/bin/python3 - <<'PY'
-# Read-only: downstream scoring progress/terminal, export manifest and native receipt hash.
+#1 +240+a
+#th2-ohmv-sandwich-20261123-a01
+set -euo pipefail
+export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+pkg="$PWD/resources/sandwich_20261123.tar.xz"
+echo "9248b07d9dca11ca9557612fee303052eb57c4505b4ecfd46af9a1389caae05c  $pkg" | sha256sum -c -
+extra=$(mktemp -d /mnt/local/_outputs/deep-llms_th2/sandwich_source.XXXXXXXX)
+tar -xJf "$pkg" -C "$extra"
+out=/mnt/local/_outputs/deep-llms_th2
+export PYTHONPATH=$out/loop_stop2_20261123_a01/execution/source
+cd "$PYTHONPATH"
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
+  --base $out/sandwich_20261123_a01 \
+  --old $out/loop_stop2_20261123_a01/execution --prior-sha256 2dbca58304be81cfeab67ec3da162de5e6b2b058e1450fe93e6af0e0678e5c42 \
+  --added efficient_llm/warm_order/sandwich.py scripts/sandwich_study.py \
+  --module scripts.sandwich_study \
+  --handoff $out/loop_screen4_downstream_20261123_a01/native-verified.json \
+  --handoff-sha256 39f94a2b8e9c8978e22dc94cbbe3e6e791d69ca2ec20aaa931a4a6a6065d06c4
+
+/usr/bin/python3 - <<'PROGRESS'
 from pathlib import Path
-import hashlib, json
-base = Path('/mnt/local/_outputs/deep-llms_th2/loop_screen4_downstream_20261123_a01')
-def j(p):
-    return json.loads(p.read_text()) if p.is_file() else None
-r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json', 'report.json')}
-r['export_manifest'] = {k: v for k, v in (j(base/'export/manifest.json') or {}).items() if k != 'members'}
-nv = base/'native-verified.json'
-r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
-r['native_workers'] = j(nv)['samples'][-1]['workers'] if nv.is_file() else None
-r['arms_done'] = sorted(p.parent.name for p in base.glob('*/summary.json'))
-logs = sorted(base.glob('score-*.log'))
-r['log_tails'] = {p.name: p.read_text()[-300:] for p in logs} if r['failure.json'] else {}
-print('DOWNSTREAM_HEALTH', json.dumps(r), flush=True)
-PY
-nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+import json, time
+base = Path('/mnt/local/_outputs/deep-llms_th2/sandwich_20261123_a01')
+for _ in range(40):
+    if (base/'failure.json').is_file():
+        print('SANDWICH_FAILURE', (base/'failure.json').read_text()[-2000:], flush=True)
+        break
+    prog = {n: json.loads(p.read_text()) for n in ('sw_warm', 'not_warm') if (p := base/n/'progress.json').is_file()}
+    if len(prog) == 2:
+        print('SANDWICH_PROGRESS', json.dumps(prog), flush=True)
+        break
+    time.sleep(5)
+print('SANDWICH_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
+PROGRESS
