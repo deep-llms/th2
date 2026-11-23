@@ -1,5 +1,5 @@
 #1 +240+a
-#th2-ohmv-stop-then-dot-sandwich-20261123-a01
+#th2-ohmv-stop-then-dot-sandwich-20261123-a02
 set -euo pipefail
 export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
 date -u
@@ -15,7 +15,10 @@ if (base/'terminal.json').exists() or (base/'failure.json').exists():
 else:
     status = json.loads((base/'status.json').read_text())
     print('STATUS', json.dumps(status), flush=True)
-    assert status['stage'] == 'train' and len(status['running']) == 8, 'unexpected stage'
+    known = {f's{s}-{a}' for s, a in [(0, 'attnres_moe_4x'), (0, 'loop_attnres_moe_4x'), (0, 'attnres8_moe_4x'),
+             (1, 'attnres_moe_4x'), (1, 'loop_attnres_moe_4x'), (1, 'attnres_4x'), (1, 'loop_attnres_4x'), (1, 'attnres8_4x')]}
+    running = set(status['running'])
+    assert status['stage'] == 'train' and running and running <= known, 'unexpected stage or jobs'
     pane = subprocess.run(['tmux', 'display-message', '-p', '-t', base.name, '#{pane_pid} #{pane_dead}'],
                           capture_output=True, text=True, check=True).stdout.split()
     sup = int(pane[0]); assert pane[1] == '0', 'pane dead'
@@ -31,9 +34,11 @@ else:
             except (FileNotFoundError, ProcessLookupError):
                 pass
     train = {p for p, cm in children.items() if f'scripts.moe_scale_study train --base {base}' in cm}
-    assert len(train) == 8 and set(children) == train, 'children mismatch'
+    assert len(train) == len(running) and set(children) == train, 'children mismatch'
+    for p_ in train:  # each child is exactly one of the running jobs
+        assert any(f'--seed {j[1]} --arm {j[3:]}' in children[p_] for j in running), 'child not a running job'
     q = subprocess.run(['nvidia-smi', '--query-compute-apps=pid', '--format=csv,noheader'], capture_output=True, text=True, check=True).stdout
-    assert {int(l) for l in q.split()} == train, 'GPU owners are not exactly the eight train workers'
+    assert {int(l) for l in q.split()} == train, 'GPU owners are not exactly the running train workers'
     os.kill(sup, signal.SIGTERM)
     print('SIGTERM_SENT', sup, flush=True)
 for _ in range(120):
