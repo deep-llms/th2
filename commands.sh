@@ -1,5 +1,5 @@
 #1 +240+a
-#th2-ohmv-wait-a02-then-dot-sandwich-a03-20261124-r2
+#th2-ohmv-wait-a02-then-dot-sandwich-a03-20261124-r3
 set -euo pipefail
 export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
 date -u
@@ -51,7 +51,7 @@ receipt=$(sha256sum $out/dot_sandwich_20261123_a02/native-verified.json | cut -d
 echo "NATIVE_RECEIPT $receipt"
 # 3) Launch DOT sandwich a03 (bounded recipient ids, train export before downstream).
 pkg="$PWD/resources/dot_sandwich_a03_20261123.tar.xz"
-echo "45a422fb14671329a2d0e1b28ab4c2283c3ab397a49caed4641141fc5ba764d5  $pkg" | sha256sum -c -
+echo "62f88f83c330a932e8c7873c5a238bffad41c77facff606254a96d46de75eced  $pkg" | sha256sum -c -
 extra=$(mktemp -d $out/dot_sandwich_a03_source.XXXXXXXX)
 tar -xJf "$pkg" -C "$extra"
 export PYTHONPATH=$out/dot_sandwich_20261123_a02/execution/source
@@ -59,8 +59,8 @@ cd "$PYTHONPATH"
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
   --base $out/dot_sandwich_20261123_a03 \
   --old $out/dot_sandwich_20261123_a02/execution --prior-sha256 5ec4dc7bef68f0829e35e193255127fbbda8ba7906b6527c245242e15a2d4d69 \
-  --added efficient_llm/warm_order/dot_sandwich.py scripts/loop_screen_study.py scripts/dot_sandwich_study.py \
-  --replaced efficient_llm/warm_order/dot_sandwich.py scripts/loop_screen_study.py scripts/dot_sandwich_study.py \
+  --added efficient_llm/warm_order/dot_sandwich.py efficient_llm/warm_order/loop_screen_downstream.py scripts/loop_screen_study.py scripts/dot_sandwich_study.py \
+  --replaced efficient_llm/warm_order/dot_sandwich.py efficient_llm/warm_order/loop_screen_downstream.py scripts/loop_screen_study.py scripts/dot_sandwich_study.py \
   --module scripts.dot_sandwich_study \
   --handoff $out/dot_sandwich_20261123_a02/native-verified.json \
   --handoff-sha256 "$receipt"
