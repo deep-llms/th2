@@ -1,38 +1,31 @@
-#1 +240+a
-#th2-ohmv-moe-scale-20261123-a01
-set -euo pipefail
-export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
-pkg="$PWD/resources/moe_scale_20261123.tar.xz"
-echo "5a182dc96c9359450263e2fd5fc2fa40ff88f25caa2c0da71350218ab7b805f7  $pkg" | sha256sum -c -
-extra=$(mktemp -d /mnt/local/_outputs/deep-llms_th2/moe_scale_source.XXXXXXXX)
-tar -xJf "$pkg" -C "$extra"
-out=/mnt/local/_outputs/deep-llms_th2
-export PYTHONPATH=$out/moe_variants_20261123_a01/execution/source
-cd "$PYTHONPATH"
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
-  --base $out/moe_scale_20261123_a01 \
-  --old $out/moe_variants_20261123_a01/execution --prior-sha256 2db9f7e29d21cd7619ca5cc45312f9a3befb5013c30e86642c578170385cdd35 \
-  --added efficient_llm/warm_order/loop_screen.py scripts/moe_scale_study.py \
-  --replaced efficient_llm/warm_order/loop_screen.py \
-  --module scripts.moe_scale_study \
-  --handoff $out/moe_variants_20261123_a01/native-verified.json \
-  --handoff-sha256 71326f67f0ed9dc420e01c5e97b1f9dc35e453f82509b7015d7e534f03987c92
-
-/usr/bin/python3 - <<'PROGRESS'
+#1 +20+a
+#th2-ohmv-moe-scale-health-20261123-a01
+set -u
+date -u
+/usr/bin/python3 - <<'PY'
+# Read-only: MoE-loop progress, summaries, terminal, export manifest, native receipt.
 from pathlib import Path
-import json, time
+import hashlib, json
 base = Path('/mnt/local/_outputs/deep-llms_th2/moe_scale_20261123_a01')
+def j(p):
+    return json.loads(p.read_text()) if p.is_file() else None
+r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
+r['export_manifest'] = {k: v for k, v in (j(base/'export/manifest.json') or {}).items() if k != 'members'}
+nv = base/'native-verified.json'
+r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
+r['native_workers'] = j(nv)['samples'][-1]['workers'] if nv.is_file() else None
 jobs = [(0, 'attnres_moe_4x'), (0, 'loop_attnres_moe_4x'), (0, 'attnres8_moe_4x'), (1, 'attnres_moe_4x'),
         (1, 'loop_attnres_moe_4x'), (1, 'attnres_4x'), (1, 'loop_attnres_4x'), (1, 'attnres8_4x')]
-paths = {f's{s}/{a}': base/f's{s}'/a/'progress.json' for s, a in jobs}
-for _ in range(44):
-    if (base/'failure.json').is_file():
-        print('MOE_SCALE_FAILURE', (base/'failure.json').read_text()[-2000:], flush=True)
-        break
-    prog = {a: json.loads(p.read_text()) for a, p in paths.items() if p.is_file()}
-    if len(prog) == len(paths):
-        print('MOE_SCALE_PROGRESS', json.dumps(prog), flush=True)
-        break
-    time.sleep(5)
-print('MOE_SCALE_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
-PROGRESS
+r['jobs'] = {}
+for s, a in jobs:
+    d = base/f's{s}'/a
+    pr, sm = j(d/'progress.json'), j(d/'summary.json')
+    cal = (d/'calibration.jsonl').read_text().splitlines()[-1] if (d/'calibration.jsonl').is_file() else None
+    r['jobs'][f's{s}/{a}'] = dict(step=(pr or {}).get('step'), last_cal=cal[:200] if cal else None,
+                                  nll={k: v for k, v in ((sm or {}).get('nll') or {}).items() if k in ('native', 'native_p3', 'swap')},
+                                  moe_trace={b: v.get('consecutive_overlap') for b, v in ((sm or {}).get('moe_trace') or {}).items()})
+if r['failure.json']:
+    r['log_tails'] = {p.name: p.read_text()[-1500:] for p in sorted(base.glob('train-*.log')) if 'Error' in p.read_text()[-3000:]}
+print('MOE_SCALE_HEALTH', json.dumps(r), flush=True)
+PY
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
