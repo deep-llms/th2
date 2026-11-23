@@ -1,33 +1,30 @@
-#1 +240+a
-#th2-ohmv-loop-stop2-20261123-a01
-set -euo pipefail
-export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
-pkg="$PWD/resources/loop_stop2_20261123.tar.xz"
-echo "f2d3f05b24e8b2bf9136f5cb6f0ff17f784d1f0f3a8586dd75d735a395ae1335  $pkg" | sha256sum -c -
-extra=$(mktemp -d /mnt/local/_outputs/deep-llms_th2/loop_stop2_source.XXXXXXXX)
-tar -xJf "$pkg" -C "$extra"
-out=/mnt/local/_outputs/deep-llms_th2
-export PYTHONPATH=$out/loop_screen4_20261123_a02/execution/source
-cd "$PYTHONPATH"
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
-  --base $out/loop_stop2_20261123_a01 \
-  --old $out/loop_screen4_20261123_a02/execution --prior-sha256 291b293be41b9501c1042123bd82f4f395bdc8442ab1cbea2c55a57f13f7e749 \
-  --added scripts/loop_stop_study.py --replaced scripts/loop_stop_study.py \
-  --module scripts.loop_stop_study \
-  --handoff $out/loop_screen4_20261123_a02/native-verified.json \
-  --handoff-sha256 64bb962452dc73d8fb7a79b9cc20cd6a39f7665cb09ca68dce4530354521218c
-
-/usr/bin/python3 - <<'PROGRESS'
+#1 +20+a
+#th2-ohmv-loop-stop2-health-20261123-a01
+set -u
+date -u
+/usr/bin/python3 - <<'PY'
+# Read-only: STOP round state, compact per-body summary (no per-row arrays), export manifest, native receipt.
 from pathlib import Path
-import json, time
+import hashlib, json
 base = Path('/mnt/local/_outputs/deep-llms_th2/loop_stop2_20261123_a01')
-for _ in range(40):
-    if (base/'failure.json').is_file():
-        print('LOOP_STOP2_FAILURE', (base/'failure.json').read_text()[-2000:], flush=True)
-        break
-    st = base/'status.json'
-    if st.is_file() and json.loads(st.read_text()).get('stage') == 'stop':
-        break
-    time.sleep(5)
-print('LOOP_STOP2_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
-PROGRESS
+def j(p):
+    return json.loads(p.read_text()) if p.is_file() else None
+r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
+r['export_manifest'] = {k: v for k, v in (j(base/'export/manifest.json') or {}).items() if k != 'members'}
+nv = base/'native-verified.json'
+r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
+r['native_workers'] = j(nv)['samples'][-1]['workers'] if nv.is_file() else None
+bodies = {}
+for p in sorted(base.glob('*/summary.json')):
+    s = j(p)
+    bodies[p.parent.name] = dict(fixed={k: [round(v['nll'], 5), round(v['passes'], 3)] for k, v in s['fixed'].items()},
+                                 learned={k: [round(v['nll'], 5), round(v['passes'], 3), v['histogram']] for k, v in s['learned'].items()},
+                                 random={k: [round(v['nll'], 5), round(v['passes'], 3)] for k, v in s['random_matched'].items()},
+                                 oracle={k: [round(v['nll'], 5), round(v['passes'], 3)] for k, v in s['oracle_uniform_context'].items()},
+                                 seconds=round(s['seconds']))
+r['bodies'] = bodies
+if r['failure.json']:
+    r['log_tails'] = {p.name: p.read_text()[-1500:] for p in sorted(base.glob('stop-*.log'))}
+print('LOOP_STOP_HEALTH', json.dumps(r), flush=True)
+PY
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
