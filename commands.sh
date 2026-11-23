@@ -1,33 +1,22 @@
-#1 +240+a
-#th2-ohmv-scale-downstream-20261123-a01
-set -euo pipefail
-export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
-pkg="$PWD/resources/scale_downstream_20261123.tar.xz"
-echo "98356cd68093f210a89aacbb9d84ce95e1eec40f71bc692dcf8eb48e33f7acf2  $pkg" | sha256sum -c -
-extra=$(mktemp -d /mnt/local/_outputs/deep-llms_th2/scale_downstream_source.XXXXXXXX)
-tar -xJf "$pkg" -C "$extra"
-out=/mnt/local/_outputs/deep-llms_th2
-export PYTHONPATH=$out/scale_round_20261123_a01/execution/source
-cd "$PYTHONPATH"
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
-  --base $out/scale_downstream_20261123_a01 \
-  --old $out/scale_round_20261123_a01/execution --prior-sha256 bda16689664a51fc9cf3fef82f20f5731e81c55632e50adf143ec51011efec6d \
-  --added efficient_llm/warm_order/loop_screen_downstream.py scripts/loop_screen_downstream_study.py \
-  --module scripts.loop_screen_downstream_study \
-  --handoff $out/scale_round_20261123_a01/native-verified.json \
-  --handoff-sha256 fbc40ff7f6cc56e540737df28d2811f4fad8e082053128c733f7e65ee09c0f8f
-
-/usr/bin/python3 - <<'PROGRESS'
+#1 +20+a
+#th2-ohmv-scale-downstream-health-20261123-a01
+set -u
+date -u
+/usr/bin/python3 - <<'PY'
+# Read-only: 4x downstream terminal, per-arm task accuracies, export manifest and native receipt hash.
 from pathlib import Path
-import json, time
+import hashlib, json
 base = Path('/mnt/local/_outputs/deep-llms_th2/scale_downstream_20261123_a01')
-for _ in range(40):
-    if (base/'failure.json').is_file():
-        print('SCALE_DS_FAILURE', (base/'failure.json').read_text()[-2000:], flush=True)
-        break
-    st = base/'status.json'
-    if st.is_file() and json.loads(st.read_text()).get('stage') == 'score':
-        break
-    time.sleep(5)
-print('SCALE_DS_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
-PROGRESS
+def j(p):
+    return json.loads(p.read_text()) if p.is_file() else None
+r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json', 'report.json')}
+r['export_manifest'] = {k: v for k, v in (j(base/'export/manifest.json') or {}).items() if k != 'members'}
+nv = base/'native-verified.json'
+r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
+r['native_workers'] = j(nv)['samples'][-1]['workers'] if nv.is_file() else None
+r['arms_done'] = sorted(p.parent.name for p in base.glob('*/summary.json'))
+if r['failure.json']:
+    r['log_tails'] = {p.name: p.read_text()[-300:] for p in sorted(base.glob('score-*.log'))}
+print('SCALE_DS_HEALTH', json.dumps(r), flush=True)
+PY
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
