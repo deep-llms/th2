@@ -1,24 +1,24 @@
 #1 +240+a
-#th2-ohmv-wait-s02-then-dot-synth-s03-20261124
+#th2-ohmv-wait-s03-then-dot-synth-s04-20261124
 set -euo pipefail
 export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
 date -u
 out=/mnt/local/_outputs/deep-llms_th2
-if [ -e "$out/dot_synth_20261124_s03" ]; then echo S03_ALREADY_LAUNCHED; cat $out/dot_synth_20261124_s03/status.json || true; exit 0; fi
-# 1) No signal: wait for s02 to end on its own; print its compact results.
+if [ -e "$out/dot_synth_20261124_s04" ]; then echo S04_ALREADY_LAUNCHED; cat $out/dot_synth_20261124_s04/status.json || true; exit 0; fi
+# 1) No signal: wait for s03 to end on its own; print its compact results.
 /usr/bin/python3 - <<'PY'
 import json, time
 from pathlib import Path
-base = Path('/mnt/local/_outputs/deep-llms_th2/dot_synth_20261124_s02')
-for i in range(720):  # up to 60 min
-    if (base/'terminal.json').exists():
+base = Path('/mnt/local/_outputs/deep-llms_th2/dot_synth_20261124_s03')
+for i in range(1320):  # up to 110 min
+    if (base/'terminal.json').exists() or (base/'failure.json').exists():
         break
     time.sleep(5)
+print('S03_FAILURE', (base/'failure.json').read_text()[-1500:] if (base/'failure.json').exists() else 'none', flush=True)
 t = json.loads((base/'terminal.json').read_text())
-print('S02_TERMINAL', json.dumps(t), flush=True)
-print('S02_FAILURE', (base/'failure.json').read_text()[-1500:] if (base/'failure.json').exists() else 'none', flush=True)
+print('S03_TERMINAL', json.dumps(t), flush=True)
 m = base/'export'/'manifest.json'
-print('S02_EXPORT', {k: v for k, v in json.loads(m.read_text()).items() if k != 'members'} if m.exists() else 'absent', flush=True)
+print('S03_EXPORT', {k: v for k, v in json.loads(m.read_text()).items() if k != 'members'} if m.exists() else 'absent', flush=True)
 compact = {}
 for s in sorted(base.glob('s0/*/*/summary.json')):
     v = json.loads(s.read_text())
@@ -28,31 +28,31 @@ for s in sorted(base.glob('s0/*/*/summary.json')):
 print('SYNTH_RESULTS', json.dumps(compact, separators=(',', ':')), flush=True)
 assert t['native_verified'] is True, 'native not verified'
 PY
-receipt=$(sha256sum $out/dot_synth_20261124_s02/native-verified.json | cut -d' ' -f1)
+receipt=$(sha256sum $out/dot_synth_20261124_s03/native-verified.json | cut -d' ' -f1)
 echo "NATIVE_RECEIPT $receipt"
-# 2) Launch s03 (chain only, curriculum, 8k steps); old source = s02 execution, pinned hash.
-pkg="$PWD/resources/dot_synth_s03_20261124.tar.xz"
-echo "f87bba8250e73b210e003a68a6ea7122275a8d3d2a4de4b22f766ef420e74a1d  $pkg" | sha256sum -c -
-extra=$(mktemp -d $out/dot_synth_s03_source.XXXXXXXX)
+# 2) Launch s04 (opseq replication, seeds 1-2); old source = s03 execution, pinned hash.
+pkg="$PWD/resources/dot_synth_s04_20261124.tar.xz"
+echo "e74fbad38116b11adf7f11ecff5be2d3b28ff771a3e323c45f8c65be34d9750d  $pkg" | sha256sum -c -
+extra=$(mktemp -d $out/dot_synth_s04_source.XXXXXXXX)
 tar -xJf "$pkg" -C "$extra"
-export PYTHONPATH=$out/dot_synth_20261124_s02/execution/source
+export PYTHONPATH=$out/dot_synth_20261124_s03/execution/source
 cd "$PYTHONPATH"
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
-  --base $out/dot_synth_20261124_s03 \
-  --old $out/dot_synth_20261124_s02/execution --prior-sha256 cefebb6c479ff9947e115b66df0a4bebd373b1b0dee06700b2bf59978d1fe3d4 \
+  --base $out/dot_synth_20261124_s04 \
+  --old $out/dot_synth_20261124_s03/execution --prior-sha256 611f93afd56897c18ff4cc7c4905379e0efaac36e8bd1668ea0fd898bcf6fec3 \
   --added scripts/dot_synth_study.py \
   --replaced scripts/dot_synth_study.py \
   --module scripts.dot_synth_study \
-  --handoff $out/dot_synth_20261124_s02/native-verified.json \
+  --handoff $out/dot_synth_20261124_s03/native-verified.json \
   --handoff-sha256 "$receipt"
 /usr/bin/python3 - <<'PROGRESS'
 from pathlib import Path
 import json, time
-base = Path('/mnt/local/_outputs/deep-llms_th2/dot_synth_20261124_s03')
+base = Path('/mnt/local/_outputs/deep-llms_th2/dot_synth_20261124_s04')
 for _ in range(24):
     if (base/'failure.json').is_file() or (base/'status.json').is_file() and 'train' in (base/'status.json').read_text():
         break
     time.sleep(5)
-print('S03_FAILURE', (base/'failure.json').read_text()[-3000:] if (base/'failure.json').is_file() else 'none', flush=True)
-print('S03_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
+print('S04_FAILURE', (base/'failure.json').read_text()[-3000:] if (base/'failure.json').is_file() else 'none', flush=True)
+print('S04_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
 PROGRESS
