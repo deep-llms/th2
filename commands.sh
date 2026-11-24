@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-ohmv-dot-synth-s06-status-20261124-a01
+#th2-ohmv-dot-synth-s06-status-20261124-a02
 set -euo pipefail
 date -u
 /usr/bin/python3 - <<'PY'
@@ -15,7 +15,9 @@ for s in sorted(base.glob('s*/*/*/summary.json')):
     v = json.loads(s.read_text())
     compact[f"s{v['seed']}/{v['arm']}/{v['task']}"] = dict(params=v['params'], apps=v['applications'], secs=round(v['train_seconds']),
         res={st: {k: [round(r['exact'], 3), round(r['token'], 3), round(r.get('answer_depth', -1), 2)] for k, r in res.items()}
-             for st, res in v['results'].items()},
+             for st, res in v['results'].items() if st != 'adaptive'},
+        adaptive={tau: {k: [round(r['exact'], 3), round(r['depth'], 2), round(r['oracle'], 3)] for k, r in res.items()}
+                  for tau, res in v['results'].get('adaptive', {}).items()},
         log=[(l['step'], round(l['loss'], 3)) for l in v['log']][::3])
 print('SYNTH_RESULTS', json.dumps(compact, separators=(',', ':')), flush=True)
 for p in sorted(base.glob('s*/*/*/progress.json')):
