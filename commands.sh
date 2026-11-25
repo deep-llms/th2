@@ -1,64 +1,29 @@
-#1 +240+a
-#th2-ohmv-wait-f09-then-dot-fast-attn-f10-20261125
-set -euo pipefail
-export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+#1 +20+a
+#th2-ohmv-dot-f10-health-20261126-a01
+set -u
 date -u
-out=/mnt/local/_outputs/deep-llms_th2
-if [ -e "$out/dot_fast_attn_20261125_f10" ]; then echo F10_ALREADY_LAUNCHED; cat $out/dot_fast_attn_20261125_f10/status.json || true; exit 0; fi
 /usr/bin/python3 - <<'PY'
-import json, time
+# Read-only: f10 progress, finished NLLs (depth sweep, halting), downstream, terminal and receipt.
 from pathlib import Path
-base = Path('/mnt/local/_outputs/deep-llms_th2/dot_narrow_tmlp_20261125_f09')
-for i in range(720):  # no signal: wait up to 60 min for f09 to end on its own
-    if (base/'terminal.json').exists() or (base/'failure.json').exists():
-        break
-    time.sleep(5)
+import hashlib, json
+base = Path('/mnt/local/_outputs/deep-llms_th2/dot_fast_attn_20261125_f10')
 def j(p):
     return json.loads(p.read_text()) if p.is_file() else None
-jobs = [(0, 'swst_d6_tmlp_ff1024'), (1, 'swst_d6_tmlp_ff1024'), (0, 'swst_d7_tmlp_ff512'), (1, 'swst_d7_tmlp_ff512'),
-        (0, 'swst_d6_tmlp_ff512'), (1, 'swst_d6_tmlp_ff512'), (0, 'swst_d8_tmlp_ff512'), (1, 'swst_d8_tmlp_ff512')]
-r = {}
-for s, a in jobs:
-    ds = j(base/'downstream'/f's{s}-{a}'/'summary.json')
-    r[f's{s}/{a}'] = dict(nll=(j(base/f's{s}'/a/'summary.json') or {}).get('nll'),
-                          downstream={t: round(v['accuracy'], 4) for t, v in ds['tasks'].items()} if ds else None)
-print('F09_RESULTS', json.dumps(r), flush=True)
-print('F09_FAILURE_PRE', (base/'failure.json').read_text()[-1500:] if (base/'failure.json').exists() else 'none', flush=True)
-t = json.loads((base/'terminal.json').read_text())
-print('F09_TERMINAL', json.dumps(t), flush=True)
-assert t['native_verified'] is True, 'native not verified'
-PY
-receipt=$(sha256sum $out/dot_narrow_tmlp_20261125_f09/native-verified.json | cut -d' ' -f1)
-echo "NATIVE_RECEIPT $receipt"
-prior=2ff04abc74deba94cea64d2adf4824e65294feb21d74939ca1e64dd950a4ff92
-pkg="$PWD/resources/dot_f10_20261125.tar.xz"
-echo "ed8db89413f186c10288fdc8981a18473867ce3094873574fb5f4bc8df07a374  $pkg" | sha256sum -c -
-extra=$(mktemp -d $out/dot_f10_source.XXXXXXXX)
-tar -xJf "$pkg" -C "$extra"
-export PYTHONPATH=$out/dot_narrow_tmlp_20261125_f09/execution/source
-cd "$PYTHONPATH"
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
-  --base $out/dot_fast_attn_20261125_f10 \
-  --old $out/dot_narrow_tmlp_20261125_f09/execution --prior-sha256 "$prior" \
-  --added efficient_llm/dot_pool/model.py efficient_llm/warm_order/adaptation_runtime.py efficient_llm/warm_order/shared_heads.py efficient_llm/warm_order/dot_stop_sandwich.py efficient_llm/warm_order/loop_baselines.py efficient_llm/warm_order/loop_screen.py scripts/loop_screen_study.py scripts/dot_sandwich_study.py \
-  --replaced efficient_llm/dot_pool/model.py efficient_llm/warm_order/adaptation_runtime.py efficient_llm/warm_order/shared_heads.py efficient_llm/warm_order/dot_stop_sandwich.py efficient_llm/warm_order/loop_baselines.py efficient_llm/warm_order/loop_screen.py scripts/loop_screen_study.py scripts/dot_sandwich_study.py \
-  --module scripts.dot_sandwich_study \
-  --handoff $out/dot_narrow_tmlp_20261125_f09/native-verified.json \
-  --handoff-sha256 "$receipt"
-/usr/bin/python3 - <<'PROGRESS'
-from pathlib import Path
-import json, time
-base = Path('/mnt/local/_outputs/deep-llms_th2/dot_fast_attn_20261125_f10')
+r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
+nv = base/'native-verified.json'
+r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
 jobs = [(0, 'swst_d6_tmlp_lr14_fa'), (1, 'swst_d6_tmlp_lr14_fa'), (0, 'loop_cycle_a11_lr14_fa'), (1, 'loop_cycle_a11_lr14_fa'),
         (0, 'dense8_lr14'), (1, 'dense8_lr14'), (0, 'dense8_lr14_fa'), (1, 'dense8_lr14_fa')]
-paths = {f's{s}/{a}': base/f's{s}'/a/'progress.json' for s, a in jobs}
-for _ in range(36):
-    if (base/'failure.json').is_file():
-        break
-    if len([p for p in paths.values() if p.is_file()]) == len(paths):
-        break
-    time.sleep(5)
-print('F10_FAILURE', (base/'failure.json').read_text()[-3000:] if (base/'failure.json').is_file() else 'none', flush=True)
-print('F10_PROGRESS', json.dumps({a: json.loads(p.read_text()) for a, p in paths.items() if p.is_file()}), flush=True)
-print('F10_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
-PROGRESS
+r['jobs'] = {}
+for s, a in jobs:
+    d = base/f's{s}'/a
+    pr, sm = j(d/'progress.json'), j(d/'summary.json')
+    ds = j(base/'downstream'/f's{s}-{a}'/'summary.json')
+    r['jobs'][f's{s}/{a}'] = dict(step=(pr or {}).get('step'), tok_s=(pr or {}).get('tokens_per_s'), nll=(sm or {}).get('nll'),
+                                  halting=(sm or {}).get('halting'),
+                                  downstream={t: round(v['accuracy'], 4) for t, v in ds['tasks'].items()} if ds else None)
+if r['failure.json']:
+    r['log_tails'] = {p.name: p.read_text()[-2000:] for p in sorted(base.glob('*.log')) if 'Error' in p.read_text()[-4000:]}
+print('F10_HEALTH', json.dumps(r), flush=True)
+PY
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
