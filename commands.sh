@@ -1,54 +1,36 @@
-#1 +240+a
-#th2-ohmv-wait-f01-then-dot-compact-t-f02-20261125
-set -euo pipefail
-export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+#1 +20+a
+#th2-ohmv-dot-f01-f02-health-20261125-a01
+set -u
 date -u
-out=/mnt/local/_outputs/deep-llms_th2
-if [ -e "$out/dot_compact_t_20261125_f02" ]; then echo F02_ALREADY_LAUNCHED; cat $out/dot_compact_t_20261125_f02/status.json || true; exit 0; fi
 /usr/bin/python3 - <<'PY'
-import json
+# Read-only: f01 results (NLL, depth sweep, halting, downstream), f01 terminal and receipt; f02 launch state and progress.
 from pathlib import Path
-base = Path('/mnt/local/_outputs/deep-llms_th2/dot_fixed_improve_20261125_f01')
-import time
-for i in range(1320):  # no signal: wait up to 110 min for f01 (train + downstream) to end on its own
-    if (base/'terminal.json').exists() or (base/'failure.json').exists():
-        break
-    time.sleep(5)
-print('F01_FAILURE', (base/'failure.json').read_text()[-1500:] if (base/'failure.json').exists() else 'none', flush=True)
-t = json.loads((base/'terminal.json').read_text())
-print('F01_TERMINAL', json.dumps(t), flush=True)
-assert t['native_verified'] is True, 'native not verified'
+import hashlib, json
+root = Path('/mnt/local/_outputs/deep-llms_th2')
+def j(p):
+    return json.loads(p.read_text()) if p.is_file() else None
+def study(name, jobs):
+    base = root/name
+    r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
+    nv = base/'native-verified.json'
+    r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
+    r['exists'] = base.is_dir()
+    r['jobs'] = {}
+    for s, a in jobs:
+        d = base/f's{s}'/a
+        pr, sm = j(d/'progress.json'), j(d/'summary.json')
+        ds = j(base/'downstream'/f's{s}-{a}'/'summary.json')
+        r['jobs'][f's{s}/{a}'] = dict(step=(pr or {}).get('step'), tok_s=(pr or {}).get('tokens_per_s'), nll=(sm or {}).get('nll'),
+                                      halting=(sm or {}).get('halting'),
+                                      downstream={t: round(v['accuracy'], 4) for t, v in ds['tasks'].items()} if ds else None)
+    if r['failure.json']:
+        r['log_tails'] = {p.name: p.read_text()[-2000:] for p in sorted(base.glob('*.log')) if 'Error' in p.read_text()[-4000:]}
+    return r
+f01 = [(0, 'swst_fixed_d3_film'), (1, 'swst_fixed_d3_film'), (0, 'swst_fixed_d3_lora'), (1, 'swst_fixed_d3_lora'),
+       (0, 'swst_fixed_d4_light'), (1, 'swst_fixed_d4_light'), (0, 'swst_fixed_d3_fl'), (0, 'swst_fixed_d4_lightf')]
+f02 = [(0, 'swst_d3_nt384'), (1, 'swst_d3_nt384'), (0, 'swst_m4d5_nt384'), (1, 'swst_m4d5_nt384'),
+       (0, 'swst_d3_nt256'), (1, 'swst_d3_nt256'), (0, 'swst_m4d5_nt256'), (0, 'swst_d3_h4')]
+print('F01_HEALTH', json.dumps(study('dot_fixed_improve_20261125_f01', f01)), flush=True)
+print('F02_HEALTH', json.dumps(study('dot_compact_t_20261125_f02', f02)), flush=True)
 PY
-receipt=$(sha256sum $out/dot_fixed_improve_20261125_f01/native-verified.json | cut -d' ' -f1)
-echo "NATIVE_RECEIPT $receipt"
-pkg="$PWD/resources/dot_f02_20261125.tar.xz"
-echo "7f52bf8237006fae12162225287e0981f310105f06076628b9fc655bde0a52f8  $pkg" | sha256sum -c -
-extra=$(mktemp -d $out/dot_f02_source.XXXXXXXX)
-tar -xJf "$pkg" -C "$extra"
-export PYTHONPATH=$out/dot_fixed_improve_20261125_f01/execution/source
-cd "$PYTHONPATH"
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
-  --base $out/dot_compact_t_20261125_f02 \
-  --old $out/dot_fixed_improve_20261125_f01/execution --prior-sha256 4a87411be92c287e95485bee8462808a51642c5774ec1c52224df446665802c9 \
-  --added efficient_llm/warm_order/dot_stop_sandwich.py efficient_llm/warm_order/loop_screen.py scripts/loop_screen_study.py scripts/dot_sandwich_study.py \
-  --replaced efficient_llm/warm_order/dot_stop_sandwich.py efficient_llm/warm_order/loop_screen.py scripts/loop_screen_study.py scripts/dot_sandwich_study.py \
-  --module scripts.dot_sandwich_study \
-  --handoff $out/dot_fixed_improve_20261125_f01/native-verified.json \
-  --handoff-sha256 "$receipt"
-/usr/bin/python3 - <<'PROGRESS'
-from pathlib import Path
-import json, time
-base = Path('/mnt/local/_outputs/deep-llms_th2/dot_compact_t_20261125_f02')
-jobs = [(0, 'swst_d3_nt384'), (1, 'swst_d3_nt384'), (0, 'swst_m4d5_nt384'), (1, 'swst_m4d5_nt384'),
-        (0, 'swst_d3_nt256'), (1, 'swst_d3_nt256'), (0, 'swst_m4d5_nt256'), (0, 'swst_d3_h4')]
-paths = {f's{s}/{a}': base/f's{s}'/a/'progress.json' for s, a in jobs}
-for _ in range(36):
-    if (base/'failure.json').is_file():
-        break
-    if len([p for p in paths.values() if p.is_file()]) == len(paths):
-        break
-    time.sleep(5)
-print('F02_FAILURE', (base/'failure.json').read_text()[-3000:] if (base/'failure.json').is_file() else 'none', flush=True)
-print('F02_PROGRESS', json.dumps({a: json.loads(p.read_text()) for a, p in paths.items() if p.is_file()}), flush=True)
-print('F02_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
-PROGRESS
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
