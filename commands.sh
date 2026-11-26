@@ -1,50 +1,29 @@
-#1 +240+a
-#th2-ohmv-dot-vs-inkling-f17-20261126
-set -euo pipefail
-export PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+#1 +20+a
+#th2-ohmv-dot-f17-health-20261126-a01
+set -u
 date -u
-out=/mnt/local/_outputs/deep-llms_th2
-if [ -e "$out/dot_vs_inkling_20261126_f17" ]; then echo F17_ALREADY_LAUNCHED; cat $out/dot_vs_inkling_20261126_f17/status.json || true; exit 0; fi
 /usr/bin/python3 - <<'PY'
-import json
+# Read-only: f17 progress, finished NLLs (depth sweep, halting), downstream, terminal and receipt.
 from pathlib import Path
-base = Path('/mnt/local/_outputs/deep-llms_th2/dot_ffn_control_20261126_f16')
-t = json.loads((base/'terminal.json').read_text())
-print('F16_TERMINAL', json.dumps(t), flush=True)
-assert t['native_verified'] is True, 'native not verified'
-PY
-receipt=$(sha256sum $out/dot_ffn_control_20261126_f16/native-verified.json | cut -d' ' -f1)
-echo "NATIVE_RECEIPT $receipt"
-[ "$receipt" = 88836ba2e9e993efc63722fe16307865c578422ede2c706ced389f15e0450d99 ]
-prior=c1b7e60f6101818f3774310aaec774e108751ed08e554811d7b03f0ae4fe0f97
-pkg="$PWD/resources/dot_f17_20261126.tar.xz"
-echo "a5f09a3f47adad8dfb5a1c8b9d8b8167a710888556952999d48410e9877402ab  $pkg" | sha256sum -c -
-extra=$(mktemp -d $out/dot_f17_source.XXXXXXXX)
-tar -xJf "$pkg" -C "$extra"
-export PYTHONPATH=$out/dot_ffn_control_20261126_f16/execution/source
-cd "$PYTHONPATH"
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 "$extra/scripts/launch_loop_screen.py" "$extra" \
-  --base $out/dot_vs_inkling_20261126_f17 \
-  --old $out/dot_ffn_control_20261126_f16/execution --prior-sha256 "$prior" \
-  --added efficient_llm/warm_order/loop_screen.py scripts/dot_sandwich_study.py \
-  --replaced efficient_llm/warm_order/loop_screen.py scripts/dot_sandwich_study.py \
-  --module scripts.dot_sandwich_study \
-  --handoff $out/dot_ffn_control_20261126_f16/native-verified.json \
-  --handoff-sha256 "$receipt"
-/usr/bin/python3 - <<'PROGRESS'
-from pathlib import Path
-import json, time
+import hashlib, json
 base = Path('/mnt/local/_outputs/deep-llms_th2/dot_vs_inkling_20261126_f17')
-jobs = [(0, 'gated_fa'), (1, 'gated_fa'), (0, 'memory_fa'), (1, 'memory_fa'), (0, 'loop_attnres_fa'), (1, 'loop_attnres_fa'),
-        (0, 'attnres8_fa'), (1, 'attnres8_fa')]
-paths = {f's{s}/{a}': base/f's{s}'/a/'progress.json' for s, a in jobs}
-for _ in range(36):
-    if (base/'failure.json').is_file():
-        break
-    if len([p for p in paths.values() if p.is_file()]) == len(paths):
-        break
-    time.sleep(5)
-print('F17_FAILURE', (base/'failure.json').read_text()[-3000:] if (base/'failure.json').is_file() else 'none', flush=True)
-print('F17_PROGRESS', json.dumps({a: json.loads(p.read_text()) for a, p in paths.items() if p.is_file()}), flush=True)
-print('F17_STATUS', (base/'status.json').read_text() if (base/'status.json').is_file() else 'absent', flush=True)
-PROGRESS
+def j(p):
+    return json.loads(p.read_text()) if p.is_file() else None
+r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
+nv = base/'native-verified.json'
+r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
+jobs = [(0, 'gated_fa'), (1, 'gated_fa'), (0, 'memory_fa'), (1, 'memory_fa'),
+        (0, 'loop_attnres_fa'), (1, 'loop_attnres_fa'), (0, 'attnres8_fa'), (1, 'attnres8_fa')]
+r['jobs'] = {}
+for s, a in jobs:
+    d = base/f's{s}'/a
+    pr, sm = j(d/'progress.json'), j(d/'summary.json')
+    ds = j(base/'downstream'/f's{s}-{a}'/'summary.json')
+    r['jobs'][f's{s}/{a}'] = dict(step=(pr or {}).get('step'), tok_s=(pr or {}).get('tokens_per_s'), nll=(sm or {}).get('nll'),
+                                  halting=(sm or {}).get('halting'),
+                                  downstream={t: round(v['accuracy'], 4) for t, v in ds['tasks'].items()} if ds else None)
+if r['failure.json']:
+    r['log_tails'] = {p.name: p.read_text()[-2000:] for p in sorted(base.glob('*.log')) if 'Error' in p.read_text()[-4000:]}
+print('F17_HEALTH', json.dumps(r), flush=True)
+PY
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
