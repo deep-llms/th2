@@ -1,9 +1,9 @@
 #1 +20+a
-#th2-ohmv-liveness-f18b-state-20261126-a01
+#th2-ohmv-liveness-f18b-state-20261126-a02
 set -u
 date -u
 /usr/bin/python3 - <<'PY'
-# Read-only liveness probe: does the f18b run directory exist yet, and its status (no writes, no process changes).
+# Read-only liveness probe (hourly, a02): does the f18b run directory exist yet, and its status (no writes, no process changes).
 from pathlib import Path
 base = Path('/mnt/local/_outputs/deep-llms_th2/dot_f18b_20261126')
 print('F18B_EXISTS', base.is_dir(), flush=True)
