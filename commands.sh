@@ -1,29 +1,16 @@
-#1 +20+a
-#th2-ohmv-dot-f22-health-20261126-a01
+#1 +240+a
+#th2-ohmv-backup-discover-20261126-a01
 set -u
 date -u
-/usr/bin/python3 - <<'PY'
-# Read-only: f22 progress, finished NLLs (depth sweep, halting), downstream, terminal and receipt.
-from pathlib import Path
-import hashlib, json
-base = Path('/mnt/local/_outputs/deep-llms_th2/dot_f22_20261126')
-def j(p):
-    return json.loads(p.read_text()) if p.is_file() else None
-r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
-nv = base/'native-verified.json'
-r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
-jobs = [(1, 'huginn_r3_lr28'), (0, 'huginn_r2_lr28'), (0, 'huginn_r3_lr20_prenorm'), (0, 'huginn_r3_lr20_adamw'),
-        (0, 'huginn_r3_lr20_zero_state'), (0, 'huginn_r3_lr20_fixed_r'), (0, 'huginn_r3_lr20_add_inject'), (0, 'huginn_r3_lr20_no_emb_scale')]
-r['jobs'] = {}
-for s, a in jobs:
-    d = base/f's{s}'/a
-    pr, sm = j(d/'progress.json'), j(d/'summary.json')
-    ds = j(base/'downstream'/f's{s}-{a}'/'summary.json')
-    r['jobs'][f's{s}/{a}'] = dict(step=(pr or {}).get('step'), tok_s=(pr or {}).get('tokens_per_s'), nll=(sm or {}).get('nll'),
-                                  full_stats=(sm or {}).get('full_stats'), params=(sm or {}).get('non_embedding_parameters'),
-                                  downstream={t: round(v['accuracy'], 4) for t, v in ds['tasks'].items()} if ds else None)
-if r['failure.json']:
-    r['log_tails'] = {p.name: p.read_text()[-2000:] for p in sorted(base.glob('*.log')) if 'Error' in p.read_text()[-4000:]}
-print('F22_HEALTH', json.dumps(r), flush=True)
-PY
-nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+# Read-only: find the persistent backup folder under /mnt and size what needs backing up before the B200 restart.
+echo '== /mnt'; ls -la /mnt/
+for d in /mnt/*/; do echo "== $d"; ls -la "$d" 2>/dev/null | head -25; done
+echo '== backup dirs'; find /mnt -maxdepth 4 -iname '*backup*' -type d 2>/dev/null | head -20
+echo '== mounts'; df -hT /mnt /mnt/* 2>/dev/null; findmnt -lo TARGET,SOURCE,FSTYPE,SIZE,AVAIL 2>/dev/null | grep -E '^/mnt|^/ ' | head -20
+echo '== outputs size'; du -sh /mnt/local/_outputs/deep-llms_th2 2>/dev/null
+du -sh /mnt/local/_outputs/deep-llms_th2/* 2>/dev/null | sort -h | tail -60
+echo '== checkpoints'; find /mnt/local/_outputs/deep-llms_th2 -name '*.pt' -size +1M 2>/dev/null | wc -l
+find /mnt/local/_outputs/deep-llms_th2 -name '*.pt' -size +1M -printf '%s\n' 2>/dev/null | awk '{s+=$1} END {printf "%.1f GB\n", s/1e9}'
+find /mnt/local/_outputs/deep-llms_th2 -path '*backup*' -name '*.pt' -printf '%s\n' 2>/dev/null | awk '{s+=$1; n++} END {printf "in-run backup copies: %d files %.1f GB\n", n, s/1e9}'
+echo '== other local trees'; du -sh /mnt/local/* 2>/dev/null | sort -h | tail -20
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader | head -8
