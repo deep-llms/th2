@@ -1,17 +1,29 @@
 #1 +20+a
-#th2-ohmv-liveness-f21-state-20261126-a02
+#th2-ohmv-dot-f21-health-20261126-a01
 set -u
 date -u
 /usr/bin/python3 - <<'PY'
-# Read-only liveness probe (hourly, a02; runner silent since 07:54Z): did the f21 run start (its directory), its status and progress; no writes, no process changes.
+# Read-only: f21 progress, finished NLLs (depth sweep, halting), downstream, terminal and receipt.
 from pathlib import Path
-import json
+import hashlib, json
 base = Path('/mnt/local/_outputs/deep-llms_th2/dot_f21_20261126')
-print('F21_EXISTS', base.is_dir(), 'F20_TERMINAL_EXISTS', (base.parent/'dot_f20_20261126'/'terminal.json').is_file(), flush=True)
-for n in ('status.json', 'failure.json', 'terminal.json'):
-    p = base/n
-    print(n, p.read_text()[-600:] if p.is_file() else 'absent', flush=True)
-for p in sorted(base.glob('s*/*/progress.json')):
-    print('PROGRESS', p.parent.parent.name + '/' + p.parent.name, p.read_text()[:200], flush=True)
+def j(p):
+    return json.loads(p.read_text()) if p.is_file() else None
+r = {n: j(base/n) for n in ('status.json', 'failure.json', 'terminal.json')}
+nv = base/'native-verified.json'
+r['native_verified_sha256'] = hashlib.sha256(nv.read_bytes()).hexdigest() if nv.is_file() else None
+jobs = [(0, 'huginn_r3_lr28'), (0, 'huginn_r3_lr40'), (0, 'huginn_r2_lr20'), (1, 'huginn_r2_lr20'), (1, 'huginn_r3_lr20'),
+        (1, 'ouro_t2_lr14'), (1, 'mor_mc3'), (0, 'swst_d7_tmlp_ff512_unshared_lr20_fa')]
+r['jobs'] = {}
+for s, a in jobs:
+    d = base/f's{s}'/a
+    pr, sm = j(d/'progress.json'), j(d/'summary.json')
+    ds = j(base/'downstream'/f's{s}-{a}'/'summary.json')
+    r['jobs'][f's{s}/{a}'] = dict(step=(pr or {}).get('step'), tok_s=(pr or {}).get('tokens_per_s'), nll=(sm or {}).get('nll'),
+                                  full_stats=(sm or {}).get('full_stats'), params=(sm or {}).get('non_embedding_parameters'),
+                                  downstream={t: round(v['accuracy'], 4) for t, v in ds['tasks'].items()} if ds else None)
+if r['failure.json']:
+    r['log_tails'] = {p.name: p.read_text()[-2000:] for p in sorted(base.glob('*.log')) if 'Error' in p.read_text()[-4000:]}
+print('F21_HEALTH', json.dumps(r), flush=True)
 PY
-nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader | head -8
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
