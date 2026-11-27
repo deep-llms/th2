@@ -55,12 +55,24 @@ def training_policy(device):
 
 
 @contextmanager
-def training_runtime(device):
-    """Fixed arithmetic for exact paired continuation/resume, restored on exit."""
+def training_runtime(device, fast_attention=False):
+    """Fixed arithmetic for exact paired continuation/resume, restored on exit.
+
+    fast_attention=True (DOT studies from f10): the deep2shallow B200 training setting - no deterministic mode, no pinned
+    SDPA backend (torch picks its fused kernels), matmul TF32 off, cuDNN TF32 on. Exact bitwise resume is not guaranteed."""
     if device == 'cpu':
         yield training_policy(device)
         return
     if device != 'cuda':raise ValueError('Explicit cpu/cuda training device required')
+    if fast_attention:
+        previous = (torch.backends.cuda.matmul.allow_tf32, torch.backends.cudnn.allow_tf32)
+        try:
+            torch.backends.cuda.matmul.allow_tf32 = False
+            torch.backends.cudnn.allow_tf32 = True
+            yield dict(training_policy(device), attention_backend='sdpa_fused', deterministic=False, cudnn_tf32=True)
+        finally:
+            torch.backends.cuda.matmul.allow_tf32, torch.backends.cudnn.allow_tf32 = previous
+        return
     import os
     if os.environ.get('CUBLAS_WORKSPACE_CONFIG') != ':4096:8':
         raise ValueError('Set CUBLAS_WORKSPACE_CONFIG=:4096:8 before CUDA initialization')

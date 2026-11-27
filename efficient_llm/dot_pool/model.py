@@ -55,19 +55,56 @@ class Attention(nn.Module):
         cos,sin=angles.cos().to(q.dtype),angles.sin().to(q.dtype)
         def rotary(z):return z*cos+torch.cat([-z[...,c.head_dim//2:],z[...,:c.head_dim//2]],-1)*sin
         q,k=rotary(q),rotary(k)
-        if c.backend=='fa4':
-            from flash_attn.cute.interface import flash_attn_varlen_func
-            # Segment identity resets at every packed row, including fragments.
-            start=torch.ones_like(segments,dtype=torch.bool);start[:,1:]=segments[:,1:]!=segments[:,:-1]
-            starts=start.flatten().nonzero().flatten().to(torch.int32)
-            cu=torch.cat([starts,starts.new_tensor([b*t])]);maxlen=int((cu[1:]-cu[:-1]).max())
-            out=flash_attn_varlen_func(q.to(v.dtype).flatten(0,1).contiguous(),k.to(v.dtype).flatten(0,1).contiguous(),v.flatten(0,1).contiguous(),cu_seqlens_q=cu,cu_seqlens_k=cu,max_seqlen_q=maxlen,max_seqlen_k=maxlen,causal=True)
-            if isinstance(out,tuple):out=out[0]
-            out=out.reshape(b,t,-1)
-        else:
-            mask=(segments[:,:,None]==segments[:,None,:]) & torch.ones(t,t,dtype=torch.bool,device=x.device).tril()
-            out=F.scaled_dot_product_attention(q.transpose(1,2),k.transpose(1,2).repeat_interleave(c.heads//c.kv_heads,1),v.transpose(1,2).repeat_interleave(c.heads//c.kv_heads,1),attn_mask=mask[:,None]).transpose(1,2).reshape(b,t,-1)
-        return self.o_proj(out)
+        return self.o_proj(attend(q,k,v,segments,c.backend))
+
+def causal_mask(segments,t,device):
+    """Causal mask that also isolates documents: (B, T, T) bool, or (T, T) when segments is None (one sequence per row)."""
+    tril=torch.ones(t,t,dtype=torch.bool,device=device).tril()
+    return tril if segments is None else (segments[:,:,None]==segments[:,None,:]) & tril
+
+def document_positions(segments):
+    """Rotary positions restarting at 0 at every document start (packed rows), as deep2shallow's packing does."""
+    t=segments.shape[1];idx=torch.arange(t,device=segments.device).expand_as(segments)
+    start=torch.ones_like(segments,dtype=torch.bool);start[:,1:]=segments[:,1:]!=segments[:,:-1]
+    return idx-torch.where(start,idx,torch.zeros_like(idx)).cummax(1).values
+
+def cu_seqlens(segments,b,t,device):
+    """Varlen boundaries over the flattened (B*T) tokens: a new sequence at every row start and segment change."""
+    if segments is None:
+        return torch.arange(0,(b+1)*t,t,dtype=torch.int32,device=device),t
+    start=torch.ones_like(segments,dtype=torch.bool);start[:,1:]=segments[:,1:]!=segments[:,:-1]
+    starts=start.flatten().nonzero().flatten().to(torch.int32)
+    cu=torch.cat([starts,starts.new_tensor([b*t])]);return cu,int((cu[1:]-cu[:-1]).max())
+
+def attend(q,k,v,segments,backend):
+    """Causal attention within documents. q (B,T,H,D), k/v (B,T,KV,D); segments (B,T) document ids or None (one
+    sequence per row). Every backend honours segments; none of them ignores document boundaries.
+      sdpa  : reference path (explicit mask, repeated k/v); the exact path used by the deterministic MATH runtime.
+      fused : torch SDPA kernels with native GQA; implicit causal when segments is None, else a document mask.
+      fa4   : FlashAttention-4 varlen (cu_seqlens from segments); BF16/FP16 on CUDA only."""
+    b,t,h,_=q.shape
+    if backend=='fa4':
+        if not q.is_cuda or v.dtype not in (torch.bfloat16,torch.float16):
+            raise ValueError('fa4 needs BF16/FP16 CUDA tensors')
+        from flash_attn.cute.interface import flash_attn_varlen_func
+        cu,maxlen=cu_seqlens(segments,b,t,q.device)
+        out=flash_attn_varlen_func(q.to(v.dtype).flatten(0,1).contiguous(),k.to(v.dtype).flatten(0,1).contiguous(),v.flatten(0,1).contiguous(),cu_seqlens_q=cu,cu_seqlens_k=cu,max_seqlen_q=maxlen,max_seqlen_k=maxlen,causal=True)
+        if isinstance(out,tuple):out=out[0]
+        return out.reshape(b,t,-1)
+    q,k,v=q.transpose(1,2),k.transpose(1,2),v.transpose(1,2)
+    if backend=='fused':  # as deep2shallow trained on B200 (torch picks the kernel; no backend is pinned)
+        if segments is None:  # implicit causal with native GQA
+            out=F.scaled_dot_product_attention(q,k,v,is_causal=True,enable_gqa=True)
+        else:  # documents isolated: repeated k/v and an additive (B, 1, T, T) mask, the path deep2shallow ran via cuDNN
+            rep=h//k.shape[1];allowed=causal_mask(segments,t,q.device)[:,None]
+            bias=torch.zeros(allowed.shape,dtype=q.dtype,device=q.device).masked_fill(~allowed,torch.finfo(q.dtype).min)
+            out=F.scaled_dot_product_attention(q,k.repeat_interleave(rep,1),v.repeat_interleave(rep,1),attn_mask=bias)
+    elif backend=='sdpa':
+        rep=h//k.shape[1];mask=causal_mask(segments,t,q.device)
+        out=F.scaled_dot_product_attention(q,k.repeat_interleave(rep,1),v.repeat_interleave(rep,1),attn_mask=mask if segments is None else mask[:,None])
+    else:
+        raise ValueError('Unknown attention backend: '+str(backend))
+    return out.transpose(1,2).reshape(b,t,-1)
 
 class MLP(nn.Module):
     def __init__(self,d,f):
@@ -104,9 +141,19 @@ class Block(nn.Module):
     def __init__(self,c,dense):
         super().__init__();self.input_layernorm=RMSNorm(c.d);self.self_attn=Attention(c);self.post_attention_layernorm=RMSNorm(c.d)
         self.mlp=MLP(c.d,c.ff) if dense else None
-    def attention(self,h,pos,segments):return h+self.self_attn(self.input_layernorm(h),pos,segments)
+    def attention(self,h,pos,segments):
+        h=h+self.self_attn(self.input_layernorm(h),pos,segments)
+        return self.norm_2(h) if 'norm_2' in self._modules else h  # Huginn sandwich norm (f23), when enabled
+    def ffn(self,h):
+        h=h+self.mlp(self.post_attention_layernorm(h))
+        return self.norm_4(h) if 'norm_4' in self._modules else h
     def forward(self,h,pos,segments):
-        h=self.attention(h,pos,segments);return h+self.mlp(self.post_attention_layernorm(h))
+        return self.ffn(self.attention(h,pos,segments))
+
+def enable_sandwich(block,d):
+    """Huginn's 4-norm sandwich block (f23): x = n2(x + Attn(n1 x)); x = n4(x + MLP(n3 x)); new norms start at 1."""
+    block.norm_2=RMSNorm(d)
+    if block.mlp is not None:block.norm_4=RMSNorm(d)
 
 class Model(nn.Module):
     def __init__(self,c):

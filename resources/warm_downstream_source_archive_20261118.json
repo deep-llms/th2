@@ -1,8 +1,0 @@
-{
-  "path": "docs/results/a2_nem_s1_20261028/final/supervised/run/pair/P1T-pre.json",
-  "archived": "docs/results/a2_nem_s1_20261028/final/supervised/run/pair/P1T-pre.json.gz",
-  "original_sha256": "ecc92eee0010fcd322da3558d37a33947e5dd2ea4420ee8cb014088227736b10",
-  "original_bytes": 232367,
-  "compressed_bytes": 71770,
-  "roundtrip_verified": true
-}

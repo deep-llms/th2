@@ -1,7 +1,0 @@
-{
-  "status": "PASS",
-  "unit_tests": 8,
-  "actual_cpu_scorer_then_canonical_replay": true,
-  "items_per_task": 2,
-  "synthetic_model_not_experiment": true
-}

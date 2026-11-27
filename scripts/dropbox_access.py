@@ -75,7 +75,7 @@ def validate_path(path):
         raise AccessError("Use a path inside the share beginning with /; no parent traversal")
 
 
-def list_folder(token, url, path=""):
+def list_folder(token, url, path="", include_identity=False):
     validate_path(path)
     endpoint = "files/list_folder"
     body = {"path": path, "shared_link": {"url": url}, "recursive": False, "limit": 2000}
@@ -86,8 +86,11 @@ def list_folder(token, url, path=""):
                      json.dumps(body).encode(), headers) as response:
             data = json.load(response)
         for item in data["entries"]:
-            yield {"type": item[".tag"], "path": path.rstrip("/") + "/" + item["name"],
+            entry={"type": item[".tag"], "path": path.rstrip("/") + "/" + item["name"],
                    "bytes": item.get("size"), "modified": item.get("server_modified")}
+            if include_identity:
+                entry.update(id=item.get('id'),rev=item.get('rev'),content_hash=item.get('content_hash'))
+            yield entry
         if not data.get("has_more"):
             break
         cursor = data["cursor"]
@@ -152,6 +155,7 @@ def main():
     sub = parser.add_subparsers(dest="mode", required=True)
     listing = sub.add_parser("list")
     listing.add_argument("--path", default="")
+    listing.add_argument("--identity", action="store_true")
     pulling = sub.add_parser("download")
     pulling.add_argument("--path", required=True)
     pulling.add_argument("--output", required=True, type=Path)
@@ -161,7 +165,7 @@ def main():
         url = shared_link(args.folders, args.label)
         token = access_token(args.credentials)
         if args.mode == "list":
-            for item in list_folder(token, url, args.path):
+            for item in list_folder(token, url, args.path,args.identity):
                 print(json.dumps(item))
         else:
             print(json.dumps(download(token, url, args.path, args.output, args.sha256)))

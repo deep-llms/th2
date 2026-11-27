@@ -1,0 +1,15 @@
+{
+ "stem": "/disk/thuat/dot_data_20261126/dot/e2/train",
+ "data_sha256": {
+  ".bin": "90d971d9203c9ab6c1498165dd35a2c6887ee8d5f886cd1242cc07ddc08368d6",
+  ".starts": "8302b82ca68fa93c62ca378b60e7f57bd20090ad3490bdb2ce5eaa7e32b898ed"
+ },
+ "eligible": 2649984,
+ "seed": 20261126,
+ "files": {
+  "measurement": "23da0f73a006cba9e6ec3c8a6736a2640a583463658a63970b2285b503b85a8a",
+  "calibration": "60e021787044e9ef664121f059c7b616594536417fcc76dc51a92f62ad153bb7",
+  "train_s0": "cc4539d3e7a33abd1aceac8535b6117d0d6eb52963dae11c4e0eeb1b8f0dc23c",
+  "train_s1": "7ea98e3cf958f5be07020bbbe54ec377ec75ee13f93e26d92f2aceb05237c6ce"
+ }
+}
