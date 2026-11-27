@@ -455,6 +455,19 @@ SPECS.update({
                                                                     full_backprop=True, layout='cycle3', shared_t=True,
                                                                     **cfg))
        for name, cfg in (('t750', dict(t_ff=750)), ('t576x2', dict(t_ff=576, t_hidden=2)), ('t512', dict(t_ff=512)))},
+    # L33 (T improvements on the best layout, pair + scaled init): idea 1 anchor gate, idea 3 T sees the last change
+    **{f'dotpair_rand_inj_t512_si_{name}_lr14': dict(blocks=4, loop=None, mix='dotrec', var=False, steps=12288,
+                                                    fast_attn=True, lr_scale=1.4,
+                                                    dotrec=dict(mean_recurrence=3, backprop=3, t='mlp', t_ff=512,
+                                                                inject=True, layout='pair', full_backprop=True,
+                                                                scaled_init=True, **cfg))
+       for name, cfg in (('gate', dict(anchor_gate=True)), ('delta', dict(delta=True)))},
+    # L34 (user): one shared d7-style T + scaled init, and the 4x-token B200 batch (train 4x directly; the calibration
+    # curve gives the whole trajectory): Huginn, DOT #1 (pair + init), DOT #2 (full + init), one-T DOT (+ init)
+    'dotshared_rand_t512_si_lr14': dict(blocks=4, loop=None, mix='dotrec', var=False, steps=12288, fast_attn=True,
+                                        lr_scale=1.4, dotrec=dict(mean_recurrence=3, backprop=3, t='mlp', t_ff=512,
+                                                                  inject=True, full_backprop=True, layout='cycle3',
+                                                                  shared_t=True, scaled_init=True)),
     # L27 companion: the same full DOT with Huginn's truncated backprop (gradients through the last 3 recurrences)
     'dotfull_rand_inj_t512_trunc_lr14': dict(blocks=4, loop=None, mix='dotrec', var=False, steps=12288, fast_attn=True,
                                              lr_scale=1.4, dotrec=dict(mean_recurrence=3, backprop=3, t='mlp', t_ff=512,
@@ -527,6 +540,9 @@ DYN_RANK = 32
 DYN_BOUND = .05  # dyn='tanh': per-element query delta bounded to +-0.05 (trained AttnRes queries ~0.004-0.02)
 MOE_EXPERTS, MOE_TOP, MOE_FF_DIV, MOE_BALANCE = 8, 2, 2, .01
 ARMS = ('dense4', 'dense4_2x', 'dense8', 'serial', 'memory', 'gated', 'gated_var', 'attnres')  # round 1
+# L34: the 4x-token versions of the B200 batch (built from the registered 1x specs; only the step count changes)
+SPECS.update({f'{a}_4x': dict(SPECS[a], steps=49152) for a in (
+    'huginn_r3_lr28', 'dotpair_rand_inj_t512_si_lr14', 'dotfull_rand_inj_t512_si_lr14', 'dotshared_rand_t512_si_lr14')})
 ALL_ARMS = tuple(SPECS)
 LOOP_ARMS = tuple(a for a, s in SPECS.items() if s['loop'])
 STEPS = {a: s['steps'] for a, s in SPECS.items()}
@@ -858,3 +874,4 @@ class LoopScreen(EmbeddingAnchor):
         if t_on:
             t_step(len(order))
         return self._attnres_mix(sources, 2 * self.spec['blocks'])
+

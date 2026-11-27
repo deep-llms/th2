@@ -54,25 +54,43 @@ class TMLP2(nn.Module):
 
 
 class Translator(nn.Module):
-    def __init__(self, d, f, inject, mlp, hidden=1):
+    """anchor_gate (L33 idea 1): T(s, e) = norm_out(g * n(s) + (1 - g) * n(e) + MLP(...)), g = sigmoid(per-channel
+    logit, init 3 -> 0.95): the translator learns how far to pull the state back toward the anchor each time.
+    delta (L33 idea 3): the MLP also sees n(delta), delta = the change the previous module made to the state."""
+    def __init__(self, d, f, inject, mlp, hidden=1, anchor_gate=False, delta=False):
         super().__init__()
-        self.inject = inject
+        self.inject, self.anchor_gate, self.use_delta = inject, bool(anchor_gate), bool(delta)
+        if self.anchor_gate and not inject:
+            raise ValueError('anchor_gate needs the injected anchor e')
         if mlp:
             self.norm_in = RMSNorm(d)
             if inject:
                 self.norm_e = RMSNorm(d)
-            self.mlp = (TMLP if hidden == 1 else TMLP2)(2 * d if inject else d, d, f)
+            if self.use_delta:
+                self.norm_d = RMSNorm(d)
+            self.mlp = (TMLP if hidden == 1 else TMLP2)(d * (1 + bool(inject) + self.use_delta), d, f)
+            if self.anchor_gate:
+                self.gate_logit = nn.Parameter(torch.full((d,), 3.))
         self.norm_out = RMSNorm(d)
 
-    def forward(self, s, e, code=None):
+    def forward(self, s, e, code=None, delta=None):
         if 'mlp' not in self._modules:
             return self.norm_out(s)
-        u = self.norm_in(s)
+        ns = self.norm_in(s)
+        u = ns
         if code is not None:  # L32 shared T: the recipient's learned code, added to the normalized state (zero init)
             u = u + code.to(u.dtype)
+        parts, ne = [u], None
         if self.inject:
-            u = torch.cat([u, self.norm_e(e)], -1)
-        return self.norm_out(s + self.mlp(u))
+            ne = self.norm_e(e)
+            parts.append(ne)
+        if self.use_delta:
+            parts.append(self.norm_d(delta))
+        m = self.mlp(torch.cat(parts, -1) if len(parts) > 1 else u)
+        if self.anchor_gate:
+            g = torch.sigmoid(self.gate_logit).to(ns.dtype)
+            return self.norm_out(g * ns + (1 - g) * ne + m)
+        return self.norm_out(s + m)
 
 
 class DotRecurrent(EmbeddingAnchor):
@@ -216,11 +234,42 @@ class DotPair(DotRecurrent):
     def __init__(self, config, arm, spec):
         super().__init__(config, arm, spec)  # B0 prelude, B1-B2 core, Huginn's sampler and eval variants
         f = self.f
-        self.translators = nn.ModuleList(Translator(config.d, f['t_ff'], bool(f.get('inject')), f['t'] == 'mlp')
+        self.translators = nn.ModuleList(Translator(config.d, f['t_ff'], bool(f.get('inject')), f['t'] == 'mlp',
+                                                    anchor_gate=f.get('anchor_gate'), delta=f.get('delta'))
                                          for _ in range(2))  # recipients: the core pair, the head
         for module in self.translators.modules():
             if isinstance(module, nn.Linear):
                 nn.init.normal_(module.weight, std=.02)
+        self.use_delta = bool(f.get('delta'))
 
     def _recur(self, s, e, pos, segments):
         return self.blocks[2](self.blocks[1](self.translators[0](s, e), pos, segments), pos, segments)
+
+    def _recur_delta(self, s, e, d, pos, segments):
+        return self.blocks[2](self.blocks[1](self.translators[0](s, e, delta=d), pos, segments), pos, segments)
+
+    def hidden(self, x, path=None, *, skip=None, segments=None, **kwargs):
+        if not self.use_delta:
+            return super().hidden(x, path, skip=skip, segments=segments, **kwargs)
+        if skip is not None:
+            raise ValueError('skip is not defined for the recurrent DOT')
+        pos = torch.arange(x.shape[1], device=x.device).expand_as(x)
+        e = self.blocks[0](self.embed(x) * math.sqrt(self.c.d), pos, segments)
+        s, d = e, torch.zeros_like(e)  # no previous module yet: delta 0
+        if self.training and torch.is_grad_enabled():
+            n, k = self.train_steps if self.train_steps is not None else self.sample_steps(0)
+        else:
+            n, k = self.eval_mode.get('steps', self.mean_recurrence), 0
+        dt = x.device.type
+        amp = (torch.autocast(dt, dtype=torch.get_autocast_dtype(dt), cache_enabled=False)
+               if torch.is_autocast_enabled(dt) else nullcontext())
+        with torch.no_grad(), amp:
+            for _ in range(n):
+                t = self._recur_delta(s, e, d, pos, segments)
+                s, d = t, t - s
+        ckpt = self.f.get('full_backprop') and self.training and torch.is_grad_enabled()
+        for _ in range(k):
+            t = (checkpoint(self._recur_delta, s, e, d, pos, segments, use_reentrant=False) if ckpt
+                 else self._recur_delta(s, e, d, pos, segments))
+            s, d = t, t - s
+        return self.translators[-1](s, e, delta=d)
