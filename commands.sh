@@ -1,35 +1,33 @@
-#1 +240+a
-#th2-pq5r-dot-l55-lr-4x-launch-20261128-a01
-set -euo pipefail
-export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 PYTHONDONTWRITEBYTECODE=1
+#1 +45+a
+#th2-pq5r-dot-l55-health-or-wrapup-20261128-a01
+set -uo pipefail
+printf 'READ_ONLY_L55_HEALTH_OR_WRAPUP (never signals a process)\n'
 date -u
-hostname
-prev=/mnt/local/_outputs/deep-llms_th2/dot_l50_20261128
 out=/mnt/local/_outputs/deep-llms_th2/dot_l55_20261128
-src=$out/src
 base=$out/run
-data=/mnt/local/_data/deep-llms_th2/dot_data_20261128
 PY=/mnt/local/conda-py311/envs/a2_env/bin/python3.11
-receipt=$prev/inspection-a01.json
-if [ -e "$out" ]; then echo L55_ALREADY_LAUNCHED; cat "$base/jobs.json" 2>/dev/null || true; exit 0; fi
-python3 -c "import json,sys;t=json.load(open(sys.argv[1]));sys.exit(0 if t.get('native_restored') else 1)" "$prev/run/terminal.json"
-echo "6495068aaf7a6a2c5c62b5885405032645b627b1ae072da05551a684aebac6d4  $receipt" | sha256sum -c -
-test -x "$PY"
-command -v tmux >/dev/null
-mkdir -p "$src/docs/results/local_rows_20261126"
-cp -r efficient_llm scripts eval run_experiments.py "$src/"
-cp docs/results/local_rows_20261126/manifest.json "$src/docs/results/local_rows_20261126/"
-(cd "$src" && find efficient_llm scripts eval run_experiments.py docs -type f \( -name '*.py' -o -name '*.json' \) | sort | xargs sha256sum > "$out/src.sha256")
-wc -l "$out/src.sha256"
-jobs="0:dotpair_rand_inj_lin_si_coda_lr10_d1024_4x 1:dotpair_rand_inj_lin_si_coda_lr10_d1024_4x 0:dotpair_rand_inj_lin_si_coda_lr20_d1024_4x 1:dotpair_rand_inj_lin_si_coda_lr20_d1024_4x 0:huginn_r3_lr20_d1024_4x 1:huginn_r3_lr20_d1024_4x 0:huginn_r3_lr40_d1024_4x 1:huginn_r3_lr40_d1024_4x 0:dotpair_rand_inj_lin_si_coda_lr20_4x 1:dotpair_rand_inj_lin_si_coda_lr20_4x 0:huginn_r3_lr20_4x 1:huginn_r3_lr20_4x 0:huginn_r3_lr40_4x 1:huginn_r3_lr40_4x"
-cmd="$PY -u scripts/node_dot_queue.py --base $base --rows $data/norm/local_rows --requests $data/downstream/requests.json --inspection $receipt --inspection-sha256 6495068aaf7a6a2c5c62b5885405032645b627b1ae072da05551a684aebac6d4 --jobs $jobs > $out/supervisor.log 2>&1"
-tmux new-session -d -s dotl55_20261128 -c "$src" "$cmd"
-tmux set-option -w -t dotl55_20261128 remain-on-exit on
-echo LAUNCHED_TMUX dotl55_20261128
-sleep 200
-tmux ls 2>/dev/null || true
-tail -n 30 "$out/supervisor.log" | cut -c1-300
-cat "$base/jobs.json" 2>/dev/null || echo NO_JOBS_YET
-ls -la /mnt/local/_gpu_guard/
+cat "$base/jobs.json" 2>&1 | head -40
+for d in "$base"/s*/*_4x; do
+  printf '%s ' "${d#$base/}"
+  python3 -c "import json,sys;p=json.load(open(sys.argv[1]));print('step',p.get('step'),'/',p.get('total'))" "$d/progress.json" 2>/dev/null || printf 'no progress\n'
+  tail -n 1 "$d/calibration.jsonl" 2>/dev/null | cut -c1-100
+  test -f "$d/summary.json" && python3 -c "import json,sys;v=json.load(open(sys.argv[1]))['nll'];print('  SUMMARY', ' '.join(f'{k}:{v[k]:.4f}' for k in ('native','r1','r2','r4','r8','r16','r32') if k in v))" "$d/summary.json"
+done
+grep -l -E "Traceback|Error" "$base"/logs/*.log 2>/dev/null || printf 'no errors in job logs\n'
+tail -n 4 "$out/supervisor.log" | cut -c1-200
+for f in failure.json handoff-failure.json; do test -e "$base/$f" && { printf '%s: ' "$f"; cat "$base/$f"; }; done
+if test -f "$base/terminal.json"; then
+  printf 'TERMINAL '; cat "$base/terminal.json" | head -c 600; printf '\n'
+  if python3 -c "import json,sys;t=json.load(open(sys.argv[1]));sys.exit(0 if t.get('native_restored') else 1)" "$base/terminal.json"; then
+    test -e "$out/inspection-a01.json" || "$PY" scripts/node_gpu_inspect.py "$out/inspection-a01.json"
+    sha256sum "$out/inspection-a01.json"
+    test -e "$out/l55_results.tar.gz" || "$PY" scripts/node_bundle_results.py --base "$base" --out "$out/l55_results"
+    ls -la "$out"/l55_results.* && sha256sum "$out/l55_results.tar.gz"
+  else
+    printf 'NATIVE_NOT_RESTORED: no inspection, no next batch\n'
+  fi
+fi
+tmux ls 2>&1
+ls -la /mnt/local/_gpu_guard/ | tail -n +2
 nvidia-smi --query-gpu=index,memory.used,utilization.gpu,power.draw --format=csv,noheader
 nvidia-smi --query-compute-apps=pid,gpu_uuid,used_memory --format=csv,noheader
