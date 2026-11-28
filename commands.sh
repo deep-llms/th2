@@ -1,5 +1,5 @@
 #1 +240+a
-#th2-pq5r-dot-l40-4x-launch-20261128-a02
+#th2-pq5r-dot-l40-4x-launch-20261128-a03
 set -euo pipefail
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 PYTHONDONTWRITEBYTECODE=1
 date -u
@@ -33,3 +33,4 @@ cat "$base/jobs.json" 2>/dev/null || echo NO_JOBS_YET
 ls -la /mnt/local/_gpu_guard/
 nvidia-smi --query-gpu=index,memory.used,utilization.gpu,power.draw --format=csv,noheader
 nvidia-smi --query-compute-apps=pid,gpu_uuid,used_memory --format=csv,noheader
+
