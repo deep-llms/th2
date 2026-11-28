@@ -561,12 +561,25 @@ SPECS['dotpair_rand_inj_lin_si_coda_lr14'] = dict(
     SPECS['dotpair_rand_inj_t512_si_coda_lr14'],
     dotrec=dict(SPECS['dotpair_rand_inj_t512_si_coda_lr14']['dotrec'], t='linear'))  # t_ff unused
 
+# L39: Huginn under DOT's training recipe (AdamW, wd 0, our warmup-stable-decay schedule; f22 'adamw' ablation), the
+# cleanest architecture-only control; x1.4 is DOT's LR, x2.0 the f22 point (-0.018 vs ELLISAdam there)
+SPECS.update({f'huginn_r3_lr{n}_adamw': dict(SPECS['huginn_r3_lr28'], lr_scale=lr,
+                                            full=dict(SPECS['huginn_r3_lr28']['full'], ablate=('adamw',)))
+              for n, lr in (('14', 1.4),)})
+
+# L40: the full DOT (three middles, four Ts, scaled init; best at 4x in L34) with an added attention coda after T_out in
+# place of the head FFN; the cycle runs 2 r + 1 applications so attention applications stay Huginn's 2 r + 2
+SPECS['dotfull_rand_inj_t512_si_coda3_lr14'] = dict(
+    SPECS['dotfull_rand_inj_t512_si_lr14'], dotrec=dict(SPECS['dotfull_rand_inj_t512_si_lr14']['dotrec'], coda=True))
+
 # L34: the 4x-token versions of the B200 batch (built from the registered 1x specs; only the step count changes)
 SPECS.update({f'{a}_4x': dict(SPECS[a], steps=49152) for a in (
     'huginn_r3_lr28', 'dotpair_rand_inj_t512_si_lr14', 'dotfull_rand_inj_t512_si_lr14', 'dotshared_rand_t512_si_lr14',
     # L38 (second B200 batch): the coda arms of L35-L37
     'dotpair_rand_inj_t512_si_coda_lr14', 'dotfull_rand_inj_t512_si_coda_lr14', 'dotshared_rand_t512_si_coda_lr14',
-    'dotpair_rand_inj_t512_si_coda_not_lr14', 'dotpair_rand_inj_lin_si_coda_lr14')})
+    'dotpair_rand_inj_t512_si_coda_not_lr14', 'dotpair_rand_inj_lin_si_coda_lr14',
+    # L40 (third B200 batch)
+    'dotfull_rand_inj_t512_si_coda3_lr14', 'huginn_r3_lr20_adamw', 'huginn_r3_lr14_adamw')})
 ALL_ARMS = tuple(SPECS)
 LOOP_ARMS = tuple(a for a, s in SPECS.items() if s['loop'])
 STEPS = {a: s['steps'] for a, s in SPECS.items()}

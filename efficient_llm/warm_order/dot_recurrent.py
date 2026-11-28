@@ -108,8 +108,10 @@ class DotRecurrent(EmbeddingAnchor):
         # L35 options (pair layout only): coda = B3 kept as an unshared attention block after the head's translator and
         # in place of the DOT head FFN (Huginn's ending: ... -> coda -> norm -> tied head); final_t=False drops T_out
         self.coda, self.final_t = bool(f.get('coda')), f.get('final_t', True)
-        if (self.coda or not self.final_t) and f.get('layout') != 'pair':
-            raise ValueError('coda / final_t options are defined for the pair layout only')
+        if (not self.final_t and f.get('layout') != 'pair') or (self.coda and f.get('layout') not in ('pair', 'cycle3')):
+            raise ValueError('final_t is defined for the pair layout; coda for the pair and cycle3 layouts')
+        if self.coda and f.get('cycle_coda'):
+            raise ValueError('coda (B3 added) and cycle_coda (M3 replaced) are exclusive')
         if not self.coda:
             del self.blocks[3]  # B0 runs once (prelude), B1 and B2 recur; B3 is not part of this model
         else:  # the coda replaces the head FFN: the readout is head_output_norm(coda(T_out(s, e)))
@@ -236,8 +238,8 @@ class DotCycle(DotRecurrent):
             n, k = self.train_steps if self.train_steps is not None else self.sample_steps(0)
         else:
             n, k = self.eval_mode.get('steps', self.mean_recurrence), 0
-        total, frozen = 2 * (n + k) + 2 - self.cycle_coda, 2 * n  # cycle applications; the first 2 n run without
-        # gradient (truncation); with cycle_coda the last of Huginn's 2 r + 2 applications is the coda
+        total, frozen = 2 * (n + k) + 2 - (self.cycle_coda or self.coda), 2 * n  # cycle applications; the first 2 n
+        # run without gradient (truncation); with a coda the last of Huginn's 2 r + 2 applications is the coda
         if not (self.training and torch.is_grad_enabled()):
             frozen = total
         dt = x.device.type
@@ -250,7 +252,10 @@ class DotCycle(DotRecurrent):
         for i in range(frozen, total):
             s = checkpoint(self._app, i, s, e, pos, segments, use_reentrant=False) if ckpt else self._app(i, s, e, pos, segments)
         h = self._t(self.head_index, s, e)
-        return self.blocks[2](h, pos, segments) if self.cycle_coda else h
+        if self.cycle_coda:
+            return self.blocks[2](h, pos, segments)
+        # L40: coda added after the full three-middle cycle (B3 kept, in place of the head FFN, as in the pair layout)
+        return self.blocks[3](h, pos, segments) if self.coda else h
 
 
 class DotPair(DotRecurrent):
