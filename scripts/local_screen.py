@@ -67,7 +67,7 @@ def load(rows_dir):
 def run(rows_dir, base, seed, arm):
     from unittest import mock
     import scripts.loop_screen_study as loop
-    from efficient_llm.warm_order.model import Config
+    from efficient_llm.warm_order.loop_screen import config_for
     rows, ids, manifest = load(rows_dir)
     base.mkdir(parents=True, exist_ok=True)
     pins = (manifest['files']['train_s0'], manifest['files']['train_s1'])
@@ -77,8 +77,9 @@ def run(rows_dir, base, seed, arm):
     with mock.patch.object(loop, 'DEVICE', 'cuda'), mock.patch.object(loop, 'ROW_PINS', pins), \
             mock.patch.object(loop, 'extended_ids', extended):
         if not (base/f's{seed}'/f'qualification-{arm}'/'passed.json').is_file():
-            loop.qualify(base, seed, arm, Config(), rows, ids['calibration'])
-        loop.fit(base, seed, arm, {}, Config(), rows, ids[f'train_s{seed}'], ids['calibration'], ids['measurement'])
+            loop.qualify(base, seed, arm, config_for(arm), rows, ids['calibration'])
+        loop.fit(base, seed, arm, {}, config_for(arm), rows, ids[f'train_s{seed}'], ids['calibration'],
+                 ids['measurement'])
 
 
 def queue(rows_dir, base, gpus, jobs):

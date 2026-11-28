@@ -572,6 +572,36 @@ SPECS.update({f'huginn_r3_lr{n}_adamw': dict(SPECS['huginn_r3_lr28'], lr_scale=l
 SPECS['dotfull_rand_inj_t512_si_coda3_lr14'] = dict(
     SPECS['dotfull_rand_inj_t512_si_lr14'], dotrec=dict(SPECS['dotfull_rand_inj_t512_si_lr14']['dotrec'], coda=True))
 
+# L41 (user: other kinds of T), on DOT #1 + coda: the minimal translator norm(s + g * n(e)) (re-standardize and
+# re-inject the anchor only), and the linear translator (best in L37) plus a causal depthwise token mix (kernel 4,
+# zero init); the MLP-T + conv variant stays registered for reference
+SPECS['dotpair_rand_inj_gate_si_coda_lr14'] = dict(
+    SPECS['dotpair_rand_inj_t512_si_coda_lr14'],
+    dotrec=dict(SPECS['dotpair_rand_inj_t512_si_coda_lr14']['dotrec'], t='gate'))
+SPECS['dotpair_rand_inj_t512_si_coda_conv_lr14'] = dict(
+    SPECS['dotpair_rand_inj_t512_si_coda_lr14'],
+    dotrec=dict(SPECS['dotpair_rand_inj_t512_si_coda_lr14']['dotrec'], t_conv=4))
+SPECS['dotpair_rand_inj_lin_si_coda_conv_lr14'] = dict(
+    SPECS['dotpair_rand_inj_lin_si_coda_lr14'],
+    dotrec=dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14']['dotrec'], t_conv=4))
+
+# L42: the full DOT + added coda (L40 arm) at 1x locally, with the MLP T and with linear Ts (best T in the pair layout)
+SPECS['dotfull_rand_inj_lin_si_coda3_lr14'] = dict(
+    SPECS['dotfull_rand_inj_t512_si_coda3_lr14'],
+    dotrec=dict(SPECS['dotfull_rand_inj_t512_si_coda3_lr14']['dotrec'], t='linear'))
+
+# L43: LR check for the best arm (linear T + coda, tuned only at x1.4 so far; Huginn had x1.4 / x2.0 / x2.8)
+SPECS['dotpair_rand_inj_lin_si_coda_lr20'] = dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14'], lr_scale=2.0)
+
+# L44: the best arm (linear T + coda) at 2x tokens locally (Huginn / dense8 + sqrt(d) 2x already exist locally)
+SPECS['dotpair_rand_inj_lin_si_coda_lr14_2x'] = dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14'], steps=24576)
+
+# L45 (B200, scale check): the main comparison at d = 1024 (16 heads, 4 KV heads, head 64, ff 2752 = 8/3 d rounded to
+# 64), 4x tokens: linear T + coda, Huginn (original recipe and AdamW x1.4), dense8 + sqrt(d)
+D1024 = dict(d=1024, heads=16, kv_heads=4, head_dim=64, ff=2752)
+SPECS.update({f'{a}_d1024': dict(SPECS[a], config=D1024) for a in (
+    'dotpair_rand_inj_lin_si_coda_lr14', 'huginn_r3_lr28', 'huginn_r3_lr14_adamw', 'dense8_sq_lr10_fa')})
+
 # L34: the 4x-token versions of the B200 batch (built from the registered 1x specs; only the step count changes)
 SPECS.update({f'{a}_4x': dict(SPECS[a], steps=49152) for a in (
     'huginn_r3_lr28', 'dotpair_rand_inj_t512_si_lr14', 'dotfull_rand_inj_t512_si_lr14', 'dotshared_rand_t512_si_lr14',
@@ -579,8 +609,18 @@ SPECS.update({f'{a}_4x': dict(SPECS[a], steps=49152) for a in (
     'dotpair_rand_inj_t512_si_coda_lr14', 'dotfull_rand_inj_t512_si_coda_lr14', 'dotshared_rand_t512_si_coda_lr14',
     'dotpair_rand_inj_t512_si_coda_not_lr14', 'dotpair_rand_inj_lin_si_coda_lr14',
     # L40 (third B200 batch)
-    'dotfull_rand_inj_t512_si_coda3_lr14', 'huginn_r3_lr20_adamw', 'huginn_r3_lr14_adamw')})
+    'dotfull_rand_inj_t512_si_coda3_lr14', 'huginn_r3_lr20_adamw', 'huginn_r3_lr14_adamw',
+    # L45
+    'dotpair_rand_inj_lin_si_coda_lr14_d1024', 'huginn_r3_lr28_d1024', 'huginn_r3_lr14_adamw_d1024',
+    'dense8_sq_lr10_fa_d1024')})
 ALL_ARMS = tuple(SPECS)
+
+
+def config_for(arm):
+    """The model config of an arm: the default Config unless the spec overrides fields (L45 'config')."""
+    from .model import Config
+    return Config(**SPECS[arm].get('config', {}))
+
 LOOP_ARMS = tuple(a for a, s in SPECS.items() if s['loop'])
 STEPS = {a: s['steps'] for a, s in SPECS.items()}
 VAR_PASSES = (3, 1, 3, 2, 3, 4, 3, 5)  # P(3)=1/2, P(1|2|4|5)=1/8 each, mean 3

@@ -57,9 +57,21 @@ class Translator(nn.Module):
     """anchor_gate (L33 idea 1): T(s, e) = norm_out(g * n(s) + (1 - g) * n(e) + MLP(...)), g = sigmoid(per-channel
     logit, init 3 -> 0.95): the translator learns how far to pull the state back toward the anchor each time.
     delta (L33 idea 3): the MLP also sees n(delta), delta = the change the previous module made to the state."""
-    def __init__(self, d, f, inject, mlp, hidden=1, anchor_gate=False, delta=False, linear=False):
+    def __init__(self, d, f, inject, mlp, hidden=1, anchor_gate=False, delta=False, linear=False, gate=False, conv=0):
         super().__init__()
         self.inject, self.anchor_gate, self.use_delta = inject, bool(anchor_gate), bool(delta)
+        # L41: gate = minimal translator norm_out(s + g * n(e)) (per-channel g, zero init; no map of s at all);
+        # conv = a causal depthwise token mix of n(s) (kernel `conv`, zero init) added inside the residual
+        self.gate, self.conv_k = bool(gate), int(conv)
+        if self.gate:
+            if not inject or mlp:
+                raise ValueError('the gate translator needs the anchor and no MLP')
+            self.norm_e = RMSNorm(d)
+            self.gate_e = nn.Parameter(torch.zeros(d))
+        if self.conv_k:
+            if not mlp:
+                raise ValueError('the token-mixing conv is defined for the MLP / linear translator')
+            self.conv_w = nn.Parameter(torch.zeros(d, 1, self.conv_k))
         if self.anchor_gate and not inject:
             raise ValueError('anchor_gate needs the injected anchor e')
         if mlp:
@@ -76,6 +88,8 @@ class Translator(nn.Module):
         self.norm_out = RMSNorm(d)
 
     def forward(self, s, e, code=None, delta=None):
+        if self.gate:
+            return self.norm_out(s + self.gate_e.to(s.dtype) * self.norm_e(e))
         if 'mlp' not in self._modules:
             return self.norm_out(s)
         ns = self.norm_in(s)
@@ -89,6 +103,9 @@ class Translator(nn.Module):
         if self.use_delta:
             parts.append(self.norm_d(delta))
         m = self.mlp(torch.cat(parts, -1) if len(parts) > 1 else u)
+        if self.conv_k:  # causal (left-padded) depthwise conv over the sequence; rows are single-document
+            x = F.pad(ns.transpose(1, 2), (self.conv_k - 1, 0))
+            m = m + F.conv1d(x, self.conv_w.to(x.dtype), groups=x.shape[1]).transpose(1, 2)
         if self.anchor_gate:
             g = torch.sigmoid(self.gate_logit).to(ns.dtype)
             return self.norm_out(g * ns + (1 - g) * ne + m)
@@ -102,7 +119,7 @@ class DotRecurrent(EmbeddingAnchor):
         super().__init__(config)  # identical base init (embed, B0..B3, head) for every arm of a seed
         self.arm, self.spec, self.f = arm, spec, spec['dotrec']
         f = self.f
-        if f['t'] not in ('mlp', 'norm', 'linear'):
+        if f['t'] not in ('mlp', 'norm', 'linear', 'gate'):
             raise ValueError('Unknown translator kind')
         self.mean_recurrence, self.backprop = f['mean_recurrence'], f['backprop']
         # L35 options (pair layout only): coda = B3 kept as an unshared attention block after the head's translator and
@@ -164,6 +181,8 @@ class DotRecurrent(EmbeddingAnchor):
         return self._out(s, e, pos, segments)
 
     def _out(self, s, e, pos, segments):
+        if segments is not None and self.f.get('t_conv'):
+            raise NotImplementedError('the token-mixing translator assumes single-document rows (segments=None)')
         h = self.translators[-1](s, e) if self.final_t else s  # the head's translator (L35: optionally none)
         return self.blocks[3](h, pos, segments) if self.coda else h
 
@@ -205,8 +224,10 @@ class DotCycle(DotRecurrent):
         self.cycle_coda = bool(f.get('cycle_coda'))
         self.middles = 2 if self.cycle_coda else 3
         self.head_index = self.middles
-        self.translators = nn.ModuleList(Translator(config.d, f['t_ff'], bool(f.get('inject')), f['t'] == 'mlp',
-                                                    f.get('t_hidden', 1)) for _ in range(1 if self.shared_t else 4))
+        self.translators = nn.ModuleList(Translator(config.d, f['t_ff'], bool(f.get('inject')),
+                                                    f['t'] in ('mlp', 'linear'), f.get('t_hidden', 1),
+                                                    linear=f['t'] == 'linear')  # L42: linear T in the cycle
+                                         for _ in range(1 if self.shared_t else 4))
         if self.shared_t:
             self.recipient_codes = nn.Parameter(torch.zeros(self.middles + 1, config.d))
         for module in self.translators.modules():
@@ -268,7 +289,8 @@ class DotPair(DotRecurrent):
         f = self.f
         self.translators = nn.ModuleList(Translator(config.d, f['t_ff'], bool(f.get('inject')),
                                                     f['t'] in ('mlp', 'linear'), anchor_gate=f.get('anchor_gate'),
-                                                    delta=f.get('delta'), linear=f['t'] == 'linear')
+                                                    delta=f.get('delta'), linear=f['t'] == 'linear',
+                                                    gate=f['t'] == 'gate', conv=f.get('t_conv', 0))
                                          for _ in range(2))  # recipients: the core pair, the head
         for module in self.translators.modules():
             if isinstance(module, nn.Linear):

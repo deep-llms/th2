@@ -33,7 +33,7 @@ def score(base, seed, arm, requests):
     import torch
     from efficient_llm.warm_order.adaptation_runtime import measurement_runtime
     from efficient_llm.warm_order.embedding_anchor_runtime import anchor_runtime
-    from efficient_llm.warm_order.loop_screen import SPECS, make_model, native_path
+    from efficient_llm.warm_order.loop_screen import SPECS, config_for, make_model, native_path
     from efficient_llm.warm_order.loop_screen_downstream import digest, score_requests
     from efficient_llm.warm_order.model import Config
     prepared = load_requests(requests)
@@ -41,7 +41,7 @@ def score(base, seed, arm, requests):
     state = torch.load(run/'terminal.pt', map_location='cpu', weights_only=False)
     if state['arm'] != arm:
         raise ValueError('Checkpoint identity mismatch')
-    model = make_model(Config(), arm)
+    model = make_model(config_for(arm), arm)
     model.load_state_dict(state['model'])
     model = model.to('cuda').eval()
     model.passes = SPECS[arm].get('passes', 3)
