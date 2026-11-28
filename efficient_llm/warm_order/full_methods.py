@@ -217,6 +217,13 @@ class HuginnLM(_Base):
         self.train_steps = None  # (n_no_grad, k_grad) for the current training step
         self.state_override = None  # tests / reference parity: an explicit s0
         self.reset_parameters()
+        # L49 analysis (not part of the published method): DOT's readout translator T(s, e) = norm(s + W [n(s), n(e)])
+        # in place of ln_f before the coda; built after reset_parameters so every Huginn tensor keeps its init
+        self.coda_t = None
+        if f.get('coda_t'):
+            from .dot_recurrent import Translator
+            self.coda_t = Translator(c.d, 0, True, True, linear=True)
+            nn.init.normal_(self.coda_t.mlp.weight, std=.02)
 
     @torch.no_grad()
     def reset_parameters(self):
@@ -295,7 +302,7 @@ class HuginnLM(_Base):
         ckpt = 'full_bp' in self.ablate and self.training and torch.is_grad_enabled()
         for _ in range(k):
             s = checkpoint(self._core, s, e, pos, segments, use_reentrant=False) if ckpt else self._core(s, e, pos, segments)
-        h = self.ln_f(s)
+        h = self.coda_t(s, e) if self.coda_t is not None else self.ln_f(s)
         for block in self.coda:
             h = block(h, pos, segments)
         return h
