@@ -103,7 +103,15 @@ class DotRecurrent(EmbeddingAnchor):
         if f['t'] not in ('mlp', 'norm'):
             raise ValueError('Unknown translator kind')
         self.mean_recurrence, self.backprop = f['mean_recurrence'], f['backprop']
-        del self.blocks[3]  # B0 runs once (prelude), B1 and B2 recur; B3 is not part of this model
+        # L35 options (pair layout only): coda = B3 kept as an unshared attention block after the head's translator and
+        # in place of the DOT head FFN (Huginn's ending: ... -> coda -> norm -> tied head); final_t=False drops T_out
+        self.coda, self.final_t = bool(f.get('coda')), f.get('final_t', True)
+        if (self.coda or not self.final_t) and f.get('layout') != 'pair':
+            raise ValueError('coda / final_t options are defined for the pair layout only')
+        if not self.coda:
+            del self.blocks[3]  # B0 runs once (prelude), B1 and B2 recur; B3 is not part of this model
+        else:  # the coda replaces the head FFN: the readout is head_output_norm(coda(T_out(s, e)))
+            del self.head_ffn, self.head_input_norm
         mlp = f['t'] == 'mlp'
         self.translators = nn.ModuleList(Translator(config.d, f.get('t_ff', 0), bool(f.get('inject')), mlp)
                                          for _ in range(3))  # recipients: B1, B2, head
@@ -112,7 +120,7 @@ class DotRecurrent(EmbeddingAnchor):
                 nn.init.normal_(module.weight, std=.02)
         if f.get('scaled_init'):  # L31: GPT-2 style residual-output init std / sqrt(2 L), L = applications at r = mean
             layout = f.get('layout')
-            apps = 2 * self.mean_recurrence + 2 if layout == 'cycle3' else 1 + 2 * self.mean_recurrence
+            apps = 2 * self.mean_recurrence + 2 if layout == 'cycle3' else 1 + 2 * self.mean_recurrence + self.coda
             with torch.no_grad():
                 for block in self.blocks:
                     block.self_attn.o_proj.weight.mul_(1 / math.sqrt(2 * apps))
@@ -149,7 +157,14 @@ class DotRecurrent(EmbeddingAnchor):
         for _ in range(k):
             s = (checkpoint(self._recur, s, e, pos, segments, use_reentrant=False) if ckpt
                  else self._recur(s, e, pos, segments))
-        return self.translators[-1](s, e)  # the head's translator
+        return self._out(s, e, pos, segments)
+
+    def _out(self, s, e, pos, segments):
+        h = self.translators[-1](s, e) if self.final_t else s  # the head's translator (L35: optionally none)
+        return self.blocks[3](h, pos, segments) if self.coda else h
+
+    def readout_hidden(self, h):
+        return self.head_output_norm(h) if self.coda else super().readout_hidden(h)
 
     def train_loss(self, x, path, step, total):
         n, k = self.sample_steps(step)
@@ -180,13 +195,21 @@ class DotCycle(DotRecurrent):
         # recipients: M1 = B0, M2 = B1, M3 = B2, head. shared_t (L32, the original DOT T): one translator for every
         # recipient, told the recipient by a learned code (zero init) added to its normalized input
         self.shared_t = bool(f.get('shared_t'))
+        # L36 (user): cycle_coda drops M3 and its translator from the cycle; B2 (M3's block, same init) runs once as an
+        # unshared coda after the head's translator: [T1 M1 T2 M2] cycle for 2 r + 1 applications -> T_out -> coda ->
+        # DOT head FFN (2 r + 2 attention applications as before, no added parameters)
+        self.cycle_coda = bool(f.get('cycle_coda'))
+        self.middles = 2 if self.cycle_coda else 3
+        self.head_index = self.middles
         self.translators = nn.ModuleList(Translator(config.d, f['t_ff'], bool(f.get('inject')), f['t'] == 'mlp',
                                                     f.get('t_hidden', 1)) for _ in range(1 if self.shared_t else 4))
         if self.shared_t:
-            self.recipient_codes = nn.Parameter(torch.zeros(4, config.d))
+            self.recipient_codes = nn.Parameter(torch.zeros(self.middles + 1, config.d))
         for module in self.translators.modules():
             if isinstance(module, nn.Linear):
                 nn.init.normal_(module.weight, std=.02)
+        if self.cycle_coda and not self.shared_t:  # built and dropped: T(M1), T(M2), T(head) keep the base arm's init
+            del self.translators[2]
         if f.get('sandwich_blocks'):  # L29 diagnostic only: Huginn's 4-norm sandwich in the three middles
             from efficient_llm.dot_pool.model import enable_sandwich
             for block in self.blocks:
@@ -198,7 +221,7 @@ class DotCycle(DotRecurrent):
         return self.translators[j](s, e)
 
     def _app(self, i, s, e, pos, segments):
-        j = i % 3
+        j = i % self.middles
         return self.blocks[j](self._t(j, s, e), pos, segments)
 
     def hidden(self, x, path=None, *, skip=None, segments=None, **kwargs):
@@ -211,7 +234,8 @@ class DotCycle(DotRecurrent):
             n, k = self.train_steps if self.train_steps is not None else self.sample_steps(0)
         else:
             n, k = self.eval_mode.get('steps', self.mean_recurrence), 0
-        total, frozen = 2 * (n + k) + 2, 2 * n  # applications; the first 2 n run without gradient (truncation)
+        total, frozen = 2 * (n + k) + 2 - self.cycle_coda, 2 * n  # cycle applications; the first 2 n run without
+        # gradient (truncation); with cycle_coda the last of Huginn's 2 r + 2 applications is the coda
         if not (self.training and torch.is_grad_enabled()):
             frozen = total
         dt = x.device.type
@@ -223,7 +247,8 @@ class DotCycle(DotRecurrent):
         ckpt = self.f.get('full_backprop') and self.training and torch.is_grad_enabled()
         for i in range(frozen, total):
             s = checkpoint(self._app, i, s, e, pos, segments, use_reentrant=False) if ckpt else self._app(i, s, e, pos, segments)
-        return self._t(3, s, e)
+        h = self._t(self.head_index, s, e)
+        return self.blocks[2](h, pos, segments) if self.cycle_coda else h
 
 
 class DotPair(DotRecurrent):
@@ -240,6 +265,8 @@ class DotPair(DotRecurrent):
         for module in self.translators.modules():
             if isinstance(module, nn.Linear):
                 nn.init.normal_(module.weight, std=.02)
+        if not self.final_t:  # L35: no head translator (built and dropped, so T0's init equals the base arm's)
+            del self.translators[1]
         self.use_delta = bool(f.get('delta'))
 
     def _recur(self, s, e, pos, segments):

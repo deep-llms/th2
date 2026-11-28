@@ -462,6 +462,14 @@ SPECS.update({
                                                                 inject=True, layout='pair', full_backprop=True,
                                                                 scaled_init=True, **cfg))
        for name, cfg in (('gate', dict(anchor_gate=True)), ('delta', dict(delta=True)))},
+    # L35 (user): the DOT ending vs Huginn's: (a) an unshared attention coda after T_out in place of the head FFN,
+    # (c) no final T (the core pair's output goes straight to the DOT head FFN); both on DOT #1 (pair + scaled init)
+    **{f'dotpair_rand_inj_t512_si_{name}_lr14': dict(blocks=4, loop=None, mix='dotrec', var=False, steps=12288,
+                                                    fast_attn=True, lr_scale=1.4,
+                                                    dotrec=dict(mean_recurrence=3, backprop=3, t='mlp', t_ff=512,
+                                                                inject=True, layout='pair', full_backprop=True,
+                                                                scaled_init=True, **cfg))
+       for name, cfg in (('coda', dict(coda=True)), ('not', dict(final_t=False)))},
     # L34 (user): one shared d7-style T + scaled init, and the 4x-token B200 batch (train 4x directly; the calibration
     # curve gives the whole trajectory): Huginn, DOT #1 (pair + init), DOT #2 (full + init), one-T DOT (+ init)
     'dotshared_rand_t512_si_lr14': dict(blocks=4, loop=None, mix='dotrec', var=False, steps=12288, fast_attn=True,
@@ -540,6 +548,10 @@ DYN_RANK = 32
 DYN_BOUND = .05  # dyn='tanh': per-element query delta bounded to +-0.05 (trained AttnRes queries ~0.004-0.02)
 MOE_EXPERTS, MOE_TOP, MOE_FF_DIV, MOE_BALANCE = 8, 2, 2, .01
 ARMS = ('dense4', 'dense4_2x', 'dense8', 'serial', 'memory', 'gated', 'gated_var', 'attnres')  # round 1
+# L36 (user): the full DOT and the one-T DOT (both + scaled init) with M3 and its T replaced by an unshared coda
+SPECS.update({a.replace('_si_', '_si_coda_'): dict(SPECS[a], dotrec=dict(SPECS[a]['dotrec'], cycle_coda=True))
+              for a in ('dotfull_rand_inj_t512_si_lr14', 'dotshared_rand_t512_si_lr14')})
+
 # L34: the 4x-token versions of the B200 batch (built from the registered 1x specs; only the step count changes)
 SPECS.update({f'{a}_4x': dict(SPECS[a], steps=49152) for a in (
     'huginn_r3_lr28', 'dotpair_rand_inj_t512_si_lr14', 'dotfull_rand_inj_t512_si_lr14', 'dotshared_rand_t512_si_lr14')})
@@ -593,7 +605,7 @@ def block_applications(arm, passes=3):
         return 2 + f['base_depth'] * sum(caps)
     if spec.get('dotrec'):  # attention-block applications at the native recurrence: prelude + 2 r (cycle3: 2 r + 2)
         r = spec['dotrec']['mean_recurrence']
-        return 2 * r + 2 if spec['dotrec'].get('layout') == 'cycle3' else 1 + 2 * r
+        return 2 * r + 2 if spec['dotrec'].get('layout') == 'cycle3' else 1 + 2 * r + bool(spec['dotrec'].get('coda'))
     if spec.get('schedule'):
         return 4 if spec['schedule'] == 'dense' else spec.get('apps') or 2 * spec['depth'] + 1
     if spec.get('dot'):
