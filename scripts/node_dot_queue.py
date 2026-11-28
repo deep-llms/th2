@@ -74,34 +74,44 @@ def check_ownership(receipt, inspect, process, ownership, approved_launcher, nat
     return now
 
 
-def run_jobs(jobs, base, rows, requests, python=sys.executable, poll=20):
-    """jobs: [(seed, arm)], at most one per GPU; fit, then downstream score, each job on its own GPU."""
-    if len(jobs) > len(GPUS):
-        raise ValueError('more jobs than GPUs')
+def run_jobs(jobs, base, rows, requests, python=sys.executable, poll=20, gpus=None):
+    """jobs: [(seed, arm)], any number, queued over the GPUs. Each GPU runs one job at a time: its fit, then (on fit
+    success) its downstream score on the same GPU, then the next pending job, so no GPU idles while work remains."""
+    gpus = list(GPUS if gpus is None else gpus)
     (base/'logs').mkdir(parents=True, exist_ok=True)
-    results = {}
-    for stage in ('fit', 'downstream'):
-        running = {}
-        for gpu, (seed, arm) in enumerate(jobs):
-            key = f's{seed}/{arm}'
-            if stage == 'downstream' and results.get(key, {}).get('fit') != 0:
-                continue
-            argv = ([python, '-u', 'scripts/local_screen.py', 'run', '--rows', str(rows), '--base', str(base),
-                     '--seed', str(seed), '--arm', arm] if stage == 'fit' else
-                    [python, '-u', 'scripts/local_downstream.py', 'score', '--base', str(base), '--seed', str(seed),
-                     '--arm', arm, '--requests', str(requests)])
-            env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(gpu), OMP_NUM_THREADS='8', PYTHONDONTWRITEBYTECODE='1')
-            log = (base/'logs'/f'{stage}-s{seed}-{arm}.log').open('x')
-            running[key] = subprocess.Popen(argv, cwd=str(ROOT), env=env, stdout=log, stderr=subprocess.STDOUT)
-            log.close()
-            print(time.strftime('%H:%M:%S'), 'START', stage, gpu, key, flush=True)
-        while running:
-            for key, child in list(running.items()):
-                if child.poll() is not None:
-                    results.setdefault(key, {})[stage] = child.returncode
-                    print(time.strftime('%H:%M:%S'), 'END', stage, key, 'rc', child.returncode, flush=True)
-                    del running[key]
-            write_json(base/'jobs.json', dict(stage=stage, results=results, running=sorted(running)))
+    pending, results, running = list(jobs), {}, {}
+
+    def start(gpu, seed, arm, stage):
+        argv = ([python, '-u', 'scripts/local_screen.py', 'run', '--rows', str(rows), '--base', str(base),
+                 '--seed', str(seed), '--arm', arm] if stage == 'fit' else
+                [python, '-u', 'scripts/local_downstream.py', 'score', '--base', str(base), '--seed', str(seed),
+                 '--arm', arm, '--requests', str(requests)])
+        env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(gpu), OMP_NUM_THREADS='8', PYTHONDONTWRITEBYTECODE='1')
+        log = (base/'logs'/f'{stage}-s{seed}-{arm}.log').open('x')
+        running[gpu] = (subprocess.Popen(argv, cwd=str(ROOT), env=env, stdout=log, stderr=subprocess.STDOUT),
+                        seed, arm, stage)
+        log.close()
+        print(time.strftime('%H:%M:%S'), 'START', stage, gpu, f's{seed}/{arm}', flush=True)
+
+    while pending or running:
+        for gpu in gpus:
+            if gpu in running:
+                child, seed, arm, stage = running[gpu]
+                if child.poll() is None:
+                    continue
+                key = f's{seed}/{arm}'
+                results.setdefault(key, {})[stage] = child.returncode
+                print(time.strftime('%H:%M:%S'), 'END', stage, key, 'rc', child.returncode, flush=True)
+                del running[gpu]
+                if stage == 'fit' and child.returncode == 0:
+                    start(gpu, seed, arm, 'downstream')
+                    continue
+            if gpu not in running and pending:
+                seed, arm = pending.pop(0)
+                start(gpu, seed, arm, 'fit')
+        write_json(base/'jobs.json', dict(results=results, pending=[f's{s}/{a}' for s, a in pending],
+                                          running={str(g): f's{r[1]}/{r[2]} {r[3]}' for g, r in running.items()}))
+        if pending or running:
             time.sleep(poll)
     return results
 
