@@ -592,6 +592,7 @@ SPECS['dotfull_rand_inj_lin_si_coda3_lr14'] = dict(
 
 # L43: LR check for the best arm (linear T + coda, tuned only at x1.4 so far; Huginn had x1.4 / x2.0 / x2.8)
 SPECS['dotpair_rand_inj_lin_si_coda_lr20'] = dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14'], lr_scale=2.0)
+SPECS['dotpair_rand_inj_lin_si_coda_lr28'] = dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14'], lr_scale=2.8)  # L43b
 
 # L44: the best arm (linear T + coda) at 2x tokens locally (Huginn / dense8 + sqrt(d) 2x already exist locally)
 SPECS['dotpair_rand_inj_lin_si_coda_lr14_2x'] = dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14'], steps=24576)
@@ -600,6 +601,16 @@ SPECS['dotpair_rand_inj_lin_si_coda_lr14_2x'] = dict(SPECS['dotpair_rand_inj_lin
 # 64), 4x tokens: linear T + coda, Huginn (original recipe and AdamW x1.4), dense8 + sqrt(d)
 D1024 = dict(d=1024, heads=16, kv_heads=4, head_dim=64, ff=2752)
 SPECS.update({f'{a}_d1024': dict(SPECS[a], config=D1024) for a in (
+    'dotpair_rand_inj_lin_si_coda_lr14', 'huginn_r3_lr28', 'huginn_r3_lr14_adamw', 'dense8_sq_lr10_fa')})
+
+# L46: linear T + coda with a translator between B1 and B2 as well (T at every core layer)
+SPECS['dotpair_rand_inj_lin_si_coda_tmid_lr14'] = dict(
+    SPECS['dotpair_rand_inj_lin_si_coda_lr14'],
+    dotrec=dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14']['dotrec'], t_mid=True))
+
+# L47 (B200, second scale step): the same comparison at d = 1536 (24 heads, 8 KV heads, head 64, ff 4096 = 8/3 d)
+D1536 = dict(d=1536, heads=24, kv_heads=8, head_dim=64, ff=4096)
+SPECS.update({f'{a}_d1536': dict(SPECS[a], config=D1536) for a in (
     'dotpair_rand_inj_lin_si_coda_lr14', 'huginn_r3_lr28', 'huginn_r3_lr14_adamw', 'dense8_sq_lr10_fa')})
 
 # L34: the 4x-token versions of the B200 batch (built from the registered 1x specs; only the step count changes)
@@ -612,7 +623,10 @@ SPECS.update({f'{a}_4x': dict(SPECS[a], steps=49152) for a in (
     'dotfull_rand_inj_t512_si_coda3_lr14', 'huginn_r3_lr20_adamw', 'huginn_r3_lr14_adamw',
     # L45
     'dotpair_rand_inj_lin_si_coda_lr14_d1024', 'huginn_r3_lr28_d1024', 'huginn_r3_lr14_adamw_d1024',
-    'dense8_sq_lr10_fa_d1024')})
+    'dense8_sq_lr10_fa_d1024',
+    # L47
+    'dotpair_rand_inj_lin_si_coda_lr14_d1536', 'huginn_r3_lr28_d1536', 'huginn_r3_lr14_adamw_d1536',
+    'dense8_sq_lr10_fa_d1536')})
 ALL_ARMS = tuple(SPECS)
 
 

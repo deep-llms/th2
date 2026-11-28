@@ -297,10 +297,23 @@ class DotPair(DotRecurrent):
                 nn.init.normal_(module.weight, std=.02)
         if not self.final_t:  # L35: no head translator (built and dropped, so T0's init equals the base arm's)
             del self.translators[1]
+        # L46: a translator between B1 and B2 as well (T at every layer of the core pair); built after the base
+        # translators so every other tensor keeps the base arm's init
+        self.t_mid = (Translator(config.d, f['t_ff'], bool(f.get('inject')), f['t'] in ('mlp', 'linear'),
+                                 linear=f['t'] == 'linear') if f.get('t_mid') else None)
+        if self.t_mid is not None:
+            for module in self.t_mid.modules():
+                if isinstance(module, nn.Linear):
+                    nn.init.normal_(module.weight, std=.02)
+            if f.get('delta'):
+                raise ValueError('t_mid is not combined with the delta translator')
         self.use_delta = bool(f.get('delta'))
 
     def _recur(self, s, e, pos, segments):
-        return self.blocks[2](self.blocks[1](self.translators[0](s, e), pos, segments), pos, segments)
+        h = self.blocks[1](self.translators[0](s, e), pos, segments)
+        if self.t_mid is not None:
+            h = self.t_mid(h, e)
+        return self.blocks[2](h, pos, segments)
 
     def _recur_delta(self, s, e, d, pos, segments):
         return self.blocks[2](self.blocks[1](self.translators[0](s, e, delta=d), pos, segments), pos, segments)
