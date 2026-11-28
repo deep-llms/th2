@@ -57,8 +57,13 @@ class Translator(nn.Module):
     """anchor_gate (L33 idea 1): T(s, e) = norm_out(g * n(s) + (1 - g) * n(e) + MLP(...)), g = sigmoid(per-channel
     logit, init 3 -> 0.95): the translator learns how far to pull the state back toward the anchor each time.
     delta (L33 idea 3): the MLP also sees n(delta), delta = the change the previous module made to the state."""
-    def __init__(self, d, f, inject, mlp, hidden=1, anchor_gate=False, delta=False, linear=False, gate=False, conv=0):
+    def __init__(self, d, f, inject, mlp, hidden=1, anchor_gate=False, delta=False, linear=False, gate=False, conv=0,
+                 raw=False):
         super().__init__()
+        # L51 analysis: raw = Huginn's adapter form W [s, e] (no input norms, no residual, no output norm)
+        self.raw = bool(raw)
+        if self.raw and not (linear and inject and not gate and not conv and not anchor_gate and not delta):
+            raise ValueError('the raw (adapter-form) translator is the plain linear map of [s, e]')
         self.inject, self.anchor_gate, self.use_delta = inject, bool(anchor_gate), bool(delta)
         # L41: gate = minimal translator norm_out(s + g * n(e)) (per-channel g, zero init; no map of s at all);
         # conv = a causal depthwise token mix of n(s) (kernel `conv`, zero init) added inside the residual
@@ -88,6 +93,8 @@ class Translator(nn.Module):
         self.norm_out = RMSNorm(d)
 
     def forward(self, s, e, code=None, delta=None):
+        if self.raw:
+            return self.mlp(torch.cat([s, e], -1))
         if self.gate:
             return self.norm_out(s + self.gate_e.to(s.dtype) * self.norm_e(e))
         if 'mlp' not in self._modules:
@@ -119,7 +126,7 @@ class DotRecurrent(EmbeddingAnchor):
         super().__init__(config)  # identical base init (embed, B0..B3, head) for every arm of a seed
         self.arm, self.spec, self.f = arm, spec, spec['dotrec']
         f = self.f
-        if f['t'] not in ('mlp', 'norm', 'linear', 'gate'):
+        if f['t'] not in ('mlp', 'norm', 'linear', 'gate', 'adapter'):
             raise ValueError('Unknown translator kind')
         self.mean_recurrence, self.backprop = f['mean_recurrence'], f['backprop']
         # L35 options (pair layout only): coda = B3 kept as an unshared attention block after the head's translator and
@@ -133,7 +140,7 @@ class DotRecurrent(EmbeddingAnchor):
             del self.blocks[3]  # B0 runs once (prelude), B1 and B2 recur; B3 is not part of this model
         else:  # the coda replaces the head FFN: the readout is head_output_norm(coda(T_out(s, e)))
             del self.head_ffn, self.head_input_norm
-        mlp = f['t'] in ('mlp', 'linear')  # (the base translators are replaced by every layout)
+        mlp = f['t'] in ('mlp', 'linear', 'adapter')  # (the base translators are replaced by every layout)
         self.translators = nn.ModuleList(Translator(config.d, f.get('t_ff', 0), bool(f.get('inject')), mlp)
                                          for _ in range(3))  # recipients: B1, B2, head
         for module in self.translators.modules():
@@ -160,7 +167,7 @@ class DotRecurrent(EmbeddingAnchor):
             raise ValueError('skip is not defined for the recurrent DOT')
         pos = torch.arange(x.shape[1], device=x.device).expand_as(x)
         e = self.blocks[0](self.embed(x) * math.sqrt(self.c.d), pos, segments)
-        s = e
+        s = torch.zeros_like(e) if self.f.get('s0') == 'zero' else e  # L52 analysis: zero initial state (Huginn-like)
         if self.training and torch.is_grad_enabled():
             n, k = self.train_steps if self.train_steps is not None else self.sample_steps(0)
         else:
@@ -288,15 +295,22 @@ class DotPair(DotRecurrent):
         super().__init__(config, arm, spec)  # B0 prelude, B1-B2 core, Huginn's sampler and eval variants
         f = self.f
         self.translators = nn.ModuleList(Translator(config.d, f['t_ff'], bool(f.get('inject')),
-                                                    f['t'] in ('mlp', 'linear'), anchor_gate=f.get('anchor_gate'),
-                                                    delta=f.get('delta'), linear=f['t'] == 'linear',
-                                                    gate=f['t'] == 'gate', conv=f.get('t_conv', 0))
+                                                    f['t'] in ('mlp', 'linear', 'adapter'),
+                                                    anchor_gate=f.get('anchor_gate'), delta=f.get('delta'),
+                                                    linear=f['t'] in ('linear', 'adapter'), gate=f['t'] == 'gate',
+                                                    conv=f.get('t_conv', 0), raw=f['t'] == 'adapter')
                                          for _ in range(2))  # recipients: the core pair, the head
         for module in self.translators.modules():
             if isinstance(module, nn.Linear):
                 nn.init.normal_(module.weight, std=.02)
         if not self.final_t:  # L35: no head translator (built and dropped, so T0's init equals the base arm's)
             del self.translators[1]
+        # L53 analysis: Huginn's 4-norm sandwich in every block of the pair layout (prelude, core pair, coda); the new
+        # norms start at 1 and are added after the base init, so every other tensor keeps the base arm's init
+        if f.get('sandwich_blocks'):
+            from efficient_llm.dot_pool.model import enable_sandwich
+            for block in self.blocks:
+                enable_sandwich(block, config.d)
         # L46: a translator between B1 and B2 as well (T at every layer of the core pair); built after the base
         # translators so every other tensor keeps the base arm's init
         self.t_mid = (Translator(config.d, f['t_ff'], bool(f.get('inject')), f['t'] in ('mlp', 'linear'),

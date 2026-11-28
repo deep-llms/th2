@@ -626,6 +626,31 @@ SPECS['dotpair_rand_inj_lin_si_coda_lr10'] = dict(SPECS['dotpair_rand_inj_lin_si
 SPECS.update({f'{a}_d1536': dict(SPECS[a], config=D1536) for a in (
     'dotpair_rand_inj_lin_si_coda_lr10', 'dotpair_rand_inj_lin_si_coda_lr20', 'huginn_r3_lr20', 'huginn_r3_lr40')})
 
+# L51 (analysis): DOT #1 + coda with Huginn's adapter form W [s, e] (no norms, no residual) in place of the linear T
+SPECS['dotpair_rand_inj_adapter_si_coda_lr14'] = dict(
+    SPECS['dotpair_rand_inj_lin_si_coda_lr14'],
+    dotrec=dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14']['dotrec'], t='adapter'))
+
+# L52 (analysis): DOT #1 + coda with linear T, starting the recurrence from s0 = 0 instead of s0 = e
+SPECS['dotpair_rand_inj_lin_si_coda_s0zero_lr14'] = dict(
+    SPECS['dotpair_rand_inj_lin_si_coda_lr14'],
+    dotrec=dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14']['dotrec'], s0='zero'))
+
+# L53 (analysis): DOT #1 + coda with linear T and Huginn's sandwich blocks (instead of pre-norm)
+SPECS['dotpair_rand_inj_lin_si_coda_sw_lr14'] = dict(
+    SPECS['dotpair_rand_inj_lin_si_coda_lr14'],
+    dotrec=dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14']['dotrec'], sandwich_blocks=True))
+
+# L54 (training-compute efficiency): DOT #1 + coda with linear T trained at Huginn's sampler with mean 2 (6 attention
+# applications at the mean) against Huginn at mean 3 (8)
+SPECS['dotpair_rand_inj_lin_si_coda_r2_lr14'] = dict(
+    SPECS['dotpair_rand_inj_lin_si_coda_lr14'],
+    dotrec=dict(SPECS['dotpair_rand_inj_lin_si_coda_lr14']['dotrec'], mean_recurrence=2, backprop=2))
+
+# L55 (B200): LR sweep at d1024 and at d768 4x so every size in the summary compares each side at its best LR
+SPECS.update({f'{a}_d1024': dict(SPECS[a], config=D1024) for a in (
+    'dotpair_rand_inj_lin_si_coda_lr10', 'dotpair_rand_inj_lin_si_coda_lr20', 'huginn_r3_lr20', 'huginn_r3_lr40')})
+
 # L34: the 4x-token versions of the B200 batch (built from the registered 1x specs; only the step count changes)
 SPECS.update({f'{a}_4x': dict(SPECS[a], steps=49152) for a in (
     'huginn_r3_lr28', 'dotpair_rand_inj_t512_si_lr14', 'dotfull_rand_inj_t512_si_lr14', 'dotshared_rand_t512_si_lr14',
@@ -642,7 +667,10 @@ SPECS.update({f'{a}_4x': dict(SPECS[a], steps=49152) for a in (
     'dense8_sq_lr10_fa_d1536',
     # L50
     'dotpair_rand_inj_lin_si_coda_lr10_d1536', 'dotpair_rand_inj_lin_si_coda_lr20_d1536', 'huginn_r3_lr20_d1536',
-    'huginn_r3_lr40_d1536')})
+    'huginn_r3_lr40_d1536',
+    # L55
+    'dotpair_rand_inj_lin_si_coda_lr10_d1024', 'dotpair_rand_inj_lin_si_coda_lr20_d1024', 'huginn_r3_lr20_d1024',
+    'huginn_r3_lr40_d1024', 'dotpair_rand_inj_lin_si_coda_lr20', 'huginn_r3_lr20', 'huginn_r3_lr40')})
 ALL_ARMS = tuple(SPECS)
 
 
