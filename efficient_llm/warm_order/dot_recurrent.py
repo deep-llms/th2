@@ -57,7 +57,7 @@ class Translator(nn.Module):
     """anchor_gate (L33 idea 1): T(s, e) = norm_out(g * n(s) + (1 - g) * n(e) + MLP(...)), g = sigmoid(per-channel
     logit, init 3 -> 0.95): the translator learns how far to pull the state back toward the anchor each time.
     delta (L33 idea 3): the MLP also sees n(delta), delta = the change the previous module made to the state."""
-    def __init__(self, d, f, inject, mlp, hidden=1, anchor_gate=False, delta=False):
+    def __init__(self, d, f, inject, mlp, hidden=1, anchor_gate=False, delta=False, linear=False):
         super().__init__()
         self.inject, self.anchor_gate, self.use_delta = inject, bool(anchor_gate), bool(delta)
         if self.anchor_gate and not inject:
@@ -68,7 +68,9 @@ class Translator(nn.Module):
                 self.norm_e = RMSNorm(d)
             if self.use_delta:
                 self.norm_d = RMSNorm(d)
-            self.mlp = (TMLP if hidden == 1 else TMLP2)(d * (1 + bool(inject) + self.use_delta), d, f)
+            d_in = d * (1 + bool(inject) + self.use_delta)
+            # L37 ablation: linear translator norm_out(s + W [n(s), n(e)]), i.e. Huginn's linear concat adapter in T's place
+            self.mlp = nn.Linear(d_in, d, bias=False) if linear else (TMLP if hidden == 1 else TMLP2)(d_in, d, f)
             if self.anchor_gate:
                 self.gate_logit = nn.Parameter(torch.full((d,), 3.))
         self.norm_out = RMSNorm(d)
@@ -100,7 +102,7 @@ class DotRecurrent(EmbeddingAnchor):
         super().__init__(config)  # identical base init (embed, B0..B3, head) for every arm of a seed
         self.arm, self.spec, self.f = arm, spec, spec['dotrec']
         f = self.f
-        if f['t'] not in ('mlp', 'norm'):
+        if f['t'] not in ('mlp', 'norm', 'linear'):
             raise ValueError('Unknown translator kind')
         self.mean_recurrence, self.backprop = f['mean_recurrence'], f['backprop']
         # L35 options (pair layout only): coda = B3 kept as an unshared attention block after the head's translator and
@@ -112,7 +114,7 @@ class DotRecurrent(EmbeddingAnchor):
             del self.blocks[3]  # B0 runs once (prelude), B1 and B2 recur; B3 is not part of this model
         else:  # the coda replaces the head FFN: the readout is head_output_norm(coda(T_out(s, e)))
             del self.head_ffn, self.head_input_norm
-        mlp = f['t'] == 'mlp'
+        mlp = f['t'] in ('mlp', 'linear')  # (the base translators are replaced by every layout)
         self.translators = nn.ModuleList(Translator(config.d, f.get('t_ff', 0), bool(f.get('inject')), mlp)
                                          for _ in range(3))  # recipients: B1, B2, head
         for module in self.translators.modules():
@@ -259,8 +261,9 @@ class DotPair(DotRecurrent):
     def __init__(self, config, arm, spec):
         super().__init__(config, arm, spec)  # B0 prelude, B1-B2 core, Huginn's sampler and eval variants
         f = self.f
-        self.translators = nn.ModuleList(Translator(config.d, f['t_ff'], bool(f.get('inject')), f['t'] == 'mlp',
-                                                    anchor_gate=f.get('anchor_gate'), delta=f.get('delta'))
+        self.translators = nn.ModuleList(Translator(config.d, f['t_ff'], bool(f.get('inject')),
+                                                    f['t'] in ('mlp', 'linear'), anchor_gate=f.get('anchor_gate'),
+                                                    delta=f.get('delta'), linear=f['t'] == 'linear')
                                          for _ in range(2))  # recipients: the core pair, the head
         for module in self.translators.modules():
             if isinstance(module, nn.Linear):

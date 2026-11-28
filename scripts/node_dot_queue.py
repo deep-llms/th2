@@ -137,6 +137,11 @@ def restore_native(base, native, session, inspect, process, approved_launcher, r
     write_json(base/'native-verified.json', dict(samples=samples, script=script, script_sha256=digest))
 
 
+def native_session(base):
+    """tmux session for the restored native burn: unique per batch (an earlier batch's restored burn keeps its own)."""
+    return f'{base.parent.name}_{base.name}_native'.replace('.', '_')
+
+
 def supervise(a):
     from scripts.gpu_process import inspect, ownership, process
     from scripts.gpu_status import require_free
@@ -157,6 +162,12 @@ def supervise(a):
     if json.loads((a.rows/'manifest.json').read_text())['files'] != pins:
         raise RuntimeError('row pins differ from the local pins')
     native = native_of(receipt)
+    from scripts.train_then_burn import APPROVED_BURNS
+    if APPROVED_BURNS.get(native[0]) != native[1]:  # defense in depth: only a reviewed native burn is ever stopped
+        raise RuntimeError(f'native burn {native} is not a reviewed script/hash')
+    session = native_session(a.base)
+    if subprocess.run(['tmux', 'has-session', '-t', session], capture_output=True).returncode == 0:
+        raise RuntimeError(f'native session {session} already exists; refusing before any stop')
     a.base.mkdir(parents=True, exist_ok=False)
     if shutil.disk_usage(a.base).free < 200 * 1024**3:
         raise RuntimeError('insufficient disk')
@@ -197,8 +208,7 @@ def supervise(a):
             if reclaimed:
                 clean_owned_children()
                 time.sleep(30)
-                restore_native(a.base, native, a.base.name + '_native', inspect, process, approved_launcher,
-                               require_free)
+                restore_native(a.base, native, session, inspect, process, approved_launcher, require_free)
                 restored = True
         except BaseException as failure:
             write_json(a.base/'handoff-failure.json', dict(reason=repr(failure), utc=time.time()))

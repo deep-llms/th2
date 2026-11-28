@@ -552,9 +552,21 @@ ARMS = ('dense4', 'dense4_2x', 'dense8', 'serial', 'memory', 'gated', 'gated_var
 SPECS.update({a.replace('_si_', '_si_coda_'): dict(SPECS[a], dotrec=dict(SPECS[a]['dotrec'], cycle_coda=True))
               for a in ('dotfull_rand_inj_t512_si_lr14', 'dotshared_rand_t512_si_lr14')})
 
+# L37: on DOT #1 + coda (L35a): no final T (coda reads the core pair's state directly), and the T-isolating ablation
+# with a linear translator (Huginn's linear concat adapter, W [n(s), n(e)], in place of T's MLP)
+SPECS['dotpair_rand_inj_t512_si_coda_not_lr14'] = dict(
+    SPECS['dotpair_rand_inj_t512_si_coda_lr14'],
+    dotrec=dict(SPECS['dotpair_rand_inj_t512_si_coda_lr14']['dotrec'], final_t=False))
+SPECS['dotpair_rand_inj_lin_si_coda_lr14'] = dict(
+    SPECS['dotpair_rand_inj_t512_si_coda_lr14'],
+    dotrec=dict(SPECS['dotpair_rand_inj_t512_si_coda_lr14']['dotrec'], t='linear'))  # t_ff unused
+
 # L34: the 4x-token versions of the B200 batch (built from the registered 1x specs; only the step count changes)
 SPECS.update({f'{a}_4x': dict(SPECS[a], steps=49152) for a in (
-    'huginn_r3_lr28', 'dotpair_rand_inj_t512_si_lr14', 'dotfull_rand_inj_t512_si_lr14', 'dotshared_rand_t512_si_lr14')})
+    'huginn_r3_lr28', 'dotpair_rand_inj_t512_si_lr14', 'dotfull_rand_inj_t512_si_lr14', 'dotshared_rand_t512_si_lr14',
+    # L38 (second B200 batch): the coda arms of L35-L37
+    'dotpair_rand_inj_t512_si_coda_lr14', 'dotfull_rand_inj_t512_si_coda_lr14', 'dotshared_rand_t512_si_coda_lr14',
+    'dotpair_rand_inj_t512_si_coda_not_lr14', 'dotpair_rand_inj_lin_si_coda_lr14')})
 ALL_ARMS = tuple(SPECS)
 LOOP_ARMS = tuple(a for a, s in SPECS.items() if s['loop'])
 STEPS = {a: s['steps'] for a, s in SPECS.items()}
